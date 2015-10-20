@@ -18,6 +18,29 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GAgent.h" />
+    <ClInclude Include="GDynamicObstacle.h" />
+    <ClInclude Include="GEntity.h" />
+    <ClInclude Include="GEntityManager.h" />
+    <ClInclude Include="GObject.h" />
+    <ClInclude Include="GObstacle.h" />
+    <ClInclude Include="GStaticObstacle.h" />
+    <ClInclude Include="GWorldManager.h" />
+    <ClInclude Include="GWorldSquare.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GAgent.cpp" />
+    <ClCompile Include="GDynamicObstacle.cpp" />
+    <ClCompile Include="GEntity.cpp" />
+    <ClCompile Include="GEntityManager.cpp" />
+    <ClCompile Include="GObject.cpp" />
+    <ClCompile Include="GObstacle.cpp" />
+    <ClCompile Include="GStaticObstacle.cpp" />
+    <ClCompile Include="GWorldManager.cpp" />
+    <ClCompile Include="GWorldSquare.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -145,8 +168,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
