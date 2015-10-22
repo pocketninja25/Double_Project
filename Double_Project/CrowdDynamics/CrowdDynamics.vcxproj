@@ -19,27 +19,57 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GAgent.h" />
-    <ClInclude Include="GDynamicObstacle.h" />
-    <ClInclude Include="GEntity.h" />
-    <ClInclude Include="GEntityManager.h" />
-    <ClInclude Include="GObject.h" />
-    <ClInclude Include="GObstacle.h" />
-    <ClInclude Include="GStaticObstacle.h" />
-    <ClInclude Include="GWorldManager.h" />
-    <ClInclude Include="GWorldSquare.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Common\CFatalException.h" />
+    <ClInclude Include="Source\Common\CHashTable.h" />
+    <ClInclude Include="Source\Common\Defines.h" />
+    <ClInclude Include="Source\Common\Error.h" />
+    <ClInclude Include="Source\Common\MSDefines.h" />
+    <ClInclude Include="Source\Common\Utility.h" />
+    <ClInclude Include="Source\GAgent.h" />
+    <ClInclude Include="Source\GDynamicObstacle.h" />
+    <ClInclude Include="Source\GEntity.h" />
+    <ClInclude Include="Source\GEntityManager.h" />
+    <ClInclude Include="Source\GObject.h" />
+    <ClInclude Include="Source\GObstacle.h" />
+    <ClInclude Include="Source\GStaticObstacle.h" />
+    <ClInclude Include="Source\GWorldManager.h" />
+    <ClInclude Include="Source\GWorldSquare.h" />
+    <ClInclude Include="Source\Math\BaseMath.h" />
+    <ClInclude Include="Source\Math\CMatrix2x2.h" />
+    <ClInclude Include="Source\Math\CMatrix3x3.h" />
+    <ClInclude Include="Source\Math\CMatrix4x4.h" />
+    <ClInclude Include="Source\Math\CQuaternion.h" />
+    <ClInclude Include="Source\Math\CQuatTransform.h" />
+    <ClInclude Include="Source\Math\CVector2.h" />
+    <ClInclude Include="Source\Math\CVector3.h" />
+    <ClInclude Include="Source\Math\CVector4.h" />
+    <ClInclude Include="Source\Math\MathDX.h" />
+    <ClInclude Include="Source\Math\MathIO.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GAgent.cpp" />
-    <ClCompile Include="GDynamicObstacle.cpp" />
-    <ClCompile Include="GEntity.cpp" />
-    <ClCompile Include="GEntityManager.cpp" />
-    <ClCompile Include="GObject.cpp" />
-    <ClCompile Include="GObstacle.cpp" />
-    <ClCompile Include="GStaticObstacle.cpp" />
-    <ClCompile Include="GWorldManager.cpp" />
-    <ClCompile Include="GWorldSquare.cpp" />
+    <ClCompile Include="Source\Common\CFatalException.cpp" />
+    <ClCompile Include="Source\Common\CHashTable.cpp" />
+    <ClCompile Include="Source\Common\MSDefines.cpp" />
+    <ClCompile Include="Source\Common\Utility.cpp" />
+    <ClCompile Include="Source\GAgent.cpp" />
+    <ClCompile Include="Source\GDynamicObstacle.cpp" />
+    <ClCompile Include="Source\GEntity.cpp" />
+    <ClCompile Include="Source\GEntityManager.cpp" />
+    <ClCompile Include="Source\GObject.cpp" />
+    <ClCompile Include="Source\GObstacle.cpp" />
+    <ClCompile Include="Source\GStaticObstacle.cpp" />
+    <ClCompile Include="Source\GWorldManager.cpp" />
+    <ClCompile Include="Source\GWorldSquare.cpp" />
+    <ClCompile Include="Source\Math\BaseMath.cpp" />
+    <ClCompile Include="Source\Math\CMatrix2x2.cpp" />
+    <ClCompile Include="Source\Math\CMatrix3x3.cpp" />
+    <ClCompile Include="Source\Math\CMatrix4x4.cpp" />
+    <ClCompile Include="Source\Math\CQuaternion.cpp" />
+    <ClCompile Include="Source\Math\CQuatTransform.cpp" />
+    <ClCompile Include="Source\Math\CVector2.cpp" />
+    <ClCompile Include="Source\Math\CVector3.cpp" />
+    <ClCompile Include="Source\Math\CVector4.cpp" />
+    <ClCompile Include="Source\Math\MathIO.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}</ProjectGuid>
@@ -49,13 +79,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -112,6 +142,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics\Source\Math;D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics\Source\Common;D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +173,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics\Source\Math;D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics\Source\Common;D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
