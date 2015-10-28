@@ -1,10 +1,10 @@
 #pragma once
 #include "GObject.h"
-class GEntity :
+class GSceneSquare :
 	public GObject
 {
 public:
-	GEntity();
-	virtual ~GEntity();
+	GSceneSquare();
+	virtual ~GSceneSquare();
 };
 

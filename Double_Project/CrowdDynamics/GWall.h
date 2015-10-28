@@ -1,10 +1,10 @@
 #pragma once
 #include "GObject.h"
-class GEntity :
+class GWall :
 	public GObject
 {
 public:
-	GEntity();
-	virtual ~GEntity();
+	GWall();
+	virtual ~GWall();
 };
 
