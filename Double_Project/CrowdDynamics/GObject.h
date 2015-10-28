@@ -1,14 +1,8 @@
 #pragma once
-
-#include "Source\Math\CVector3.h"
-
-class CGObject
+class GObject
 {
 public:
-	CGObject();
-	virtual ~CGObject();
-
-private:
-	
+	GObject();
+	virtual ~GObject();
 };
 

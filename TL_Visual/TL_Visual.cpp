@@ -24,6 +24,11 @@ void main()
 
 		/**** Update your scene each frame here ****/
 
+		//IMesh* foo;
+		//foo->BeginEnumVertices //This lets you find out the vertex data
+
+			IModel* bar;
+			bar->rota
 	}
 
 	// Delete the 3D engine now we are finished with it

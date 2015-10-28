@@ -19,6 +19,15 @@
     <Filter Include="Common">
       <UniqueIdentifier>{984a655c-e462-4f10-a587-9bb7ac206df0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{b015ef8c-b9fe-4f84-a26a-b5f9787f5d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers\Headers">
+      <UniqueIdentifier>{b7ac59c0-db77-4c6b-a54d-4351992a741a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers\Source">
+      <UniqueIdentifier>{c7e161f5-7462-4501-bde4-f9e1c5086fd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Math\BaseMath.h">
@@ -72,31 +81,43 @@
     <ClInclude Include="Source\Common\Utility.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GAgent.h">
+    <ClInclude Include="GCrowdEngine.h">
+      <Filter>Managers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GEntityManager.h">
+      <Filter>Managers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GObstacleManager.h">
+      <Filter>Managers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GSceneManager.h">
+      <Filter>Managers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GDynamicObstacle.h">
+    <ClInclude Include="GEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GEntity.h">
+    <ClInclude Include="GAgent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GEntityManager.h">
+    <ClInclude Include="GObstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GObject.h">
+    <ClInclude Include="GSceneSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GObstacle.h">
+    <ClInclude Include="GWall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GStaticObstacle.h">
+    <ClInclude Include="GObstacleTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GWorldManager.h">
+    <ClInclude Include="GDynamicObstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GWorldSquare.h">
+    <ClInclude Include="GStaticObstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,31 +164,43 @@
     <ClCompile Include="Source\Common\Utility.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GAgent.cpp">
+    <ClCompile Include="GCrowdEngine.cpp">
+      <Filter>Managers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GEntityManager.cpp">
+      <Filter>Managers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GObstacleManager.cpp">
+      <Filter>Managers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GSceneManager.cpp">
+      <Filter>Managers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GDynamicObstacle.cpp">
+    <ClCompile Include="GEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GEntity.cpp">
+    <ClCompile Include="GAgent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GEntityManager.cpp">
+    <ClCompile Include="GObstacle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GObject.cpp">
+    <ClCompile Include="GSceneSquare.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GObstacle.cpp">
+    <ClCompile Include="GWall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GStaticObstacle.cpp">
+    <ClCompile Include="GObstacleTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GWorldManager.cpp">
+    <ClCompile Include="GDynamicObstacle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GWorldSquare.cpp">
+    <ClCompile Include="GStaticObstacle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

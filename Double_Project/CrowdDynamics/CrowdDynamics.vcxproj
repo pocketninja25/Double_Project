@@ -19,21 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GAgent.h" />
+    <ClInclude Include="GCrowdEngine.h" />
+    <ClInclude Include="GDynamicObstacle.h" />
+    <ClInclude Include="GEntity.h" />
+    <ClInclude Include="GEntityManager.h" />
+    <ClInclude Include="GObject.h" />
+    <ClInclude Include="GObstacle.h" />
+    <ClInclude Include="GObstacleManager.h" />
+    <ClInclude Include="GObstacleTemplate.h" />
+    <ClInclude Include="GSceneManager.h" />
+    <ClInclude Include="GSceneSquare.h" />
+    <ClInclude Include="GStaticObstacle.h" />
+    <ClInclude Include="GWall.h" />
     <ClInclude Include="Source\Common\CFatalException.h" />
     <ClInclude Include="Source\Common\CHashTable.h" />
     <ClInclude Include="Source\Common\Defines.h" />
     <ClInclude Include="Source\Common\Error.h" />
     <ClInclude Include="Source\Common\MSDefines.h" />
     <ClInclude Include="Source\Common\Utility.h" />
-    <ClInclude Include="Source\GAgent.h" />
-    <ClInclude Include="Source\GDynamicObstacle.h" />
-    <ClInclude Include="Source\GEntity.h" />
-    <ClInclude Include="Source\GEntityManager.h" />
-    <ClInclude Include="Source\GObject.h" />
-    <ClInclude Include="Source\GObstacle.h" />
-    <ClInclude Include="Source\GStaticObstacle.h" />
-    <ClInclude Include="Source\GWorldManager.h" />
-    <ClInclude Include="Source\GWorldSquare.h" />
     <ClInclude Include="Source\Math\BaseMath.h" />
     <ClInclude Include="Source\Math\CMatrix2x2.h" />
     <ClInclude Include="Source\Math\CMatrix3x3.h" />
@@ -47,19 +51,23 @@
     <ClInclude Include="Source\Math\MathIO.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GAgent.cpp" />
+    <ClCompile Include="GCrowdEngine.cpp" />
+    <ClCompile Include="GDynamicObstacle.cpp" />
+    <ClCompile Include="GEntity.cpp" />
+    <ClCompile Include="GEntityManager.cpp" />
+    <ClCompile Include="GObject.cpp" />
+    <ClCompile Include="GObstacle.cpp" />
+    <ClCompile Include="GObstacleManager.cpp" />
+    <ClCompile Include="GObstacleTemplate.cpp" />
+    <ClCompile Include="GSceneManager.cpp" />
+    <ClCompile Include="GSceneSquare.cpp" />
+    <ClCompile Include="GStaticObstacle.cpp" />
+    <ClCompile Include="GWall.cpp" />
     <ClCompile Include="Source\Common\CFatalException.cpp" />
     <ClCompile Include="Source\Common\CHashTable.cpp" />
     <ClCompile Include="Source\Common\MSDefines.cpp" />
     <ClCompile Include="Source\Common\Utility.cpp" />
-    <ClCompile Include="Source\GAgent.cpp" />
-    <ClCompile Include="Source\GDynamicObstacle.cpp" />
-    <ClCompile Include="Source\GEntity.cpp" />
-    <ClCompile Include="Source\GEntityManager.cpp" />
-    <ClCompile Include="Source\GObject.cpp" />
-    <ClCompile Include="Source\GObstacle.cpp" />
-    <ClCompile Include="Source\GStaticObstacle.cpp" />
-    <ClCompile Include="Source\GWorldManager.cpp" />
-    <ClCompile Include="Source\GWorldSquare.cpp" />
     <ClCompile Include="Source\Math\BaseMath.cpp" />
     <ClCompile Include="Source\Math\CMatrix2x2.cpp" />
     <ClCompile Include="Source\Math\CMatrix3x3.cpp" />
