@@ -13,8 +13,6 @@ class GEntity :	public GObject
 private:
 	CMatrix3x3 m_Matrix;
 
-
-
 //---------------------------
 // Public Functions
 //---------------------------
@@ -23,7 +21,8 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GEntity();
+	GEntity(CVector2 iPosition, bool iIsActive = true);
+	GEntity(float iXPos, float iYPos, bool iIsActive = true);
 
 	virtual ~GEntity();
 
@@ -42,7 +41,9 @@ public:
 	//***************************
 	virtual void Update(float updateTime) = 0;	//Inherited pure virtual Update function, also pure virtual here to prevent instansiation of GEntity
 
+#ifdef _DEBUG
 	virtual string ToString();
+#endif
 
 //---------------------------
 // Protected Functions

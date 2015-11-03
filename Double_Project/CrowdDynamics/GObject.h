@@ -4,17 +4,29 @@ typedef int UID;
 
 #include <string>
 using std::string;
+#include <sstream>
 
 class GObject
 {
 
 //---------------------------
+// Static Data Members
+//---------------------------
+private:
+	static UID s_NextUID;
+
+//---------------------------
+// Static Functions
+//---------------------------
+private:
+	static UID GetNewUID();
+
+//---------------------------
 // Private Data Members
 //---------------------------
 private:
-
-	UID m_UID;
-	bool m_IsActive;
+	UID m_UID;			//This objects UID (Unique IDentifier)
+	bool m_IsActive;	//Whether or not the object is active, this will influence whether it is included in the update each timestep
 
 //---------------------------
 // Public Functions
@@ -24,7 +36,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GObject();
+	GObject(bool iIsActive = true);
 
 	virtual ~GObject();
 
@@ -47,8 +59,11 @@ public:
 	//***************************
 
 	virtual void Update(float updateTime) = 0;
+
+
+#ifdef _DEBUG
 	virtual string ToString();	//Outputs a string version of the information about the object for debugging and possibly file saving purposes
-	
+#endif
 
 };
 

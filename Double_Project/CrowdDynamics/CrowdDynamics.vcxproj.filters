@@ -93,12 +93,6 @@
     <ClInclude Include="GSceneManager.h">
       <Filter>Managers\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GAgent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -118,6 +112,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GStaticObstacle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
