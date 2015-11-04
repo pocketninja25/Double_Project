@@ -7,7 +7,7 @@
 
 // TODO: this might want to be an object so it has a UID - however probably wont have an update function
 
-class GObstacleTemplate : GObject
+class GObstacleTemplate : public GObject
 {
 //---------------------------
 // Private Data Members

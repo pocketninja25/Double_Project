@@ -19,7 +19,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GStaticObstacle();
+	GStaticObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive);
 	virtual ~GStaticObstacle();
 
 	//***************************

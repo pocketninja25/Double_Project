@@ -60,10 +60,10 @@
     <ClInclude Include="GEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GObject.h">
+    <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="GObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

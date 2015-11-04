@@ -1,6 +1,7 @@
 #include "GDynamicObstacle.h"
 
-GDynamicObstacle::GDynamicObstacle() : GObstacle()
+GDynamicObstacle::GDynamicObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive) : 
+	GObstacle(iTemplate, iPosition, iIsActive)
 {
 
 }
@@ -125,4 +126,5 @@ string GDynamicObstacle::ToString()
 	stringstream builder;
 
 	builder << GObstacle::ToString();
+	return builder.str();
 }

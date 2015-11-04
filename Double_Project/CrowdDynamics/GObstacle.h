@@ -5,8 +5,7 @@
 #include <vector>
 
 #include "GObstacleTemplate.h"
-
-class GWall;				//Forward declaration of Wall
+#include "GWall.h"
 
 class GObstacle : public GEntity
 {

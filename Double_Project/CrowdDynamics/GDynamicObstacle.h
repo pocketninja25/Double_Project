@@ -19,7 +19,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GDynamicObstacle();
+	GDynamicObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive = true);
 	virtual ~GDynamicObstacle();
 
 	//***************************
