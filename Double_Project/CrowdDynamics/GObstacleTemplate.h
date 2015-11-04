@@ -11,7 +11,7 @@ class GObstacleTemplate
 // Private Data Members
 //---------------------------
 private:
-	std::vector<gen::CVector2*> m_ObstacleMesh;			// /*Note for development*/ This is tricky, dont know how wall storage is best done when some walls are updated and others arent
+	vector<gen::CVector2*> m_ObstacleMesh;			// /*Note for development*/ This is tricky, dont know how wall storage is best done when some walls are updated and others arent
 
 //---------------------------
 // Public Functions

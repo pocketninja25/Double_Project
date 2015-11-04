@@ -52,7 +52,7 @@ void GObject::Deactivate()
 #ifdef _DEBUG
 string GObject::ToString()		//Return the state of this Object as a string (Debug tool)
 {
-	std::stringstream builder;
+	stringstream builder;
 
 	builder << "ObjectID: " << m_UID << "\n"
 		<< "Active: " << m_IsActive << "\n";

@@ -12,4 +12,3 @@
 #include "Source/CVector2.h"
 #include "Source/MathDX.h"
 #include "Source/MathIO.h"
-
