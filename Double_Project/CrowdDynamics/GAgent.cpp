@@ -17,6 +17,7 @@ GAgent::~GAgent()
 
 void GAgent::Update(float updateTime)
 {
+	//TODO: complete this function
 }
 
 #ifdef _DEBUG

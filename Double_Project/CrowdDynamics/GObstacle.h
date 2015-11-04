@@ -4,7 +4,8 @@
 #include "GEntity.h"
 #include <vector>
 
-class GObstacleTemplate;	//Forward declaration of Obstacle Template
+#include "GObstacleTemplate.h"
+
 class GWall;				//Forward declaration of Wall
 
 class GObstacle : public GEntity
@@ -14,7 +15,7 @@ class GObstacle : public GEntity
 // Private Data Members
 //---------------------------
 private:
-	GObstacleTemplate* m_Template;	//The template this obstacle is based on /*Note for Development*/ this may be better as a UID, but likely this should be one of the only direct pointers outside of managers
+	GObstacleTemplate* m_Template;	//The template this obstacle is based on TODO: this may be better as a UID, but likely this should be one of the only direct pointers outside of managers
 
 	vector<GWall*> m_Walls;			//Vector of the walls owned by this model
 
@@ -26,7 +27,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GObstacle();
+	GObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive = true);
 	virtual ~GObstacle();
 	
 	//***************************

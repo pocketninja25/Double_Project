@@ -34,7 +34,7 @@ public:
 	//***************************
 	void AddAgent(/*SomeAgentDetails*/);
 
-	// /*Note for Development*/ Might be worth having these two functions private and use an AddObstacle function that accepts an enum (static/dynamic) - depends on what these constructions look like
+	// TODO: Might be worth having these two functions private and use an AddObstacle function that accepts an enum (static/dynamic) - depends on what these constructions look like
 	void AddStaticObstacle(/*SomeObstacleDetails*/);
 	void AddDynamicObstacle(/*SomeObstacleDetails*/);
 

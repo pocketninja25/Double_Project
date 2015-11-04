@@ -1,17 +1,19 @@
 #pragma once
 
 #include "Common.h"
+
+#include "GObject.h"
 #include <vector>
 
-// /*Note for development*/ this might want to be an object so it has a UID - however probably wont have an update function
+// TODO: this might want to be an object so it has a UID - however probably wont have an update function
 
-class GObstacleTemplate
+class GObstacleTemplate : GObject
 {
 //---------------------------
 // Private Data Members
 //---------------------------
 private:
-	vector<gen::CVector2*> m_ObstacleMesh;			// /*Note for development*/ This is tricky, dont know how wall storage is best done when some walls are updated and others arent
+	vector<gen::CVector2*> m_ObstacleMesh;			// TODO: This is tricky, dont know how wall storage is best done when some walls are updated and others arent
 
 //---------------------------
 // Public Functions
@@ -21,7 +23,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 	
-	GObstacleTemplate();
+	GObstacleTemplate(bool iIsActive = true);
 	
 	virtual ~GObstacleTemplate();
 

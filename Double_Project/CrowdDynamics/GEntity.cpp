@@ -40,3 +40,8 @@ gen::CMatrix3x3 GEntity::GetMatrix()
 {
 	return m_Matrix;
 }
+
+void GEntity::SetMatrix(gen::CMatrix3x3& iMatrix)
+{
+	m_Matrix = iMatrix
+}

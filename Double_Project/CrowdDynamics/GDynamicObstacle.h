@@ -46,10 +46,18 @@ public:
 	void MoveLocal(gen::CVector2 dXY);
 	void MoveLocal(float dX, float dY);
 
-	//Rotate the obstacle (turn left/right) in degrees or radians
+	//Rotate the obstacle (turn left/right (world space)) in degrees or radians
 	void RotateXDeg(float dAlpha);
 	void RotateXRad(float dAlpha);
-	
+	void RotateYDeg(float dAlpha);
+	void RotateYRad(float dAlpha);
+
+	//Rotate the obstacle (turn left/right (local space)) in degrees or radians
+	void RotateLocalXDeg(float dAlpha);
+	void RotateLocalXRad(float dAlpha);
+	void RotateLocalYDeg(float dAlpha);
+	void RotateLocalYRad(float dAlpha);
+
 	//***************************
 	// Other Functions
 	//***************************
