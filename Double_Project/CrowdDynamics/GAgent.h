@@ -1,14 +1,16 @@
 #pragma once
 
+#include "Common.h"
 #include "GEntity.h"
 
 class GAgent : public GEntity
 {
+
 //---------------------------
 // Private Data Members
 //---------------------------
 private:
-	CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
+	gen::CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
 	float m_Mass;
 
 //---------------------------
@@ -18,7 +20,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent(CVector2 iPosition = CVector2(0.0f, 0.0f), bool iIsActive = true);
+	GAgent(gen::CVector2 iPosition = gen::CVector2(0.0f, 0.0f), bool iIsActive = true);
 	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, bool iIsActive = true);
 
 	virtual ~GAgent();

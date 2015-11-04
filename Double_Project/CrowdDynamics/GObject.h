@@ -1,10 +1,11 @@
 #pragma once
 
-typedef int UID;
+#include "Common.h"
 
 #include <string>
-using std::string;
 #include <sstream>
+
+typedef int UID;
 
 class GObject
 {

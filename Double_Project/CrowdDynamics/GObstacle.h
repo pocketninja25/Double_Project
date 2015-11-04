@@ -1,7 +1,8 @@
 #pragma once
+
+#include "Common.h"
 #include "GEntity.h"
 #include <vector>
-using std::vector;
 
 class GObstacleTemplate;	//Forward declaration of Obstacle Template
 class GWall;				//Forward declaration of Wall

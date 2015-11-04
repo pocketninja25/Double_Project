@@ -1,8 +1,7 @@
 #pragma once
 
+#include "Common.h"
 #include "GSceneSquare.h"
-#include "CVector2.h"
-using gen::CVector2;
 
 class GSceneManager
 {
@@ -22,7 +21,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GSceneManager(CVector2 worldSize, int xSubdivisions, int ySubdivisions);
+	GSceneManager(gen::CVector2 worldSize, int xSubdivisions, int ySubdivisions);
 	GSceneManager(float worldXSize, float worldYSize, int xSubdivisions, int ySubdivisions);
 		
 	virtual ~GSceneManager();

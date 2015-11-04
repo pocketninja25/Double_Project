@@ -6,6 +6,7 @@
 	CVector3 (position and scale)
 ********************************************/
 
+
 #include "CQuatTransform.h"
 
 namespace gen

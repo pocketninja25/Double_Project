@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Common.h"
 #include "GObstacle.h"
 
 

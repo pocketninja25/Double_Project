@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Common.h"
 #include "GObstacle.h"
 
 
@@ -29,19 +31,19 @@ public:
 	//***************************
 
 	//Directly set the position of the obstacle
-	void SetPosition(CVector2 iXY);
+	void SetPosition(gen::CVector2 iXY);
 	void SetPosition(float iX, float iY);
 	
 	//Move the obstacle in the X and/or Y directions
 	void MoveX(float dX);
 	void MoveY(float dY);
-	void Move(CVector2 dXY);
+	void Move(gen::CVector2 dXY);
 	void Move(float dX, float dY);
 
 	//Move the obstacle in its local X and/or Y directions
 	void MoveLocalX(float dX);
 	void MoveLocalY(float dY);
-	void MoveLocal(CVector2 dXY);
+	void MoveLocal(gen::CVector2 dXY);
 	void MoveLocal(float dX, float dY);
 
 	//Rotate the obstacle (turn left/right) in degrees or radians

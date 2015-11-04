@@ -11,6 +11,7 @@
 	Copyright 2007, University of Central Lancashire and Laurent Noel
 **************************************************************************************************/
 
+
 #include "CHashTable.h"
 
 namespace gen

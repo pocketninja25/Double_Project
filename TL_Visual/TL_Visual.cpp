@@ -3,8 +3,6 @@
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
 
-#include "../Double_Project/CrowdDynamics/GObject.h"
-
 void main()
 {
 	// Create a 3D engine (using TLX engine here) and open a window for it

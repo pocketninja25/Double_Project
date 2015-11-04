@@ -1,9 +1,7 @@
 #pragma once
 
+#include "Common.h"
 #include "GObject.h"
-#include "CMatrix3x3.h"
-using gen::CMatrix3x3;
-using gen::CVector2;
 
 class GEntity :	public GObject
 {
@@ -11,7 +9,7 @@ class GEntity :	public GObject
 // Private Data Members
 //---------------------------
 private:
-	CMatrix3x3 m_Matrix;
+	gen::CMatrix3x3 m_Matrix;
 
 //---------------------------
 // Public Functions
@@ -21,7 +19,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GEntity(CVector2 iPosition, bool iIsActive = true);
+	GEntity(gen::CVector2 iPosition, bool iIsActive = true);
 	GEntity(float iXPos, float iYPos, bool iIsActive = true);
 
 	virtual ~GEntity();
@@ -29,8 +27,8 @@ public:
 	//***************************
 	// Getters/Accessors
 	//***************************
-	CVector2 GetPosition();
-	CVector2 GetFacingVector();
+	gen::CVector2 GetPosition();
+	gen::CVector2 GetFacingVector();
 
 	//***************************
 	// Setters/Mutators
@@ -52,6 +50,6 @@ protected:
 	//***************************
 	// Getters/Accessors
 	//***************************
-	CMatrix3x3 GetMatrix();
+	gen::CMatrix3x3 GetMatrix();
 
 };

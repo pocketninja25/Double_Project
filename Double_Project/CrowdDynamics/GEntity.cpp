@@ -1,13 +1,13 @@
 #include "GEntity.h"
 
-GEntity::GEntity(CVector2 iPosition, bool iIsActive) : 
+GEntity::GEntity(gen::CVector2 iPosition, bool iIsActive) :
 	GObject(iIsActive), 
 	m_Matrix(iPosition)
 {
 }
 
-GEntity::GEntity(float iXPos, float iYPos, bool iIsActive = true): 
-	GEntity(CVector2(iXPos, iYPos), iIsActive)
+GEntity::GEntity(float iXPos, float iYPos, bool iIsActive) : 
+	GEntity(gen::CVector2(iXPos, iYPos), iIsActive)
 {
 	//Delagated Constructor - No Body
 }
@@ -16,14 +16,14 @@ GEntity::~GEntity()
 {
 }
 
-CVector2 GEntity::GetPosition()
+gen::CVector2 GEntity::GetPosition()
 {
 	return m_Matrix.GetPosition2D();
 }
 
-CVector2 GEntity::GetFacingVector()
+gen::CVector2 GEntity::GetFacingVector()
 {
-	return CVector2(m_Matrix.GetRow(1));	//Get the 2nd 'Facing' row of the matrix
+	return gen::CVector2(m_Matrix.GetRow(1));	//Get the 2nd 'Facing' row of the matrix
 }
 
 #ifdef _DEBUG
@@ -36,7 +36,7 @@ string GEntity::ToString()
 }
 #endif
 
-CMatrix3x3 GEntity::GetMatrix()
+gen::CMatrix3x3 GEntity::GetMatrix()
 {
 	return m_Matrix;
 }

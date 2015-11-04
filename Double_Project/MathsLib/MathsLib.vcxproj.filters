@@ -1,17 +1,118 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Math">
+      <UniqueIdentifier>{cc0fb690-3500-47a0-921b-2b3cbc22683c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{1fb29c0f-4bfe-4f89-ade2-a209943e3262}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathsLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CFatalException.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CHashTable.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Defines.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Error.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MSDefines.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CMatrix2x2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CMatrix3x3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CMatrix4x4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CQuaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CQuatTransform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CVector2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CVector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CVector4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MathDX.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MathIO.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\CFatalException.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CHashTable.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MSDefines.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BaseMath.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CMatrix2x2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CMatrix3x3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CMatrix4x4.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CQuaternion.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CQuatTransform.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CVector2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CVector3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CVector4.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MathIO.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

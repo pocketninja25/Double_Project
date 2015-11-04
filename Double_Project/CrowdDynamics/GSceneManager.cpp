@@ -3,11 +3,11 @@
 
 
 GSceneManager::GSceneManager(float worldXSize, float worldYSize, int xSubdivisions, int ySubdivisions) :
-	GSceneManager(CVector2(worldXSize, worldYSize), xSubdivisions, ySubdivisions)
+	GSceneManager(gen::CVector2(worldXSize, worldYSize), xSubdivisions, ySubdivisions)
 {
 }
 
-GSceneManager::GSceneManager(CVector2 worldSize, int xSubdivisions, int ySubdivisions)
+GSceneManager::GSceneManager(gen::CVector2 worldSize, int xSubdivisions, int ySubdivisions)
 {
 	m_SceneSquares = new GSceneSquare*[xSubdivisions * ySubdivisions];
 

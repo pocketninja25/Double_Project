@@ -11,6 +11,7 @@
 		V1.0    Created 23/09/05 - LN
 **************************************************************************************************/
 
+
 #include <Windows.h>
 #include <AtlBase.h> // Used for string conversion macros (CA2CT below)
 

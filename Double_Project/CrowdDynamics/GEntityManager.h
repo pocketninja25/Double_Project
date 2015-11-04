@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Common.h"
 #include <vector>
-using std::vector;
 
 class GEntity;	//Forward Declaration of Entity class
 

@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{8a93ced6-576a-4dbe-bb40-ba680f233961}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{984a655c-e462-4f10-a587-9bb7ac206df0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Managers">
       <UniqueIdentifier>{b015ef8c-b9fe-4f84-a26a-b5f9787f5d4c}</UniqueIdentifier>
     </Filter>
@@ -30,57 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Math\BaseMath.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CMatrix2x2.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CMatrix3x3.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CMatrix4x4.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CQuaternion.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CQuatTransform.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CVector2.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CVector3.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\CVector4.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\MathDX.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\MathIO.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\CFatalException.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\CHashTable.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Defines.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Error.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\MSDefines.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Utility.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="GCrowdEngine.h">
       <Filter>Managers\Headers</Filter>
     </ClInclude>
@@ -120,50 +63,11 @@
     <ClInclude Include="GObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Math\BaseMath.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CMatrix2x2.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CMatrix3x3.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CMatrix4x4.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CQuaternion.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CQuatTransform.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CVector2.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CVector3.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\CVector4.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Math\MathIO.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Common\CFatalException.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Common\CHashTable.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Common\MSDefines.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Common\Utility.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="GCrowdEngine.cpp">
       <Filter>Managers\Source</Filter>
     </ClCompile>

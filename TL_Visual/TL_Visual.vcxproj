@@ -129,6 +129,11 @@ copy "C:\ProgramData\TL-Engine\3rd Party\TL-Xtreme\shader\*.*" "$(OutDir)" &gt; 
   <ItemGroup>
     <None Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Double_Project\CrowdDynamics\CrowdDynamics.vcxproj">
+      <Project>{e98b7449-a87b-4f1a-aa5d-f7185bae5a0b}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

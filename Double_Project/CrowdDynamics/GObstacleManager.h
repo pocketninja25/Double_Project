@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Common.h"
 #include <vector>
-using std::vector;
 
 //Forward declarations of obstacle classes
 class GStaticObstacle;

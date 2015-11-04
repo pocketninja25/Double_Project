@@ -1,10 +1,10 @@
 /**************************************************************************************************
-	Module:       CVector3.cpp
+	Module:       CVector2.cpp
 	Author:       Laurent Noel
 	Date created: 12/06/06
 
-	Implementation of the concrete class CVector3, three 32-bit floats representing a vector/point
-	with x, y & z components - or a column/row of a 3x3 matrix
+	Implementation of the concrete class CVector2, two 32-bit floats representing a vector/point
+	with x & y components - or a column/row of a 2x2 matrix
 
 	Copyright 2006, University of Central Lancashire and Laurent Noel
 
@@ -12,6 +12,8 @@
 		V1.0    Created 12/06/06 - LN
 **************************************************************************************************/
 
+
+#include "CVector2.h"
 #include "CVector3.h"
 #include "CVector4.h"
 
@@ -22,53 +24,57 @@ namespace gen
 	Constructors/Destructors
 -----------------------------------------------------------------------------------------*/
 
-// Construct from a CVector4, discarding w value
-CVector3::CVector3( const CVector4& v )
+// Construct from a CVector3, discarding z value
+CVector2::CVector2( const CVector3& v )
 {
 	x = v.x;
 	y = v.y;
-	z = v.z;
 }
 
+// Construct from a CVector4, discarding z & w values
+CVector2::CVector2( const CVector4& v )
+{
+	x = v.x;
+	y = v.y;
+}
 
 /*-----------------------------------------------------------------------------------------
 	Length operations
 -----------------------------------------------------------------------------------------*/
 
 // Reduce vector to unit length - member function
-void CVector3::Normalise()
+void CVector2::Normalise()
 {
-	TFloat32 lengthSq = x*x + y*y + z*z;
+	TFloat32 lengthSq = x*x + y*y;
 
 	// Ensure vector is not zero length (use BaseMath.h float approx. fn with default epsilon)
 	if ( gen::IsZero( lengthSq ) )
 	{
-		x = y = z = 0.0f;
+		x = y = 0.0f;
 	}
 	else
 	{
 		TFloat32 invLength = InvSqrt( lengthSq );
 		x *= invLength;
 		y *= invLength;
-		z *= invLength;
 	}
 }
 
 
 // Return unit length vector in the same direction as given one
-CVector3 Normalise( const CVector3& v )
+CVector2 Normalise( const CVector2& v )
 {
-	TFloat32 lengthSq = v.x*v.x + v.y*v.y + v.z*v.z;
+	TFloat32 lengthSq = v.x*v.x + v.y*v.y;
 
 	// Ensure vector is not zero length (use BaseMath.h float approx. fn with default epsilon)
 	if ( gen::IsZero( lengthSq ) )
 	{
-		return CVector3(0.0f, 0.0f, 0.0f);
+		return CVector2(0.0f, 0.0f);
 	}
 	else
 	{
 		TFloat32 invLength = InvSqrt( lengthSq );
-		return CVector3(v.x * invLength, v.y * invLength, v.z * invLength);
+		return CVector2(v.x * invLength, v.y * invLength);
 	}
 }
 
@@ -78,38 +84,35 @@ CVector3 Normalise( const CVector3& v )
 -----------------------------------------------------------------------------------------*/
 
 // Return distance from this point to another - member function
-TFloat32 CVector3::DistanceTo( const CVector3& p )
+TFloat32 CVector2::DistanceTo( const CVector2& p )
 {
 	TFloat32 distX = p.x - x;
 	TFloat32 distY = p.y - y;
-	TFloat32 distZ = p.z - z;
-	return Sqrt( distX*distX + distY*distY + distZ*distZ );
+	return Sqrt( distX*distX + distY*distY );
 }
 
 
 // Return squared distance from this point to another - member function
 // More efficient than Distance when exact length is not required (e.g. for comparisons)
 // Use InvSqrt( DistanceToSquared(...) ) to calculate 1 / distance more efficiently
-TFloat32 CVector3::DistanceToSquared( const CVector3& p )
+TFloat32 CVector2::DistanceToSquared( const CVector2& p )
 {
 	TFloat32 distX = p.x - x;
 	TFloat32 distY = p.y - y;
-	TFloat32 distZ = p.z - z;
-	return distX*distX + distY*distY + distZ*distZ;
+	return distX*distX + distY*distY;
 }
 
 
 // Return distance from one point to another - non-member version
 TFloat32 Distance
 (
-	const CVector3& p1,
-	const CVector3& p2
+	const CVector2& p1,
+	const CVector2& p2
 )
 {
 	TFloat32 distX = p1.x - p2.x;
 	TFloat32 distY = p1.y - p2.y;
-	TFloat32 distZ = p1.z - p2.z;
-	return Sqrt( distX*distX + distY*distY + distZ*distZ );
+	return Sqrt( distX*distX + distY*distY );
 }
 
 // Return squared distance from one point to another - non-member version
@@ -117,14 +120,13 @@ TFloat32 Distance
 // Use InvSqrt( DistanceSquared(...) ) to calculate 1 / distance more efficiently
 TFloat32 DistanceSquared
 (
-	const CVector3& p1,
-	const CVector3& p2
+	const CVector2& p1,
+	const CVector2& p2
 )
 {
 	TFloat32 distX = p1.x - p2.x;
 	TFloat32 distY = p1.y - p2.y;
-	TFloat32 distZ = p1.z - p2.z;
-	return distX*distX + distY*distY + distZ*distZ;
+	return distX*distX + distY*distY;
 }
 
 
@@ -133,12 +135,11 @@ TFloat32 DistanceSquared
 ---------------------------------------------------------------------------------------------*/
 
 // Standard vectors
-const CVector3 CVector3::kZero(0.0f, 0.0f, 0.0f);
-const CVector3 CVector3::kOne(1.0f, 1.0f, 1.0f);
-const CVector3 CVector3::kOrigin(0.0f, 0.0f, 0.0f);
-const CVector3 CVector3::kXAxis(1.0f, 0.0f, 0.0f);
-const CVector3 CVector3::kYAxis(0.0f, 1.0f, 0.0f);
-const CVector3 CVector3::kZAxis(0.0f, 0.0f, 1.0f);
+const CVector2 CVector2::kZero(0.0f, 0.0f);
+const CVector2 CVector2::kOne(1.0f, 1.0f);
+const CVector2 CVector2::kOrigin(0.0f, 0.0f);
+const CVector2 CVector2::kXAxis(1.0f, 0.0f);
+const CVector2 CVector2::kYAxis(0.0f, 1.0f);
 
 
 } // namespace gen

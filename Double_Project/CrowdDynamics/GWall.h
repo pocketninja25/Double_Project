@@ -1,13 +1,12 @@
 #pragma once
 
+#include "Common.h"
 #include "GObject.h"
-#include "CVector2.h"
-using gen::CVector2;
 
 struct VertexPair
 {
-	CVector2 a;
-	CVector2 b;
+	gen::CVector2 a;
+	gen::CVector2 b;
 };
 
 class GWall : public GObject
@@ -17,7 +16,7 @@ class GWall : public GObject
 //---------------------------
 private:
 	VertexPair* m_Vertices;	//Points to a pair of vertices
-	CVector2 m_FacingVect;	//The facing vector of the wall (the direction the wall influences)
+	gen::CVector2 m_FacingVect;	//The facing vector of the wall (the direction the wall influences)
 	UID m_Parent;			//The UID of the static or dynamic obstacle that this wall belongs to
 
 //---------------------------
@@ -48,7 +47,7 @@ public:
 	virtual string ToString();
 #endif
 
-	bool IsInFront(CVector2 objectPosition);	//Returns true if the passed object position is "In front" of this wall (within 90 degrees either side of the wall's facing vector)
+	bool IsInFront(gen::CVector2 objectPosition);	//Returns true if the passed object position is "In front" of this wall (within 90 degrees either side of the wall's facing vector)
 
 
 };
