@@ -55,4 +55,3 @@ protected:
 	CMatrix3x3 GetMatrix();
 
 };
-

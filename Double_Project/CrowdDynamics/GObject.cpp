@@ -54,7 +54,8 @@ string GObject::ToString()		//Return the state of this Object as a string (Debug
 {
 	std::stringstream builder;
 
-	builder << "ObjectID: " << m_UID << "\n" << "Active: " << m_IsActive << "\n";
+	builder << "ObjectID: " << m_UID << "\n"
+		<< "Active: " << m_IsActive << "\n";
 
 	return builder.str();
 }

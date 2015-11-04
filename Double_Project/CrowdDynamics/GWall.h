@@ -44,7 +44,9 @@ public:
 	//***************************
 	virtual void Update(float updateTime);
 
+#ifdef _DEBUG
 	virtual string ToString();
+#endif
 
 	bool IsInFront(CVector2 objectPosition);	//Returns true if the passed object position is "In front" of this wall (within 90 degrees either side of the wall's facing vector)
 

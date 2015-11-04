@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GEntity.h"
-using gen::CVector3;
 
 class GAgent : public GEntity
 {
@@ -9,7 +8,7 @@ class GAgent : public GEntity
 // Private Data Members
 //---------------------------
 private:
-	CVector3 m_Destination;	//The location in the scene the agent is attempting to reach
+	CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
 	float m_Mass;
 
 //---------------------------
@@ -19,8 +18,9 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent();
-	
+	GAgent(CVector2 iPosition = CVector2(0.0f, 0.0f), bool iIsActive = true);
+	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, bool iIsActive = true);
+
 	virtual ~GAgent();
 
 	//***************************
@@ -37,7 +37,9 @@ public:
 
 	virtual void Update(float updateTime);	
 
+#ifdef _DEBUG
 	virtual string ToString();
+#endif
 
 //---------------------------
 // Private Functions

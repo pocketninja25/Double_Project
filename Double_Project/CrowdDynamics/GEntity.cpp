@@ -9,6 +9,7 @@ GEntity::GEntity(CVector2 iPosition, bool iIsActive) :
 GEntity::GEntity(float iXPos, float iYPos, bool iIsActive = true): 
 	GEntity(CVector2(iXPos, iYPos), iIsActive)
 {
+	//Delagated Constructor - No Body
 }
 
 GEntity::~GEntity()
