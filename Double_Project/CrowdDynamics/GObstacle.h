@@ -7,7 +7,7 @@
 #include "GObstacleTemplate.h"
 #include "GWall.h"
 
-class GObstacle : public GEntity
+class GObstacle : public GObject
 {
 
 //---------------------------
@@ -18,6 +18,8 @@ private:
 
 	vector<GWall*> m_Walls;			//Vector of the walls owned by this model
 
+	gen::CMatrix3x3 m_Matrix;		//Matrix of obstacle
+
 //---------------------------
 // Public Functions
 //---------------------------
@@ -27,11 +29,14 @@ public:
 	// Constructors/Destructors
 	//***************************
 	GObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive = true);
+	//TODO: Write a delegating constructor for iPosition
 	virtual ~GObstacle();
 	
 	//***************************
 	// Getters/Accessors
 	//***************************
+	gen::CVector2 GetPosition();
+	gen::CVector2 GetFacingVector();
 
 	//***************************
 	// Setters/Mutators

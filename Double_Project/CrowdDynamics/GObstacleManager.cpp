@@ -1,7 +1,5 @@
 #include "GObstacleManager.h"
 
-
-
 GObstacleManager::GObstacleManager()
 {
 }
