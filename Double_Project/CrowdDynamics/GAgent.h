@@ -20,7 +20,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent(gen::CVector2 iPosition = gen::CVector2(0.0f, 0.0f), bool iIsActive = true);
+	GAgent(gen::CVector2 iPosition, bool iIsActive = true);
 	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, bool iIsActive = true);
 
 	virtual ~GAgent();

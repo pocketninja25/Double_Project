@@ -4,9 +4,10 @@
 
 GEntityManager::GEntityManager()
 {
-}
 
+}
 
 GEntityManager::~GEntityManager()
 {
+
 }

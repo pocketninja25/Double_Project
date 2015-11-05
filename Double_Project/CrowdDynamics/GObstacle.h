@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Common.h"
-#include "GEntity.h"
+#include "GObject.h"
 #include <vector>
 
-#include "GObstacleTemplate.h"
-#include "GWall.h"
+//Forward declare these classes, can include files in the cpp
+class GObstacleTemplate;
+class GWall;
 
 class GObstacle : public GObject
 {

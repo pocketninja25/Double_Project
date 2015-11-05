@@ -5,8 +5,6 @@
 #include <string>
 #include <sstream>
 
-typedef int UID;
-
 class GObject
 {
 

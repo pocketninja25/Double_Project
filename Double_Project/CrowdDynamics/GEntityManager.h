@@ -3,7 +3,8 @@
 #include "Common.h"
 #include <vector>
 
-class GEntity;	//Forward Declaration of Entity class
+#include "GEntity.h"
+#include "GAgent.h"
 
 class GEntityManager
 {
