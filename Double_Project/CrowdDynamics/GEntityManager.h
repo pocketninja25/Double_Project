@@ -13,7 +13,7 @@ class GEntityManager
 //---------------------------
 private:
 	vector<GEntity*> m_ActiveEntities;
-	vector<GEntity*> m_InactiveEntities
+	vector<GEntity*> m_InactiveEntities;
 
 //---------------------------
 // Public Functions
