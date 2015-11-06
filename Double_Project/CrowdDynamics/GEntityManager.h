@@ -3,8 +3,8 @@
 #include "Common.h"
 #include <vector>
 
-#include "GEntity.h"
-#include "GAgent.h"
+//Forward declare these classes, include the files for the cpp only (where needed)
+class GEntity;
 
 class GEntityManager
 {
@@ -12,7 +12,8 @@ class GEntityManager
 // Private Data Members
 //---------------------------
 private:
-	vector<GEntity*> m_Entities;
+	vector<GEntity*> m_ActiveEntities;
+	vector<GEntity*> m_InactiveEntities
 
 //---------------------------
 // Public Functions
@@ -33,11 +34,14 @@ public:
 	//***************************
 	// Setters/Mutators
 	//***************************
-	void AddAgent(/*SomeAgentDetails*/);
+	void AddAgent(gen::CVector2 iPosition, bool iIsActive);
+	void AddAgent(float iXPos, float iYPos, bool iIsActive);
 
 	//***************************
 	// Other Functions
 	//***************************
+
+	void Update(float updateTime);
 
 };
 
