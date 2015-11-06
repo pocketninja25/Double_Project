@@ -14,9 +14,9 @@ void GStaticObstacle::Update(float updateTime)
 	//TODO: implement this function
 }
 
-string GStaticObstacle::ToString()
+std::string GStaticObstacle::ToString()
 {
-	stringstream builder;
+	std::stringstream builder;
 
 	builder << GObstacle::ToString();
 

@@ -40,7 +40,7 @@ public:
 	virtual void Update(float updateTime) = 0;	//Inherited pure virtual Update function, also pure virtual here to prevent instansiation of GEntity
 
 #ifdef _DEBUG
-	virtual string ToString();
+	virtual std::string ToString();
 #endif
 
 //---------------------------

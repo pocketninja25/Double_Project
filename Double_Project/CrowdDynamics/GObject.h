@@ -61,7 +61,7 @@ public:
 
 
 #ifdef _DEBUG
-	virtual string ToString();	//Outputs a string version of the information about the object for debugging and possibly file saving purposes
+	virtual std::string ToString();	//Outputs a string version of the information about the object for debugging and possibly file saving purposes
 #endif
 
 };

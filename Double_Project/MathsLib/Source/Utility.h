@@ -16,7 +16,6 @@
 
 #include <string>
 #include <sstream>
-using namespace std;
 
 #include "Defines.h"
 
@@ -46,21 +45,21 @@ inline void Swap
 
 // Template function to convert any type to a string. The type must support operator <<
 template <class T>
-inline string ToString
+inline std::string ToString
 (
 	const T& convertFrom
 )
 {
-    stringstream streamOut;
+	std::stringstream streamOut;
     streamOut << convertFrom;
     return streamOut.str();
 }
 
 // Specialization of ToString above for string input
 template <>
-inline string ToString
+inline std::string ToString
 (
-	const string& convertFrom
+	const std::string& convertFrom
 )
 {
     return convertFrom;
@@ -73,10 +72,10 @@ inline string ToString
 template <class T>
 inline T FromString
 (
-	const string& convertFrom
+	const std::string& convertFrom
 )
 {
-    stringstream streamIn( convertFrom );
+	std::stringstream streamIn( convertFrom );
     T value = T();
     streamIn >> value;
     return value;
@@ -84,17 +83,17 @@ inline T FromString
 
 
 // Return first substring in a string list separated by a given delimiter
-string FirstDelimitedSubstr
+std::string FirstDelimitedSubstr
 (
-	const string& sList,
-	const string& sDelimiter
+	const std::string& sList,
+	const std::string& sDelimiter
 );
 
 // Return last substring in a string list separated by a given delimiter
-string LastDelimitedSubstr
+std::string LastDelimitedSubstr
 (
-	const string& sList,
-	const string& sDelimiter
+	const std::string& sList,
+	const std::string& sDelimiter
 );
 
 

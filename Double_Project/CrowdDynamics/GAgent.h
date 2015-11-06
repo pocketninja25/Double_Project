@@ -12,7 +12,7 @@ class GAgent : public GEntity
 private:
 	gen::CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
 	float m_Mass;
-
+	
 //---------------------------
 // Public Functions
 //---------------------------
@@ -40,7 +40,7 @@ public:
 	virtual void Update(float updateTime);	
 
 #ifdef _DEBUG
-	virtual string ToString();
+	virtual std::string ToString();
 #endif
 
 //---------------------------

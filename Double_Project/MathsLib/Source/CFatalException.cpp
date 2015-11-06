@@ -15,6 +15,8 @@
 #include "CFatalException.h"
 #include "Utility.h"
 
+using namespace std;
+
 namespace gen
 {
 

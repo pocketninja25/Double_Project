@@ -13,7 +13,7 @@ class GSceneSquare : public GObject
 private:
 	gen::CVector2 m_Size;		//Width * Height of the Scene Square
 	gen::CVector2 m_Origin;		//The bottom left position of the square
-	vector<UID> m_Walls;	//Vector of UID's to wall objects that occupy/intersect this scene square
+	std::vector<UID> m_Walls;	//Vector of UID's to wall objects that occupy/intersect this scene square
 
 //---------------------------
 // Public Functions
@@ -44,7 +44,7 @@ public:
 	virtual void Update(float updateTime);
 
 #ifdef _DEBUG
-	virtual string ToString();
+	virtual std::string ToString();
 #endif
 };
 

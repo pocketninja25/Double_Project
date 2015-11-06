@@ -22,14 +22,14 @@ namespace gen
  ------------------------------------------------------------------------------------------------*/
 
 // Return first substring in a string list separated by a given delimiter
-string FirstDelimitedSubstr
+	std::string FirstDelimitedSubstr
 (
-	const string& sList,
-	const string& sDelimiter
+	const std::string& sList,
+	const std::string& sDelimiter
 )
 {
-	string::size_type firstDelimiter = sList.find_first_of( sDelimiter );
-	if (firstDelimiter == string::npos)
+	std::string::size_type firstDelimiter = sList.find_first_of( sDelimiter );
+	if (firstDelimiter == std::string::npos)
 	{
 		return sList;
 	}
@@ -40,14 +40,14 @@ string FirstDelimitedSubstr
 }
 
 // Return last substring in a string list separated by a given delimiter
-string LastDelimitedSubstr
+	std::string LastDelimitedSubstr
 (
-	const string& sList,
-	const string& sDelimiter
+	const std::string& sList,
+	const std::string& sDelimiter
 )
 {
-	string::size_type lastDelimiter = sList.find_last_of( sDelimiter );
-	if (lastDelimiter == string::npos)
+	std::string::size_type lastDelimiter = sList.find_last_of( sDelimiter );
+	if (lastDelimiter == std::string::npos)
 	{
 		return sList;
 	}

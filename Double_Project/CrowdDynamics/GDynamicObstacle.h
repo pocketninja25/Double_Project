@@ -64,6 +64,6 @@ public:
 	virtual void Update(float updateTime);
 
 #ifdef _DEBUG
-	virtual string ToString();
+	virtual std::string ToString();
 #endif
 };

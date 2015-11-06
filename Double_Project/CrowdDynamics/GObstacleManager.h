@@ -14,11 +14,11 @@ class GObstacleManager
 // Private Data Members
 //---------------------------
 private:
-	vector<GObstacleTemplate*> m_ObstacleTemplates;
+	std::vector<GObstacleTemplate*> m_ObstacleTemplates;
 
 	//Sorted into two categories for update tree management - hopefully wont need to update static obstacles each timestep
-	vector<GStaticObstacle*> m_StaticObstacles;
-	vector<GDynamicObstacle*> m_DynamicObstacles;
+	std::vector<GStaticObstacle*> m_StaticObstacles;
+	std::vector<GDynamicObstacle*> m_DynamicObstacles;
 
 //---------------------------
 // Public Functions

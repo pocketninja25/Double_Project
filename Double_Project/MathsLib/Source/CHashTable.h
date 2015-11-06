@@ -20,7 +20,6 @@
 #include <math.h>
 #include <iostream>
 #include <list>
-using namespace std;
 
 #include "Defines.h"
 #include "Error.h"
@@ -277,11 +276,10 @@ private:
 	// A bucket is a list of key/value pairs that have the same hash index. The list only has
 	// more than one entry if there has been a collision from the hashing function
 	// Define a couple of types to make for better readability
-	typedef list<TKeyValuePair>        TBucket;
+	typedef std::list<TKeyValuePair>        TBucket;
 	typedef typename TBucket::iterator TKeyValuePairIter;
 	// Use of templates is powerful, but can cause syntax headaches - the need for "typename"
 	// here is an example
-
 
 	/*---------------------------------------------------------------------------------------------
 		Support functions

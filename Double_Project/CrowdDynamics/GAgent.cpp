@@ -21,9 +21,9 @@ void GAgent::Update(float updateTime)
 }
 
 #ifdef _DEBUG
-string GAgent::ToString()
+std::string GAgent::ToString()
 {
-	stringstream builder;
+	std::stringstream builder;
 
 	builder << GEntity::ToString() << "Destination: X: " << m_Destination.x << " Y: " << m_Destination.y << "\n" 
 		<< "Mass: " << m_Mass << "\n";

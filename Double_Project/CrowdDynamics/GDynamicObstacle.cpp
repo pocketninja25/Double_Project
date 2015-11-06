@@ -13,7 +13,7 @@ GDynamicObstacle::~GDynamicObstacle()
 
 void GDynamicObstacle::SetPosition(gen::CVector2 iXY)
 {
-	GetMatrix().SetRow(2, iXY);	//Set row 2 (position row) with new position
+	m_Matrix.SetRow(2, iXY);	//Set row 2 (position row) with new position
 }
 
 void GDynamicObstacle::SetPosition(float iX, float iY) 
@@ -23,23 +23,17 @@ void GDynamicObstacle::SetPosition(float iX, float iY)
 
 void GDynamicObstacle::MoveX(float dX)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.MoveX2D(dX);
-	SetMatrix(mat);		
+	m_Matrix.MoveX2D(dX);
 }
 
 void GDynamicObstacle::MoveY(float dY)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.MoveY2D(dY);
-	SetMatrix(mat);
+	m_Matrix.MoveY2D(dY);
 }
 
 void GDynamicObstacle::Move(gen::CVector2 dXY)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.Move2D(dXY);
-	SetMatrix(mat);
+	m_Matrix.Move2D(dXY);
 }
 
 void GDynamicObstacle::Move(float dX, float dY)
@@ -49,23 +43,17 @@ void GDynamicObstacle::Move(float dX, float dY)
 
 void GDynamicObstacle::MoveLocalX(float dX)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.MoveLocalX2D(dX);
-	SetMatrix(mat);
+	m_Matrix.MoveLocalX2D(dX);
 }
 
 void GDynamicObstacle::MoveLocalY(float dY)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.MoveLocalY2D(dY);
-	SetMatrix(mat);
+	m_Matrix.MoveLocalY2D(dY);
 }
 
 void GDynamicObstacle::MoveLocal(gen::CVector2 dXY)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.MoveLocal2D(dXY);
-	SetMatrix(mat);
+	m_Matrix.MoveLocal2D(dXY);
 }
 
 void GDynamicObstacle::MoveLocal(float dX, float dY)
@@ -79,9 +67,7 @@ void GDynamicObstacle::RotateXDeg(float dAlpha)
 }
 void GDynamicObstacle::RotateXRad(float dAlpha)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.RotateX(dAlpha);
-	SetMatrix(mat);
+	m_Matrix.RotateX(dAlpha);
 }
 void GDynamicObstacle::RotateYDeg(float dAlpha)
 {
@@ -89,9 +75,7 @@ void GDynamicObstacle::RotateYDeg(float dAlpha)
 }
 void GDynamicObstacle::RotateYRad(float dAlpha)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.RotateY(dAlpha);
-	SetMatrix(mat);
+	m_Matrix.RotateY(dAlpha);
 }
 
 void GDynamicObstacle::RotateLocalXDeg(float dAlpha)
@@ -100,9 +84,7 @@ void GDynamicObstacle::RotateLocalXDeg(float dAlpha)
 }
 void GDynamicObstacle::RotateLocalXRad(float dAlpha)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.RotateLocalX(dAlpha);
-	SetMatrix(mat);
+	m_Matrix.RotateLocalX(dAlpha);
 }
 void GDynamicObstacle::RotateLocalYDeg(float dAlpha)
 {
@@ -110,9 +92,7 @@ void GDynamicObstacle::RotateLocalYDeg(float dAlpha)
 }
 void GDynamicObstacle::RotateLocalYRad(float dAlpha)
 {
-	gen::CMatrix3x3 mat = GetMatrix();
-	mat.RotateLocalY(dAlpha);
-	SetMatrix(mat);
+	m_Matrix.RotateLocalY(dAlpha);
 }
 
 
@@ -121,9 +101,9 @@ void GDynamicObstacle::Update(float updateTime)
 	//TODO: implement
 }
 
-string GDynamicObstacle::ToString()
+std::string GDynamicObstacle::ToString()
 {
-	stringstream builder;
+	std::stringstream builder;
 
 	builder << GObstacle::ToString();
 	return builder.str();

@@ -15,7 +15,6 @@
 #define GEN_DEFINES_H_INCLUDED
 
 #include <string>
-using namespace std;
 
 // Include platform specific definitions
 #if defined (_MSC_VER)

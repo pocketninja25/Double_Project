@@ -27,9 +27,9 @@ gen::CVector2 GEntity::GetFacingVector()
 }
 
 #ifdef _DEBUG
-string GEntity::ToString()
+std::string GEntity::ToString()
 {
-	stringstream builder;
+	std::stringstream builder;
 
 	builder << GObject::ToString() << "Position: X: " << m_Matrix.GetPosition2D().x << " Y: " << m_Matrix.GetPosition2D().y << "/n";
 	return builder.str();

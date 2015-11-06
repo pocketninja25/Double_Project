@@ -15,7 +15,6 @@
 #define GEN_C_FATAL_EXCEPTION_H_INCLUDED
 
 #include <string>
-using namespace std;
 
 #include "Defines.h"
 
@@ -72,10 +71,10 @@ public:
 	);
 
 private:
-	const string m_sDescription; // Description of the cause of the exception
-	const string m_sFileName;    // File name where the exception occured
+	const std::string m_sDescription; // Description of the cause of the exception
+	const std::string m_sFileName;    // File name where the exception occured
 	const TInt32 m_iLineNum;     // Line number within the file at which the exception occured
-	string       m_sCallStack;   // Textual form of function call stack at point of exception
+	std::string       m_sCallStack;   // Textual form of function call stack at point of exception
 };
 
 

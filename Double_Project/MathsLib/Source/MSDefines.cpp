@@ -19,6 +19,8 @@
 #include "MSDefines.h"
 #include "Error.h"
 
+using namespace std;
+
 namespace gen
 {
 

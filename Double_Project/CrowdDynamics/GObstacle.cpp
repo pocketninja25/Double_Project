@@ -38,9 +38,9 @@ void GObstacle::Update(float updateTime)
 	//TODO: complete this function
 }
 
-string GObstacle::ToString()
+std::string GObstacle::ToString()
 {
-	stringstream builder;
+	std::stringstream builder;
 	
 	builder << GObject::ToString() << "Position: X: " << m_Matrix.GetPosition2D().x << " Y: " << m_Matrix.GetPosition2D().y << "/n" 
 		<< "Template UID: " << m_Template->GetUID() << "/n"

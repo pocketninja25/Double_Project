@@ -17,8 +17,13 @@ class GObstacle : public GObject
 private:
 	GObstacleTemplate* m_Template;	//The template this obstacle is based on TODO: this may be better as a UID, but likely this should be one of the only direct pointers outside of managers
 
-	vector<GWall*> m_Walls;			//Vector of the walls owned by this model
+	std::vector<GWall*> m_Walls;	//Vector of the walls owned by this model
 
+
+//---------------------------
+// Protected Data Members
+//---------------------------
+protected:
 	gen::CMatrix3x3 m_Matrix;		//Matrix of obstacle
 
 //---------------------------
@@ -49,6 +54,6 @@ public:
 	virtual void Update(float updateTime);
 
 #ifdef _DEBUG
-	virtual string ToString();
+	virtual std::string ToString();
 #endif
 };

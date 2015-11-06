@@ -18,7 +18,6 @@
 #pragma comment(lib, "shlwapi.lib") 
 
 #include <string>
-using namespace std;
 
 namespace gen
 {
@@ -77,13 +76,13 @@ namespace gen
 #elif _MSC_VER < 1400
 	static const string ksCompiler = "Visual C++ 7.1 (.NET 2003)";
 #else
-	static const string ksCompiler = "Visual C++ 8.0 (2005) or greater";
+	static const std::string ksCompiler = "Visual C++ 8.0 (2005) or greater";
 #endif
 
 
 // String locale
-const string ksPathSeparator = "\\";
-const string ksNewline = "\n";
+const std::string ksPathSeparator = "\\";
+const std::string ksNewline = "\n";
 
 
 /*------------------------------------------------------------------------------------------------
@@ -113,8 +112,8 @@ typedef double           TFloat64;
 // can request Yes/No buttons. Return value is whether the Yes or OK button was pressed.
 bool SystemMessageBox
 (
-	const string& sMessage,                       // Main message to display
-	const string& sCaption = "TL-Engine Extreme", // Caption to display at top of box
+	const std::string& sMessage,                       // Main message to display
+	const std::string& sCaption = "TL-Engine Extreme", // Caption to display at top of box
 	const bool    bYesNo = false                  // Display Yes and No buttons instead of OK
 );
 

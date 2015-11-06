@@ -13,6 +13,7 @@
 
 
 #include "CHashTable.h"
+using namespace std;
 
 namespace gen
 {

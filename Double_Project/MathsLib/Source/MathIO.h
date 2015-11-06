@@ -15,7 +15,6 @@
 #define GEN_C_MATHIO_H_INCLUDED
 
 #include <iostream>
-using namespace std;
 
 #include "Defines.h"
 
@@ -36,35 +35,35 @@ class CQuaternion;
 	Vector IO
 ---------------------------------------------------------------------------------------------*/
 
-ostream& operator<<( ostream& s, const CVector2& v );
-ostream& operator<<( ostream& s, const CVector3& v );
-ostream& operator<<( ostream& s, const CVector4& v );
+std::ostream& operator<<( std::ostream& s, const CVector2& v );
+std::ostream& operator<<( std::ostream& s, const CVector3& v );
+std::ostream& operator<<( std::ostream& s, const CVector4& v );
 
-istream& operator>>( istream& s, CVector2& v );
-istream& operator>>( istream& s, CVector3& v );
-istream& operator>>( istream& s, CVector4& v );
+std::istream& operator>>( std::istream& s, CVector2& v );
+std::istream& operator>>( std::istream& s, CVector3& v );
+std::istream& operator>>( std::istream& s, CVector4& v );
 
 
 /*---------------------------------------------------------------------------------------------
 	Matrix IO
 ---------------------------------------------------------------------------------------------*/
 
-ostream& operator<<( ostream& s, const CMatrix2x2& m );
-ostream& operator<<( ostream& s, const CMatrix3x3& m );
-ostream& operator<<( ostream& s, const CMatrix4x4& m );
+std::ostream& operator<<( std::ostream& s, const CMatrix2x2& m );
+std::ostream& operator<<( std::ostream& s, const CMatrix3x3& m );
+std::ostream& operator<<( std::ostream& s, const CMatrix4x4& m );
 
 
-istream& operator>>( istream& s, CMatrix2x2& m );
-istream& operator>>( istream& s, CMatrix3x3& m );
-istream& operator>>( istream& s, CMatrix4x4& m );
+std::istream& operator>>( std::istream& s, CMatrix2x2& m );
+std::istream& operator>>( std::istream& s, CMatrix3x3& m );
+std::istream& operator>>( std::istream& s, CMatrix4x4& m );
 
 /*---------------------------------------------------------------------------------------------
 	Quaternion IO
 ---------------------------------------------------------------------------------------------*/
 
-ostream& operator<<( ostream& s, const CQuaternion& v );
+std::ostream& operator<<(std::ostream& s, const CQuaternion& v );
 
-istream& operator>>( istream& s, CQuaternion& v );
+std::istream& operator>>(std::istream& s, CQuaternion& v );
 
 
 } // namespace gen

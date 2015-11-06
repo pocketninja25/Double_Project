@@ -12,8 +12,8 @@ class GEntityManager
 // Private Data Members
 //---------------------------
 private:
-	vector<GEntity*> m_ActiveEntities;
-	vector<GEntity*> m_InactiveEntities;
+	std::vector<GEntity*> m_ActiveEntities;
+	std::vector<GEntity*> m_InactiveEntities;
 
 //---------------------------
 // Public Functions
