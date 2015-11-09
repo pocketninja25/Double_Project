@@ -5,3 +5,11 @@
 #include "MathsLib.h"
 
 typedef int UID;
+
+inline float RandomFloat(float min, float max)	//Returns a random float between min and max
+{
+	float random = ((float)rand()) / (float)RAND_MAX;
+
+	float range = max - min;
+	return (random * range) + min;
+}

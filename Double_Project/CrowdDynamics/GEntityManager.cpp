@@ -13,13 +13,13 @@ GEntityManager::~GEntityManager()
 {
 
 	//Deallocate entity information
-	for (auto entity : m_ActiveEntities)
+	for (auto &agent : m_ActiveAgents)
 	{
-		delete entity;
+		delete agent;
 	}
-	for (auto entity : m_InactiveEntities)
+	for (auto &agent : m_InactiveAgents)
 	{
-		delete entity;
+		delete agent;
 	}
 }
 
@@ -31,11 +31,11 @@ void GEntityManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 	//Push the agent onto the relevant entitylist
 	if (iIsActive)
 	{
-		m_ActiveEntities.push_back(newAgent);
+		m_ActiveAgents.push_back(newAgent);
 	}
 	else //inactive
 	{
-		m_InactiveEntities.push_back(newAgent);
+		m_InactiveAgents.push_back(newAgent);
 	}
 }
 
@@ -47,15 +47,21 @@ void GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 
 void GEntityManager::Update(float updateTime)
 {
-	for (auto entity: m_ActiveEntities)
+	for (auto &agent: m_ActiveAgents)
 	{
-		entity->Update(updateTime);
+		agent->Update(updateTime);
+
+		//Check if reached dest then give new random dest if true
+		if (agent->HasReachedDestination())
+		{
+			agent->SetNewDestination(this->GetRandomDestination());
+		}
 	}
 }
 
-void GEntityManager::GetRandomDestination()
+gen::CVector2 GEntityManager::GetRandomDestination()
 {
 	gen::CVector2 size = mManager_Parent->GetWorldSize();
 
-
+	return gen::CVector2(RandomFloat(0, size.x), RandomFloat(0, size.y));
 }

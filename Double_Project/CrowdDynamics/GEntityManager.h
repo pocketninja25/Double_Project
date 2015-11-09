@@ -6,6 +6,7 @@
 //Forward declare these classes, include the files for the cpp only (where needed)
 class GEntity;
 class GSceneManager;
+class GAgent;
 
 class GEntityManager
 {
@@ -19,8 +20,8 @@ private:
 // Private Data Members
 //---------------------------
 private:
-	std::vector<GEntity*> m_ActiveEntities;
-	std::vector<GEntity*> m_InactiveEntities;
+	std::vector<GAgent*> m_ActiveAgents;
+	std::vector<GAgent*> m_InactiveAgents;
 
 //---------------------------
 // Public Functions
@@ -50,7 +51,7 @@ public:
 
 	void Update(float updateTime);
 
-	void GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
+	gen::CVector2 GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
 
 };
 

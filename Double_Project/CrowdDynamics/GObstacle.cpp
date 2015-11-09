@@ -38,6 +38,8 @@ void GObstacle::Update(float updateTime)
 	//TODO: complete this function
 }
 
+
+#ifdef _DEBUG
 std::string GObstacle::ToString()
 {
 	std::stringstream builder;
@@ -49,3 +51,4 @@ std::string GObstacle::ToString()
 	return builder.str();
 }
 
+#endif

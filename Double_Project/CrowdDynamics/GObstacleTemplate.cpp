@@ -8,7 +8,7 @@ GObstacleTemplate::GObstacleTemplate(bool iIsActive) :
 
 GObstacleTemplate::~GObstacleTemplate()
 {
-	for (auto vertex : m_ObstacleMesh)	//Deallocate pointer data
+	for (auto &vertex : m_ObstacleMesh)	//Deallocate pointer data
 	{
 		delete vertex;
 	}

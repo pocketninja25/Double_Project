@@ -9,12 +9,15 @@ GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSi
 }
 
 GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions) :
-	mManager_Entity(new GEntityManager(this)),
-	mManager_Obstacle(new GObstacleManager(this)),
 	m_TimeStep(iTimeStep),
 	m_WorldSize(iWorldSize),
 	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions])
 {
+	GSceneManager* foo = this;
+
+	mManager_Entity = new GEntityManager(foo);
+	mManager_Obstacle = new GObstacleManager(foo);
+
 	float xSquareSize = iWorldSize.x / iXSubdivisions;
 	float ySquareSize = iWorldSize.y / iYSubdivisions;
 

@@ -15,14 +15,27 @@ GAgent::~GAgent()
 {
 }
 
+bool GAgent::HasReachedDestination()
+{
+	if (this->GetPosition().DistanceToSquared(m_Destination) < 1.0f /*TODO: Make this less magic*/)	//Can use DistanceSquared because for 0<x<1 xsquared < 1
+	{
+		return true;
+	}
+	return false;
+}
+
 void GAgent::SetNewDestination(gen::CVector2 newDestination)
 {
 	//Recieve a new destination (from the manager class) when the manager determines the agent has arrived, or should change destination otherwise
+	m_Destination = newDestination;
 }
 
 void GAgent::Update(float updateTime)
 {
-	//TODO: complete this function
+	gen::CMatrix3x3 matrix = GetMatrix();
+	matrix.FaceTarget2D(m_Destination);
+
+	matrix.MoveLocalY2D(1.5f * updateTime);	//TODO: Make this less magic
 }
 
 #ifdef _DEBUG

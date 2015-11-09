@@ -101,6 +101,7 @@ void GDynamicObstacle::Update(float updateTime)
 	//TODO: implement
 }
 
+#ifdef _DEBUG
 std::string GDynamicObstacle::ToString()
 {
 	std::stringstream builder;
@@ -108,3 +109,4 @@ std::string GDynamicObstacle::ToString()
 	builder << GObstacle::ToString();
 	return builder.str();
 }
+#endif

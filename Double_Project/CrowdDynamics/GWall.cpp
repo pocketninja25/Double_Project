@@ -18,6 +18,7 @@ void GWall::Update(float updateTime)
 	//TODO: fill in this function
 }
 
+#ifdef _DEBUG
 std::string GWall::ToString()
 {
 	std::stringstream builder;
@@ -29,6 +30,7 @@ std::string GWall::ToString()
 
 	return builder.str();
 }
+#endif
 
 bool GWall::IsInFront(gen::CVector2 objectPosition)	//Return true if the passed object is in front of the wall
 {

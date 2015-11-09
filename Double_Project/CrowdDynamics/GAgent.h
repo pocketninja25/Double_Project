@@ -24,10 +24,11 @@ public:
 	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, bool iIsActive = true);
 
 	virtual ~GAgent();
-
+	
 	//***************************
 	// Getters/Accessors
 	//***************************
+	bool HasReachedDestination();	//Returns whether or not the agent has reached their destination
 
 	//***************************
 	// Setters/Mutators
@@ -49,9 +50,10 @@ public:
 // Private Functions
 //---------------------------
 private:
-	//***************************
-	// Other Functions
-	//***************************
+
+//***************************
+// Other Functions
+//***************************
 
 };
 
