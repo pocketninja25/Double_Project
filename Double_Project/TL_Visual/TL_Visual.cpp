@@ -4,7 +4,7 @@
 using namespace tle;
 
 EKeyCode quitKey = Key_Escape;
-
+EKeyCode pauseKey = Key_P;
 void main()
 {
 	// Create a 3D engine (using TLX engine here) and open a window for it
