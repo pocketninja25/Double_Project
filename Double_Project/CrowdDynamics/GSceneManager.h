@@ -3,12 +3,27 @@
 #include "Common.h"
 #include "GSceneSquare.h"
 
+//Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
+class GEntityManager;
+class GObstacleManager;
+
+//This is the primary manager, it manages the scene, as well as the other managers
 class GSceneManager
 {
+//---------------------------
+// Manager classes
+//---------------------------
+private:
+	GEntityManager* mManager_Entity;
+	GObstacleManager* mManager_Obstacle;
+
 //---------------------------
 // Private Data Members
 //---------------------------
 private:
+	float m_TimeStep;				//The amount of time updated each frame TODO: make this work concurrently with the client program, updating without a call to the update function (will need to set the program to 'Enabled'/'Disabled'
+
+	gen::CVector2 m_WorldSize;		//The total size of the world space /*Can be calculated, but less expensive to just store*/
 	GSceneSquare** m_SceneSquares;	//Pointer to the 0th element in a dynamically allocated array sized m_NoOfSquaresX * m_NoOfSquaresY, access/positioning of elements defined by m_SceneSquares[x][y]
 	int m_NoOfSquaresX;				//Number of squares in the X (horizontal) direction
 	int m_NoOfSquaresY;				//Number of squares in the Y (vertical) direction
@@ -21,14 +36,15 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GSceneManager(gen::CVector2 worldSize, int xSubdivisions, int ySubdivisions);
-	GSceneManager(float worldXSize, float worldYSize, int xSubdivisions, int ySubdivisions);
+	GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
+	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions);
 		
 	virtual ~GSceneManager();
 
 	//***************************
 	// Getters/Accessors
 	//***************************
+	gen::CVector2 GetWorldSize();
 
 	//***************************
 	// Setters/Mutators
@@ -37,5 +53,7 @@ public:
 	//***************************
 	// Other Functions
 	//***************************
+	void Update();
+
 };
 

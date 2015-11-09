@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="GAgent.h" />
-    <ClInclude Include="GCrowdEngine.h" />
     <ClInclude Include="GDynamicObstacle.h" />
     <ClInclude Include="GEntity.h" />
     <ClInclude Include="GEntityManager.h" />
@@ -36,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GAgent.cpp" />
-    <ClCompile Include="GCrowdEngine.cpp" />
     <ClCompile Include="GDynamicObstacle.cpp" />
     <ClCompile Include="GEntity.cpp" />
     <ClCompile Include="GEntityManager.cpp" />

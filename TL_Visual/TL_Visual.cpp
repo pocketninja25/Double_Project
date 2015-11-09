@@ -11,9 +11,10 @@ void main()
 
 	// Add default folder for meshes and other media
 	gameEngine->AddMediaFolder( "C:\\ProgramData\\TL-Engine\\Media" );
-	gameEngine->AddMediaFolder(".\\Media");
+	//gameEngine->AddMediaFolder(".\\Media");
 
-	/**** Set up your scene here ****/	
+	/**** Set up your scene here ****/
+
 
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())

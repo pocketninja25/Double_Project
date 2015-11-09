@@ -15,6 +15,11 @@ GAgent::~GAgent()
 {
 }
 
+void GAgent::SetNewDestination(gen::CVector2 newDestination)
+{
+	//Recieve a new destination (from the manager class) when the manager determines the agent has arrived, or should change destination otherwise
+}
+
 void GAgent::Update(float updateTime)
 {
 	//TODO: complete this function
@@ -31,8 +36,3 @@ std::string GAgent::ToString()
 	return builder.str();
 }
 #endif
-
-void GAgent::GetNewDestination()
-{
-	//Ask a manager class for a new destination
-}

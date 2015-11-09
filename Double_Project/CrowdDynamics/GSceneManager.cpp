@@ -1,28 +1,31 @@
 #include "GSceneManager.h"
 
+#include "GEntityManager.h"
+#include "GObstacleManager.h"
 
-
-GSceneManager::GSceneManager(float worldXSize, float worldYSize, int xSubdivisions, int ySubdivisions) :
-	GSceneManager(gen::CVector2(worldXSize, worldYSize), xSubdivisions, ySubdivisions)
+GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions) :
+	GSceneManager(iTimeStep, gen::CVector2(iWorldXSize, iWorldYSize), iXSubdivisions, iYSubdivisions)
 {
 }
 
-GSceneManager::GSceneManager(gen::CVector2 worldSize, int xSubdivisions, int ySubdivisions)
+GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions) :
+	mManager_Entity(new GEntityManager(this)),
+	mManager_Obstacle(new GObstacleManager(this)),
+	m_TimeStep(iTimeStep),
+	m_WorldSize(iWorldSize),
+	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions])
 {
-	m_SceneSquares = new GSceneSquare*[xSubdivisions * ySubdivisions];
-
-	float xSquareSize = worldSize.x / xSubdivisions;
-	float ySquareSize = worldSize.y / ySubdivisions;
+	float xSquareSize = iWorldSize.x / iXSubdivisions;
+	float ySquareSize = iWorldSize.y / iYSubdivisions;
 
 	//Construct the scenesquare objects
-	for (int i = 0; i < xSubdivisions; i++)
+	for (int i = 0; i < iXSubdivisions; i++)
 	{
-		for (int j = 0; j < ySubdivisions; j++)
+		for (int j = 0; j < iYSubdivisions; j++)
 		{
 			m_SceneSquares[i * j] = new GSceneSquare(xSquareSize, ySquareSize, i * xSquareSize, j * ySquareSize);
 		}
 	}
-
 }
 
 GSceneManager::~GSceneManager()
@@ -36,5 +39,20 @@ GSceneManager::~GSceneManager()
 	}
 	//Deallocate the scenesquare array
 	delete m_SceneSquares;
+
+	//Deallocate Managers
+	delete mManager_Entity;
+	delete mManager_Obstacle;
+
+}
+
+gen::CVector2 GSceneManager::GetWorldSize()
+{
+	return m_WorldSize;
+}
+
+void GSceneManager::Update()
+{
+	//Begin the update tree
 
 }

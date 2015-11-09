@@ -24,9 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GCrowdEngine.h">
-      <Filter>Managers\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="GEntityManager.h">
       <Filter>Managers\Headers</Filter>
     </ClInclude>
@@ -68,9 +65,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GCrowdEngine.cpp">
-      <Filter>Managers\Source</Filter>
-    </ClCompile>
     <ClCompile Include="GEntityManager.cpp">
       <Filter>Managers\Source</Filter>
     </ClCompile>

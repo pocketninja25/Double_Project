@@ -5,9 +5,16 @@
 
 //Forward declare these classes, include the files for the cpp only (where needed)
 class GEntity;
+class GSceneManager;
 
 class GEntityManager
 {
+//---------------------------
+// Manager classes
+//---------------------------
+private:
+	GSceneManager* mManager_Parent;		//Passed on construction, do not own this object, but as it owns GEntityManager, can assume that it will always exist as long as this class does
+
 //---------------------------
 // Private Data Members
 //---------------------------
@@ -23,7 +30,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GEntityManager();
+	GEntityManager(GSceneManager* iParentManager);
 
 	virtual ~GEntityManager();
 
@@ -42,6 +49,8 @@ public:
 	//***************************
 
 	void Update(float updateTime);
+
+	void GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
 
 };
 

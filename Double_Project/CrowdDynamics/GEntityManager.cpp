@@ -2,23 +2,32 @@
 
 #include "GEntity.h"
 #include "GAgent.h"
+#include "GSceneManager.h"
 
-
-GEntityManager::GEntityManager()
+GEntityManager::GEntityManager(GSceneManager* iParentManager):
+	mManager_Parent(iParentManager)
 {
-
 }
 
 GEntityManager::~GEntityManager()
 {
 
+	//Deallocate entity information
+	for (auto entity : m_ActiveEntities)
+	{
+		delete entity;
+	}
+	for (auto entity : m_InactiveEntities)
+	{
+		delete entity;
+	}
 }
 
 void GEntityManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 {
 	//Construct a new agent
 	GAgent* newAgent = new GAgent(iPosition, iIsActive);
-
+	 
 	//Push the agent onto the relevant entitylist
 	if (iIsActive)
 	{
@@ -42,4 +51,11 @@ void GEntityManager::Update(float updateTime)
 	{
 		entity->Update(updateTime);
 	}
+}
+
+void GEntityManager::GetRandomDestination()
+{
+	gen::CVector2 size = mManager_Parent->GetWorldSize();
+
+
 }
