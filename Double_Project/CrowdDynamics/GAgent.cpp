@@ -1,12 +1,13 @@
 #include "GAgent.h"
 
-GAgent::GAgent(gen::CVector2 iPosition, bool iIsActive) :
-	GEntity(iPosition, iIsActive)
+GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive) :
+	GEntity(iPosition, iIsActive),
+	m_Destination(iDestination)
 {
 }
 
-GAgent::GAgent(float iXPos, float iYPos, bool iIsActive) : 
-	GAgent(gen::CVector2(iXPos, iYPos), iIsActive)
+GAgent::GAgent(float iXPos, float iYPos, float iXDest, float iYDest, bool iIsActive) : 
+	GAgent(gen::CVector2(iXPos, iYPos), gen::CVector2(iXDest, iYDest), iIsActive)
 {
 	//Delagated Constructor - No Body
 }
@@ -33,9 +34,13 @@ void GAgent::SetNewDestination(gen::CVector2 newDestination)
 void GAgent::Update(float updateTime)
 {
 	gen::CMatrix3x3 matrix = GetMatrix();
+	//gen::CMatrix3x3 lookAtMatrix = gen::CMatrix3x3();
 	matrix.FaceTarget2D(m_Destination);
+	//matrix *= lookAtMatrix;
 
-	matrix.MoveLocalY2D(1.5f * updateTime);	//TODO: Make this less magic
+	matrix.MoveLocalY2D(5.0f * updateTime);	//5 units per second - TODO: Make this less magic
+
+	SetMatrix(matrix);
 }
 
 #ifdef _DEBUG

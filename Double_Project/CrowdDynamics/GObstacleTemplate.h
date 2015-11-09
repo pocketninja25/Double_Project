@@ -5,8 +5,6 @@
 #include "GObject.h"
 #include <vector>
 
-// TODO: this might want to be an object so it has a UID - however probably wont have an update function
-
 class GObstacleTemplate : public GObject
 {
 //---------------------------

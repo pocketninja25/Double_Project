@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include <vector>
+#include <map>
 
 //Forward declare these classes, include the files for the cpp only (where needed)
 class GEntity;
@@ -20,8 +20,8 @@ private:
 // Private Data Members
 //---------------------------
 private:
-	std::vector<GAgent*> m_ActiveAgents;
-	std::vector<GAgent*> m_InactiveAgents;
+	std::map<UID, GAgent*> m_ActiveAgents;
+	std::map<UID, GAgent*> m_InactiveAgents;
 
 //---------------------------
 // Public Functions
@@ -39,11 +39,13 @@ public:
 	// Getters/Accessors
 	//***************************
 
+	bool GetAgent(UID request, GAgent* &returnedAgent);
+
 	//***************************
 	// Setters/Mutators
 	//***************************
-	void AddAgent(gen::CVector2 iPosition, bool iIsActive);
-	void AddAgent(float iXPos, float iYPos, bool iIsActive);
+	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
+	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
 
 	//***************************
 	// Other Functions

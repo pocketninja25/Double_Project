@@ -26,6 +26,11 @@ gen::CVector2 GEntity::GetFacingVector()
 	return gen::CVector2(m_Matrix.GetRow(1));	//Get the 2nd 'Facing' row of the matrix
 }
 
+gen::CMatrix3x3 GEntity::GetMatrix()
+{
+	return m_Matrix;
+}
+
 #ifdef _DEBUG
 std::string GEntity::ToString()
 {
@@ -35,11 +40,6 @@ std::string GEntity::ToString()
 	return builder.str();
 }
 #endif
-
-gen::CMatrix3x3 GEntity::GetMatrix()
-{
-	return m_Matrix;
-}
 
 void GEntity::SetMatrix(gen::CMatrix3x3& iMatrix)
 {

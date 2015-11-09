@@ -29,6 +29,7 @@ public:
 	//***************************
 	gen::CVector2 GetPosition();
 	gen::CVector2 GetFacingVector();
+	gen::CMatrix3x3 GetMatrix();
 
 	//***************************
 	// Setters/Mutators
@@ -50,7 +51,6 @@ protected:
 	//***************************
 	// Getters/Accessors
 	//***************************
-	gen::CMatrix3x3 GetMatrix();
 	void SetMatrix(gen::CMatrix3x3& iMatrix);
 
 };

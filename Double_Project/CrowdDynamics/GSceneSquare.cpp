@@ -28,3 +28,22 @@ GSceneSquare::GSceneSquare(float iXSize, float iYSize, float iOriginXPos, float 
 GSceneSquare::~GSceneSquare()
 {
 }
+
+void GSceneSquare::Update(float updateTime)
+{
+	//TODO: Fill this in
+}
+
+#ifdef _DEBUG
+std::string GSceneSquare::ToString()
+{
+	std::stringstream builder;
+
+	builder << GObject::ToString() << "Square Width: " << m_Size.x << " Square Height " << m_Size.y << std::endl
+		<< "Square Origin: " << m_Origin << std::endl
+		<< "No of walls: " << m_Walls.size() << std::endl;
+
+	return builder.str();
+}
+
+#endif

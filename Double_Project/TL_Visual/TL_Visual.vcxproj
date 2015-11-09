@@ -62,7 +62,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\ProgramData\TL-Engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\ProgramData\TL-Engine\include;D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\CrowdDynamics;D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\MathsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <PrecompiledHeader>
@@ -132,6 +132,9 @@ copy "C:\ProgramData\TL-Engine\3rd Party\TL-Xtreme\shader\*.*" "$(OutDir)" &gt; 
   <ItemGroup>
     <ProjectReference Include="..\CrowdDynamics\CrowdDynamics.vcxproj">
       <Project>{e98b7449-a87b-4f1a-aa5d-f7185bae5a0b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\MathsLib\MathsLib.vcxproj">
+      <Project>{613fff4e-3f98-4a1e-a9b5-adca4123b8d1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -5,7 +5,7 @@
 //-----------------------
 
 
-static UID s_NextUID = 0;
+UID GObject::s_NextUID = 0;
 
 UID GObject::GetNewUID()			//Returns the next free UID and increments the nextUID counter
 {

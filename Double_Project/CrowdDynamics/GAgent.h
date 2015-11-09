@@ -20,8 +20,8 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent(gen::CVector2 iPosition, bool iIsActive = true);
-	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, bool iIsActive = true);
+	GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive = true);
+	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, float iXDest = 0.0f, float iYDest = 0.0f, bool iIsActive = true);
 
 	virtual ~GAgent();
 	
@@ -38,9 +38,7 @@ public:
 	//***************************
 	// Other Functions
 	//***************************
-
-	virtual void Update(float updateTime);	
-	
+	virtual void Update(float updateTime);		
 
 #ifdef _DEBUG
 	virtual std::string ToString();
