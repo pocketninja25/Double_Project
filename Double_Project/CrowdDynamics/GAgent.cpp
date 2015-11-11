@@ -18,7 +18,9 @@ GAgent::~GAgent()
 
 bool GAgent::HasReachedDestination()
 {
-	if (this->GetPosition().DistanceToSquared(m_Destination) < 1.0f /*TODO: Make this less magic*/)	//Can use DistanceSquared because for 0<x<1 xsquared < 1
+	float distTo = gen::Abs(this->GetPosition().DistanceToSquared(m_Destination));
+
+	if (distTo < 4.0f /*TODO: Make this less magic*/)	
 	{
 		return true;
 	}
@@ -38,7 +40,7 @@ void GAgent::Update(float updateTime)
 	matrix.FaceTarget2D(m_Destination);
 	//matrix *= lookAtMatrix;
 
-	matrix.MoveLocalY2D(5.0f * updateTime);	//5 units per second - TODO: Make this less magic
+	matrix.MoveLocalY2D(100.0f * updateTime);	//5 units per second - TODO: Make this less magic
 
 	SetMatrix(matrix);
 }

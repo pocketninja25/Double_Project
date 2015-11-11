@@ -7,11 +7,11 @@ using namespace tle;
 using namespace gen;
 EKeyCode quitKey = Key_Escape;
 
-const int kNoAgents = 10;
-const gen::CVector2 kWorldSize = CVector2(100.0f, 100.0f);
-const float kTimeStep = 1.0f / 60.0f;
-const int kXSubDiv = 10;
-const int kYSubDiv = 10;
+const int kNoAgents = 2500;
+const gen::CVector2 kWorldSize = CVector2(2000.0f, 2000.0f);
+const float kTimeStep = 1.0f / 30.0f;
+const int kXSubDiv = 20;
+const int kYSubDiv = 20;
 
 float frameTime = 0;
 
@@ -24,11 +24,11 @@ struct SAgent
 void main()
 {
 	// Create a 3D engine (using TLX engine here) and open a window for it
-	I3DEngine* gameEngine = New3DEngine( kTLX );
+	I3DEngine* gameEngine = New3DEngine(kTLX);
 	gameEngine->StartWindowed();
 
 	// Add default folder for meshes and other media
-	gameEngine->AddMediaFolder( "C:\\ProgramData\\TL-Engine\\Media" );
+	gameEngine->AddMediaFolder( ".\\Media" );
 
 	IMesh* floorMesh = gameEngine->LoadMesh("Floor.x");
 	IModel* floorModel = floorMesh->CreateModel(kWorldSize.x / 2.0f, 0.0f, kWorldSize.y / 2.0f);
@@ -44,14 +44,14 @@ void main()
 	for (int i = 0; i < kNoAgents; i++)
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
-		AGENTS[i].model = agentMesh->CreateModel(i * (kWorldSize.x / kXSubDiv), 0.0f, i * (kWorldSize.y / kYSubDiv));
+		AGENTS[i].model = agentMesh->CreateModel(i * (kWorldSize.x /kNoAgents), 0.0f, i * (kWorldSize.y / kNoAgents));
 		AGENTS[i].id = CrowdDynamics->AddAgent(AGENTS[i].model->GetX(), AGENTS[i].model->GetZ(), true);
 	}
 
 	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 200.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 2200.0f, kWorldSize.y/2.0f);
 	cam->RotateX(90.0f);
-	cam->SetMovementSpeed(40.0f);
+	cam->SetMovementSpeed(400.0f);
 	cam->SetRotationSpeed(180.0f);
 
 	gen::CMatrix3x3 tempAgentMat;
