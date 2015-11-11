@@ -39,9 +39,9 @@ std::string GSceneSquare::ToString()
 {
 	std::stringstream builder;
 
-	builder << GObject::ToString() << "Square Width: " << m_Size.x << " Square Height " << m_Size.y << std::endl
-		<< "Square Origin: " << m_Origin << std::endl
-		<< "No of walls: " << m_Walls.size() << std::endl;
+	builder << GObject::ToString() << "Square Width: " << m_Size.x << " Square Height " << m_Size.y << "\n"
+		<< "Square Origin: " << m_Origin << "\n"
+		<< "No of walls: " << m_Walls.size() << "\n";
 
 	return builder.str();
 }

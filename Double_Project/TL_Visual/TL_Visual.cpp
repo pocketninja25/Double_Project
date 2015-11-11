@@ -45,17 +45,18 @@ void main()
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
 		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
-		AGENTS[i].model = agentMesh->CreateModel();// i * (kWorldSize.x / kNoAgents), 0.0f, i * (kWorldSize.y / kNoAgents));
-		AGENTS[i].id = IDs[i];//CrowdDynamics->AddAgent(AGENTS[i].model->GetX(), AGENTS[i].model->GetZ(), true);
+		AGENTS[i].model = agentMesh->CreateModel();
+		AGENTS[i].id = IDs[i];
 	}
-
+	
 	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(400.0f);
 	cam->SetRotationSpeed(180.0f);
 
 	gen::CMatrix3x3 tempAgentMat;
+	string tempString;
 	float tempModelMat[16];
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
@@ -68,8 +69,10 @@ void main()
 		// Draw the scene
 		gameEngine->DrawScene();
 
-		CrowdDynamics->Update(frameTime);
+		/**** Update your scene each frame here ****/
+		CrowdDynamics->Update(frameTime);	//Update the CrowdDynamics simulation
 
+		//Assign the simulation matrices to the model matrices
 		for (int i = 0; i < kNoAgents; i++)
 		{
 			if (CrowdDynamics->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
@@ -86,9 +89,17 @@ void main()
 			}
 		}
 
-
-		/**** Update your scene each frame here ****/
-
+		if (gameEngine->KeyHit(Key_M))
+		{
+			if (CrowdDynamics->GetAgentString(AGENTS[0].id, tempString))
+			{
+				cout << tempString << endl;
+			}
+			else
+			{
+				cout << "Error - Agent Not Found";
+			}
+		}
 	}
 
 	// Delete the 3D engine now we are finished with it

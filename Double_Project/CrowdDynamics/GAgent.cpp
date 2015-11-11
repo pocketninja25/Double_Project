@@ -2,8 +2,12 @@
 
 GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive) :
 	GEntity(iPosition, iIsActive),
-	m_Destination(iDestination)
+	m_Destination(iDestination),
+	m_Velocity(1.5f)		//TODO: find a way of calculating this better
 {
+	m_MovementVect = gen::CVector2(GetMatrix().Position2D(), m_Destination);
+	m_MovementVect.Normalise();
+	m_MovementVect * m_Velocity;
 }
 
 GAgent::GAgent(float iXPos, float iYPos, float iXDest, float iYDest, bool iIsActive) : 
@@ -31,6 +35,11 @@ void GAgent::SetNewDestination(gen::CVector2 newDestination)
 {
 	//Recieve a new destination (from the manager class) when the manager determines the agent has arrived, or should change destination otherwise
 	m_Destination = newDestination;
+	
+	//Calculate the new movement vector
+	m_MovementVect = gen::CVector2(GetMatrix().Position2D(), m_Destination);
+	m_MovementVect.Normalise();
+	m_MovementVect * m_Velocity;
 }
 
 void GAgent::Update(float updateTime)
@@ -39,8 +48,8 @@ void GAgent::Update(float updateTime)
 	gen::CMatrix3x3 matrix = GetMatrix();	//Get matrix of this agent
 	matrix.FaceTarget2D(m_Destination);		//Face the agent towards it's destination
 
-	
-	matrix.MoveLocalY2D(1.5f * updateTime);	//1.5 units per second - TODO: Make this less magic
+	//Move by the movement vector (units per second) modified by update time calculating units this frame
+	matrix.Move2D(m_MovementVect * updateTime);
 
 	SetMatrix(matrix);
 }
@@ -50,8 +59,9 @@ std::string GAgent::ToString()
 {
 	std::stringstream builder;
 
-	builder << GEntity::ToString() << "Destination: X: " << m_Destination.x << " Y: " << m_Destination.y << "\n" 
-		<< "Mass: " << m_Mass << "\n";
+	builder << GEntity::ToString() << "Destination: X: " << m_Destination.x << " Y: " << m_Destination.y << "\n"
+		<< "Velocity: " << m_Velocity << "\n"
+		<< "MovementVect: X: " << m_MovementVect.x << "Y: " << m_MovementVect.y << "\n";
 
 	return builder.str();
 }

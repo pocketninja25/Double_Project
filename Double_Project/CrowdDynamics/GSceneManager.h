@@ -49,6 +49,10 @@ public:
 	gen::CVector2 GetWorldSize();
 	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3& matrix);
 
+#ifdef _DEBUG
+	bool GetAgentString(UID requestedID, std::string& agentString);
+#endif
+
 	//***************************
 	// Setters/Mutators
 	//***************************

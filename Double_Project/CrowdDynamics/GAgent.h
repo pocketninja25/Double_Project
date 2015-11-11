@@ -11,7 +11,8 @@ class GAgent : public GEntity
 //---------------------------
 private:
 	gen::CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
-	float m_Mass;
+	float m_Velocity;				//The velocity of the agent in units per second
+	gen::CVector2 m_MovementVect;	//The movement vector of the agent in units per second
 
 //---------------------------
 // Public Functions
