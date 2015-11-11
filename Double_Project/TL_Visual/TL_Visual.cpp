@@ -6,6 +6,7 @@ using namespace tle;
 #include "GSceneManager.h"
 using namespace gen;
 EKeyCode quitKey = Key_Escape;
+EKeyCode pauseKey = Key_P;
 
 const int kNoAgents = 2500;
 const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
@@ -57,6 +58,7 @@ void main()
 
 	gen::CMatrix3x3 tempAgentMat;
 	string tempString;
+	int tempInt;
 	float tempModelMat[16];
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
@@ -89,9 +91,17 @@ void main()
 			}
 		}
 
-		if (gameEngine->KeyHit(Key_M))
+		if (gameEngine->KeyHit(pauseKey))
 		{
-			if (CrowdDynamics->GetAgentString(AGENTS[0].id, tempString))
+			CrowdDynamics->SetPaused(!CrowdDynamics->GetIsPaused());	//Toggle paused
+		}
+		if (gameEngine->KeyHit(Key_M) && CrowdDynamics->GetIsPaused())
+		{
+			cout << "Enter a number between 0 and " << kNoAgents << endl;
+			cin >> tempInt;	//TODO: add validation
+			
+			cout << "Agent " << tempInt << " details: " << endl;
+			if (CrowdDynamics->GetAgentString(AGENTS[tempInt].id, tempString))
 			{
 				cout << tempString << endl;
 			}

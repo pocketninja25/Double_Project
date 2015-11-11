@@ -15,7 +15,8 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 	m_TimeStep(iTimeStep),
 	m_TimeSinceLastUpdate(0.0f),
 	m_WorldSize(iWorldSize),
-	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions])
+	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions]),
+	m_Paused(false)
 {
 	float xSquareSize = iWorldSize.x / iXSubdivisions;
 	float ySquareSize = iWorldSize.y / iYSubdivisions;
@@ -46,6 +47,8 @@ GSceneManager::~GSceneManager()
 	delete mManager_Entity;
 	delete mManager_Obstacle;
 
+	//Remove reference to this instance
+	sm_SceneManager = 0;
 }
 
 gen::CVector2 GSceneManager::GetWorldSize()
@@ -63,6 +66,11 @@ bool GSceneManager::GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix)
 	}
 	//No helpful data format for failed GetMatrix, just return uninitialised memory garbage
 	return false;
+}
+
+bool GSceneManager::GetIsPaused()
+{
+	return m_Paused;
 }
 
 #ifdef _DEBUG
@@ -105,20 +113,28 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 	return agentUIDs;
 }
 
+void GSceneManager::SetPaused(bool iPaused)
+{
+	m_Paused = iPaused;
+}
+
 void GSceneManager::Update(float frameTime)
 {
-	m_TimeSinceLastUpdate += frameTime;
-
-	while (m_TimeSinceLastUpdate > m_TimeStep)		//While there are time steps left - this method allows for multiple time steps to be executed if they have built up //TODO: make this functionality independent of a function call
+	if (!m_Paused)
 	{
-		//Begin the update tree
-		mManager_Entity->Update(m_TimeStep);
+		m_TimeSinceLastUpdate += frameTime;
+
+		while (m_TimeSinceLastUpdate > m_TimeStep)		//While there are time steps left - this method allows for multiple time steps to be executed if they have built up //TODO: make this functionality independent of a function call
+		{
+			//Begin the update tree
+			mManager_Entity->Update(m_TimeStep);
 
 
-		//Time step complete, reduce the time since update by the time step
-		m_TimeSinceLastUpdate -= m_TimeStep;
+			//Time step complete, reduce the time since update by the time step
+			m_TimeSinceLastUpdate -= m_TimeStep;
+		}
+
 	}
-
 }
 
 

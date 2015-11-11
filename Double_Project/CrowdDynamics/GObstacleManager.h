@@ -11,11 +11,6 @@ class GSceneManager;
 
 class GObstacleManager
 {
-//---------------------------
-// Manager classes
-//---------------------------
-private:
-	GSceneManager* mManager_Parent;		//Passed on construction, do not own this object, but as it owns GSceneManager, can assume that it will always exist as long as this class does
 
 //---------------------------
 // Private Data Members
@@ -35,7 +30,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GObstacleManager(GSceneManager* iParent);
+	GObstacleManager();
 
 	virtual ~GObstacleManager();
 

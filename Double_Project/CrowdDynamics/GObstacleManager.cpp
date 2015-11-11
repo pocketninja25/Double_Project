@@ -3,8 +3,7 @@
 #include "GDynamicObstacle.h"
 #include "GObstacleTemplate.h"
 
-GObstacleManager::GObstacleManager(GSceneManager* iParent) :
-	mManager_Parent(iParent)
+GObstacleManager::GObstacleManager()
 {
 }
 

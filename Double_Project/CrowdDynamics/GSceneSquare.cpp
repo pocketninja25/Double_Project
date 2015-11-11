@@ -32,6 +32,15 @@ GSceneSquare::~GSceneSquare()
 void GSceneSquare::Update(float updateTime)
 {
 	//TODO: Fill this in
+	
+}
+
+std::vector<UID> GSceneSquare::TransferAgents()
+{
+	for (auto ID : m_Agents)
+	{
+		if()
+	}
 }
 
 #ifdef _DEBUG

@@ -30,6 +30,8 @@ private:
 	int m_NoOfSquaresX;				//Number of squares in the X (horizontal) direction
 	int m_NoOfSquaresY;				//Number of squares in the Y (vertical) direction
 
+
+	bool m_Paused;
 //---------------------------
 // Public Functions
 //---------------------------
@@ -53,12 +55,16 @@ public:
 	bool GetAgentString(UID requestedID, std::string& agentString);
 #endif
 
+	bool GetIsPaused();
+
 	//***************************
 	// Setters/Mutators
 	//***************************
 	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
 	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
+
+	void SetPaused(bool iPaused);
 
 	//***************************
 	// Other Functions

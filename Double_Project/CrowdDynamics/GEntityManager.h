@@ -14,7 +14,6 @@ class GEntityManager
 // Manager classes
 //---------------------------
 private:
-	GSceneManager* mManager_Parent;		//Passed on construction, do not own this object, but as it owns GEntityManager, can assume that it will always exist as long as this class does
 
 //---------------------------
 // Private Data Members
@@ -31,7 +30,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GEntityManager(GSceneManager* iParentManager);
+	GEntityManager();
 
 	virtual ~GEntityManager();
 

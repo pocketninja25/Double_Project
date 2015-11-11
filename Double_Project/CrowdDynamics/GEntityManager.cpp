@@ -4,8 +4,7 @@
 #include "GAgent.h"
 #include "GSceneManager.h"
 
-GEntityManager::GEntityManager(GSceneManager* iParentManager):
-	mManager_Parent(iParentManager)
+GEntityManager::GEntityManager()
 {
 }
 
