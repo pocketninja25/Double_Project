@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "GSceneSquare.h"
+#include <vector>
 
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
@@ -53,7 +54,7 @@ public:
 	//***************************
 	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
-
+	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
 
 	//***************************
 	// Other Functions

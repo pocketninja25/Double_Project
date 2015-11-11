@@ -8,7 +8,7 @@ using namespace gen;
 EKeyCode quitKey = Key_Escape;
 
 const int kNoAgents = 2500;
-const gen::CVector2 kWorldSize = CVector2(2000.0f, 2000.0f);
+const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
 const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 20;
 const int kYSubDiv = 20;
@@ -40,16 +40,17 @@ void main()
 	// CrowdDynamics Setup
 	//--------------------------
 	GSceneManager* CrowdDynamics = new GSceneManager(kTimeStep, kWorldSize, kXSubDiv, kYSubDiv);
-
+	vector<UID> IDs = CrowdDynamics->AddXAgents(kNoAgents);
 	for (int i = 0; i < kNoAgents; i++)
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
-		AGENTS[i].model = agentMesh->CreateModel(i * (kWorldSize.x /kNoAgents), 0.0f, i * (kWorldSize.y / kNoAgents));
-		AGENTS[i].id = CrowdDynamics->AddAgent(AGENTS[i].model->GetX(), AGENTS[i].model->GetZ(), true);
+		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
+		AGENTS[i].model = agentMesh->CreateModel();// i * (kWorldSize.x / kNoAgents), 0.0f, i * (kWorldSize.y / kNoAgents));
+		AGENTS[i].id = IDs[i];//CrowdDynamics->AddAgent(AGENTS[i].model->GetX(), AGENTS[i].model->GetZ(), true);
 	}
 
 	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 2200.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(400.0f);
 	cam->SetRotationSpeed(180.0f);

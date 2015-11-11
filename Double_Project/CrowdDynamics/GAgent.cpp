@@ -35,12 +35,12 @@ void GAgent::SetNewDestination(gen::CVector2 newDestination)
 
 void GAgent::Update(float updateTime)
 {
-	gen::CMatrix3x3 matrix = GetMatrix();
-	//gen::CMatrix3x3 lookAtMatrix = gen::CMatrix3x3();
-	matrix.FaceTarget2D(m_Destination);
-	//matrix *= lookAtMatrix;
+	//Apply physics to model
+	gen::CMatrix3x3 matrix = GetMatrix();	//Get matrix of this agent
+	matrix.FaceTarget2D(m_Destination);		//Face the agent towards it's destination
 
-	matrix.MoveLocalY2D(100.0f * updateTime);	//5 units per second - TODO: Make this less magic
+	
+	matrix.MoveLocalY2D(1.5f * updateTime);	//1.5 units per second - TODO: Make this less magic
 
 	SetMatrix(matrix);
 }

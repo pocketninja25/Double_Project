@@ -75,6 +75,21 @@ UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 	return this->AddAgent(gen::CVector2(iXPos, iYPos), iIsActive);
 }
 
+std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
+{
+	std::vector<UID> agentUIDs;
+
+	for (int i = 0; i < kNoAgents; i++)
+	{
+		agentUIDs.push_back(
+			mManager_Entity->AddAgent(
+				gen::CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y)),
+				iAreActive));
+	}
+
+	return agentUIDs;
+}
+
 void GSceneManager::Update(float frameTime)
 {
 	m_TimeSinceLastUpdate += frameTime;
