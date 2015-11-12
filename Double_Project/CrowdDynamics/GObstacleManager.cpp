@@ -1,7 +1,7 @@
-#include "GObstacleManager.h"
-#include "GStaticObstacle.h"
-#include "GDynamicObstacle.h"
-#include "GObstacleTemplate.h"
+#include "GObstacleManager.hpp"
+#include "GStaticObstacle.hpp"
+#include "GDynamicObstacle.hpp"
+#include "GObstacleTemplate.hpp"
 
 GObstacleManager::GObstacleManager()
 {

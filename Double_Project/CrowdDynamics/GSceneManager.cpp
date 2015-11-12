@@ -1,17 +1,38 @@
-#include "GSceneManager.h"
+#include "GSceneManager.hpp"
 
-#include "GEntityManager.h"
-#include "GObstacleManager.h"
-#include "GAgent.h"
+#include "GEntityManager.hpp"
+#include "GObstacleManager.hpp"
+#include "GAgent.hpp"
+
+GSceneManager* GSceneManager::mManager_Scene = 0;
+
+GSceneManager* GSceneManager::GetInstance(SWorldInfo* iWorldData)
+{
+	if (!mManager_Scene && iWorldData)	//If there is no manager instance but there is a set of world data create an instance
+	{
+		//Construct the manager
+
+		mManager_Scene = new GSceneManager(*iWorldData);
+	}
+
+	return mManager_Scene;
+}
+
+GSceneManager::GSceneManager(SWorldInfo iWorldInfo) :
+	GSceneManager(iWorldInfo.TimeStep, iWorldInfo.WorldSize, iWorldInfo.xSubdivisions, iWorldInfo.ySubdivisions)
+{
+	//Delegating Constructor
+}
 
 GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions) :
 	GSceneManager(iTimeStep, gen::CVector2(iWorldXSize, iWorldYSize), iXSubdivisions, iYSubdivisions)
 {
+	//Delegating Constructor
 }
 
 GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions) :
-	mManager_Entity(new GEntityManager(this)),
-	mManager_Obstacle(new GObstacleManager(this)),
+	mManager_Entity(new GEntityManager()),
+	mManager_Obstacle(new GObstacleManager()),
 	m_TimeStep(iTimeStep),
 	m_TimeSinceLastUpdate(0.0f),
 	m_WorldSize(iWorldSize),
@@ -47,8 +68,8 @@ GSceneManager::~GSceneManager()
 	delete mManager_Entity;
 	delete mManager_Obstacle;
 
-	//Remove reference to this instance
-	sm_SceneManager = 0;
+	//Reset the instance pointer, there is no longer an instance
+	mManager_Scene = 0;
 }
 
 gen::CVector2 GSceneManager::GetWorldSize()

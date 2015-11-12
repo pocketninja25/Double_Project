@@ -1,8 +1,8 @@
-#include "GEntityManager.h"
+#include "GEntityManager.hpp"
 
-#include "GEntity.h"
-#include "GAgent.h"
-#include "GSceneManager.h"
+#include "GEntity.hpp"
+#include "GAgent.hpp"
+#include "GSceneManager.hpp"
 
 GEntityManager::GEntityManager()
 {
@@ -88,7 +88,7 @@ void GEntityManager::Update(float updateTime)
 
 gen::CVector2 GEntityManager::GetRandomDestination()
 {
-	gen::CVector2 size = mManager_Parent->GetWorldSize();
+	gen::CVector2 size = GSceneManager::GetInstance()->GetWorldSize();
 
 	return gen::CVector2(RandomFloat(0, size.x), RandomFloat(0, size.y));
 }

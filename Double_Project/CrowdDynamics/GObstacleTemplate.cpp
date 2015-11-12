@@ -1,4 +1,4 @@
-#include "GObstacleTemplate.h"
+#include "GObstacleTemplate.hpp"
 
 GObstacleTemplate::GObstacleTemplate(bool iIsActive) :
 	GObject(iIsActive)

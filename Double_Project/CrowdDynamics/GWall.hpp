@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common.h"
-#include "GObject.h"
+#include "Common.hpp"
+#include "GObject.hpp"
 
 struct VertexPair
 {

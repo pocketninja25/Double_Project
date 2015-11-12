@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Common.h"
-#include "GEntity.h"
+#include "Common.hpp"
+#include "GEntity.hpp"
 
 class GAgent : public GEntity
 {
-
 //---------------------------
 // Private Data Members
 //---------------------------

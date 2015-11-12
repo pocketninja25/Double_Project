@@ -19,19 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="GAgent.h" />
-    <ClInclude Include="GDynamicObstacle.h" />
-    <ClInclude Include="GEntity.h" />
-    <ClInclude Include="GEntityManager.h" />
-    <ClInclude Include="GObject.h" />
-    <ClInclude Include="GObstacle.h" />
-    <ClInclude Include="GObstacleManager.h" />
-    <ClInclude Include="GObstacleTemplate.h" />
-    <ClInclude Include="GSceneManager.h" />
-    <ClInclude Include="GSceneSquare.h" />
-    <ClInclude Include="GStaticObstacle.h" />
-    <ClInclude Include="GWall.h" />
+    <ClInclude Include="Common.hpp" />
+    <ClInclude Include="CrowdDynamics.hpp" />
+    <ClInclude Include="GAgent.hpp" />
+    <ClInclude Include="GDynamicObstacle.hpp" />
+    <ClInclude Include="GEntity.hpp" />
+    <ClInclude Include="GEntityManager.hpp" />
+    <ClInclude Include="GObject.hpp" />
+    <ClInclude Include="GObstacle.hpp" />
+    <ClInclude Include="GObstacleManager.hpp" />
+    <ClInclude Include="GObstacleTemplate.hpp" />
+    <ClInclude Include="GSceneManager.hpp" />
+    <ClInclude Include="GSceneSquare.hpp" />
+    <ClInclude Include="GStaticObstacle.hpp" />
+    <ClInclude Include="GWall.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GAgent.cpp" />

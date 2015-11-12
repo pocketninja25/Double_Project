@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Common.h"
+#include "Common.hpp"
 
-#include "GObject.h"
+#include "GObject.hpp"
 #include <vector>
 
 class GObstacleTemplate : public GObject

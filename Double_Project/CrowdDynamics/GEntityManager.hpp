@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.h"
+#include "Common.hpp"
 #include <map>
 
 //Forward declare these classes, include the files for the cpp only (where needed)

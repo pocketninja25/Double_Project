@@ -1,4 +1,4 @@
-#include "GObject.h"
+#include "GObject.hpp"
 
 //-----------------------
 // Static Members

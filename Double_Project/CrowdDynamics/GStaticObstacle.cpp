@@ -1,4 +1,4 @@
-#include "GStaticObstacle.h"
+#include "GStaticObstacle.hpp"
 
 GStaticObstacle::GStaticObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive) :
 	GObstacle(iTemplate, iPosition, iIsActive)

@@ -1,4 +1,4 @@
-#include "GSceneSquare.h"
+#include "GSceneSquare.hpp"
 
 GSceneSquare::GSceneSquare(gen::CVector2 iSize, gen::CVector2 iOriginPos, bool iIsActive) :
 	GObject(iIsActive),
@@ -35,13 +35,13 @@ void GSceneSquare::Update(float updateTime)
 	
 }
 
-std::vector<UID> GSceneSquare::TransferAgents()
-{
-	for (auto ID : m_Agents)
-	{
-		if()
-	}
-}
+//std::vector<UID> GSceneSquare::TransferAgents()
+//{
+//	for (auto ID : m_Agents)
+//	{
+//		//if()
+//	}
+//}
 
 #ifdef _DEBUG
 std::string GSceneSquare::ToString()

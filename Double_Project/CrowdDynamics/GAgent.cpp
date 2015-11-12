@@ -1,4 +1,4 @@
-#include "GAgent.h"
+#include "GAgent.hpp"
 
 GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive) :
 	GEntity(iPosition, iIsActive),

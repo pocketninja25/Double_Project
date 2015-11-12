@@ -1,4 +1,4 @@
-#include "GWall.h"
+#include "GWall.hpp"
 
 //TODO: Improve this constructor
 GWall::GWall(gen::CVector2 iVertexA, gen::CVector2 iVertexB, gen::CVector2 iFacingVector, UID iObstacle, bool iIsActive) : 

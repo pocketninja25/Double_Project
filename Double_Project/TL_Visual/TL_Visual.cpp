@@ -3,7 +3,7 @@
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
 
-#include "GSceneManager.h"
+#include "CrowdDynamics.hpp"
 using namespace gen;
 EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
@@ -40,8 +40,13 @@ void main()
 	//--------------------------
 	// CrowdDynamics Setup
 	//--------------------------
-	GSceneManager* CrowdDynamics = new GSceneManager(kTimeStep, kWorldSize, kXSubDiv, kYSubDiv);
-	vector<UID> IDs = CrowdDynamics->AddXAgents(kNoAgents);
+	SWorldInfo worldData;
+	worldData.TimeStep = kTimeStep;
+	worldData.WorldSize = kWorldSize;
+	worldData.xSubdivisions = kXSubDiv;
+	worldData.ySubdivisions = kYSubDiv;
+	GSceneManager* crowdEngine = GSceneManager::GetInstance(&worldData);
+	vector<UID> IDs = crowdEngine->AddXAgents(kNoAgents);
 	for (int i = 0; i < kNoAgents; i++)
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
@@ -72,12 +77,12 @@ void main()
 		gameEngine->DrawScene();
 
 		/**** Update your scene each frame here ****/
-		CrowdDynamics->Update(frameTime);	//Update the CrowdDynamics simulation
+		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
 
 		//Assign the simulation matrices to the model matrices
 		for (int i = 0; i < kNoAgents; i++)
 		{
-			if (CrowdDynamics->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
+			if (crowdEngine->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
 			{
 				//Convert agent matrix to model matrix
 				AGENTS[i].model->GetMatrix(tempModelMat);
@@ -93,15 +98,15 @@ void main()
 
 		if (gameEngine->KeyHit(pauseKey))
 		{
-			CrowdDynamics->SetPaused(!CrowdDynamics->GetIsPaused());	//Toggle paused
+			crowdEngine->SetPaused(!crowdEngine->GetIsPaused());	//Toggle paused
 		}
-		if (gameEngine->KeyHit(Key_M) && CrowdDynamics->GetIsPaused())
+		if (gameEngine->KeyHit(Key_M) && crowdEngine->GetIsPaused())
 		{
 			cout << "Enter a number between 0 and " << kNoAgents << endl;
 			cin >> tempInt;	//TODO: add validation
 			
 			cout << "Agent " << tempInt << " details: " << endl;
-			if (CrowdDynamics->GetAgentString(AGENTS[tempInt].id, tempString))
+			if (crowdEngine->GetAgentString(AGENTS[tempInt].id, tempString))
 			{
 				cout << tempString << endl;
 			}
@@ -115,5 +120,5 @@ void main()
 	// Delete the 3D engine now we are finished with it
 	gameEngine->Delete();
 
-	delete CrowdDynamics;
+	delete crowdEngine;
 }

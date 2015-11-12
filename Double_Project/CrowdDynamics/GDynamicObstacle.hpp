@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common.h"
-#include "GObstacle.h"
+#include "Common.hpp"
+#include "GObstacle.hpp"
 
 
 class GDynamicObstacle : public GObstacle

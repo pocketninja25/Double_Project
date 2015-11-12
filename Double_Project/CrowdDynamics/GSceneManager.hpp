@@ -1,16 +1,46 @@
 #pragma once
 
-#include "Common.h"
-#include "GSceneSquare.h"
+#include "Common.hpp"
+#include "GSceneSquare.hpp"
 #include <vector>
 
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
 class GObstacleManager;
 
+struct SWorldInfo
+{
+	//Struct of data required to create a 'world instance' - scene manager
+public:
+	float TimeStep = 0.0f;
+	gen::CVector2 WorldSize = gen::CVector2(0.0f, 0.0f);
+	int xSubdivisions = 0;
+	int ySubdivisions = 0;
+
+};
+
 //This is the primary manager, it manages the scene, as well as the other managers
 class GSceneManager
 {
+//---------------------------
+// Singleton Data
+//---------------------------
+public: 
+	static GSceneManager* GetInstance(SWorldInfo* iWorldData = 0);	//Accepts struct pointer of world data - this allows the Scene manager to have a complex setup through getinstance but not require any data to get the instance subsequent times
+																	//All objects created by this class will also reference it this way, they do not need to worry about the instance not existing because they cannot exist without this
+private:
+	static GSceneManager* mManager_Scene;
+	GSceneManager(SWorldInfo iWorldInfo);
+	GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
+	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions);
+	
+	//Delete copy constructor and = operator
+	
+	//Deleted
+	GSceneManager(GSceneManager const&) = delete;
+	//Deleted
+	void operator=(GSceneManager const&) = delete;
+
 //---------------------------
 // Manager classes
 //---------------------------
@@ -40,8 +70,6 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
-	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions);
 
 	virtual ~GSceneManager();
 

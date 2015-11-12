@@ -1,7 +1,7 @@
-#include "GObstacle.h"
+#include "GObstacle.hpp"
 
-#include "GObstacleTemplate.h"
-#include "GWall.h"
+#include "GObstacleTemplate.hpp"
+#include "GWall.hpp"
 
 GObstacle::GObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive) :
 	GObject(iIsActive),

@@ -1,4 +1,4 @@
-#include "GEntity.h"
+#include "GEntity.hpp"
 
 GEntity::GEntity(gen::CVector2 iPosition, bool iIsActive) :
 	GObject(iIsActive), 

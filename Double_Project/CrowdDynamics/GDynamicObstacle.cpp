@@ -1,4 +1,4 @@
-#include "GDynamicObstacle.h"
+#include "GDynamicObstacle.hpp"
 
 GDynamicObstacle::GDynamicObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive) : 
 	GObstacle(iTemplate, iPosition, iIsActive)
