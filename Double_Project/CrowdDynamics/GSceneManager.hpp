@@ -2,7 +2,6 @@
 
 #include "Common.hpp"
 #include "GSceneSquare.hpp"
-#include <vector>
 
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
@@ -69,15 +68,15 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-
-
 	virtual ~GSceneManager();
 
 	//***************************
 	// Getters/Accessors
 	//***************************
 	gen::CVector2 GetWorldSize();
-	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3& matrix);
+	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix);
+	bool GetAgentPosition(UID requestedUID, gen::CVector2 &position);
+
 
 #ifdef _DEBUG
 	bool GetAgentString(UID requestedID, std::string& agentString);

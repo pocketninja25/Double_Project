@@ -3,7 +3,6 @@
 #include "Common.hpp"
 
 #include "GObject.hpp"
-#include <vector>
 
 class GObstacleTemplate : public GObject
 {

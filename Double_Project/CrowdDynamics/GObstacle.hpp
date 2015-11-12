@@ -2,7 +2,6 @@
 
 #include "Common.hpp"
 #include "GObject.hpp"
-#include <vector>
 
 //Forward declare these classes, can include files in the cpp
 class GObstacleTemplate;

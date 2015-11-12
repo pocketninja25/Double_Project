@@ -1,4 +1,6 @@
 #include "GSceneSquare.hpp"
+#include "GSceneManager.hpp"
+
 
 GSceneSquare::GSceneSquare(gen::CVector2 iSize, gen::CVector2 iOriginPos, bool iIsActive) :
 	GObject(iIsActive),
@@ -35,13 +37,40 @@ void GSceneSquare::Update(float updateTime)
 	
 }
 
-//std::vector<UID> GSceneSquare::TransferAgents()
-//{
-//	for (auto ID : m_Agents)
-//	{
-//		//if()
-//	}
-//}
+std::vector<UID> GSceneSquare::TransferAgents()
+{
+	GSceneManager* sceneManager = GSceneManager::GetInstance();
+	
+	std::vector<UID> rejectionList;	//List of the agents no longer in this scene square
+
+	gen::CVector2 position;
+	for (auto ID = m_Agents.begin(); ID != m_Agents.end(); ID++ )
+	{
+		if (sceneManager->GetAgentPosition(*ID, position))	//The agent exists, retrieved the position
+		{
+			//Test if the position is outside of the bounding bos of this scene square
+			if (position.x < m_Origin.x || 
+				position.y < m_Origin.y || 
+				position.x >= (m_Origin.x + m_Size.x) ||
+				position.y >= (m_Origin.y + m_Size.y)	)
+			{
+				rejectionList.push_back(*ID);
+				//Remove the agent from this list
+				ID = m_Agents.erase(ID);
+				//Decrement the iterator so the next agent is the correct agent
+				ID--;
+
+			}
+		}
+		else //The agent does not exist
+		{
+			//Remove the agent
+			ID = m_Agents.erase(ID);
+			//Decrement the iterator so the next agent is the correct agent
+			ID--;
+		}
+	}
+}
 
 #ifdef _DEBUG
 std::string GSceneSquare::ToString()

@@ -89,6 +89,18 @@ bool GSceneManager::GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix)
 	return false;
 }
 
+bool GSceneManager::GetAgentPosition(UID requestedUID, gen::CVector2 &position)
+{
+	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
+	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
+	{
+		position = foundAgent->GetPosition();
+		return true;
+	}
+	//No helpful data format for failed GetMatrix, just return uninitialised memory garbage
+	return false;
+}
+
 bool GSceneManager::GetIsPaused()
 {
 	return m_Paused;

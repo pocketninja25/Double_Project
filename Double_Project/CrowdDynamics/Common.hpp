@@ -4,8 +4,10 @@
 
 #include "MathsLib.h"
 
-typedef int UID;
+#include <list>
+#include <vector>
 
+typedef int UID;
 
 inline float RandomFloat(float min, float max)	//Returns a random float between min and max
 {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.hpp"
-#include <vector>
 
 //Forward declarations of obstacle classes
 class GStaticObstacle;

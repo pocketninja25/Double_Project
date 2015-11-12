@@ -2,7 +2,8 @@
 
 #include "Common.hpp"
 #include "GObject.hpp"
-#include <vector>
+
+
 
 class GSceneSquare : public GObject
 {
@@ -13,8 +14,8 @@ class GSceneSquare : public GObject
 private:
 	gen::CVector2 m_Size;		//Width * Height of the Scene Square
 	gen::CVector2 m_Origin;		//The bottom left position of the square
-	std::vector<UID> m_Walls;	//TODO: Consider static wall list & dynamic wall list //Vector of UID's to wall objects that occupy/intersect this scene square : This class does not own these pointers
-	std::vector<UID> m_Agents;
+	std::list<UID> m_Walls;		//TODO: Consider static wall list & dynamic wall list //Vector of UID's to wall objects that occupy/intersect this scene square : This class does not own these pointers
+	std::list<UID> m_Agents;
 
 //---------------------------
 // Public Functions
