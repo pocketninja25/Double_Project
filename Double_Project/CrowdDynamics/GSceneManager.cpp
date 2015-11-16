@@ -198,18 +198,18 @@ void GSceneManager::Update(float frameTime)
 
 void GSceneManager::MaintainSceneSquares()
 {
-	std::vector<UID>* tempAgents;
+	std::vector<UID> tempAgents;
 	std::vector<UID> unassignedAgents;	
 	
 	for (int i = 0; i < m_NoOfSquaresX * m_NoOfSquaresY; i++)
 	{
 		//Get list of agents transferring from this scenesquare
-		tempAgents = &m_SceneSquares[i]->TransferAgents();
+		tempAgents = m_SceneSquares[i]->TransferAgents();
 		
 		//Append the new agents to the unassignedAgents list
-		if (tempAgents->size() > 0)
+		if (tempAgents.size() > 0)
 		{
-			unassignedAgents.insert(unassignedAgents.end(), tempAgents->begin(), tempAgents->end());
+			unassignedAgents.insert(unassignedAgents.end(), tempAgents.begin(), tempAgents.end());
 		}
 	}
 
@@ -229,3 +229,4 @@ void GSceneManager::MaintainSceneSquares()
 		//Else ignore this agent, it is removed from the scene system
 	}
 }
+

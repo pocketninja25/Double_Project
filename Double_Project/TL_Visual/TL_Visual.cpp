@@ -8,7 +8,7 @@ using namespace gen;
 EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
 
-const int kNoAgents = 2500;
+const int kNoAgents = 500;
 const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
 const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 20;
@@ -56,7 +56,7 @@ void main()
 	}
 	
 	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(400.0f);
 	cam->SetRotationSpeed(180.0f);
