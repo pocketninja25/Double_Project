@@ -56,14 +56,18 @@ void main()
 	}
 	
 	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(400.0f);
 	cam->SetRotationSpeed(180.0f);
 
+	float frameRate;
+	stringstream frameStream;
+	frameStream.precision(4);
+
 	gen::CMatrix3x3 tempAgentMat;
 	string tempString;
-	int tempInt;
+	int tempInt, tempInt2;
 	float tempModelMat[16];
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
@@ -75,6 +79,11 @@ void main()
 		frameTime = gameEngine->Timer();
 		// Draw the scene
 		gameEngine->DrawScene();
+		
+		frameRate = 1 / frameTime;
+		frameStream << frameRate;
+		gameEngine->SetWindowCaption(frameStream.str());
+		frameStream.str("");
 
 		/**** Update your scene each frame here ****/
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
@@ -112,7 +121,23 @@ void main()
 			}
 			else
 			{
-				cout << "Error - Agent Not Found";
+				cout << "Error - Agent Not Found" << endl;
+			}
+		}
+		if (gameEngine->KeyHit(Key_N) && crowdEngine->GetIsPaused())
+		{
+			cout << "Enter a number between 0 and " << kXSubDiv << endl;
+			cin >> tempInt;
+			cout << "Enter a number between 0 and " << kYSubDiv << endl;
+			cin >> tempInt2;
+			cout << "Square " << tempInt << ", " << tempInt2 << " details: " << endl;
+			if (crowdEngine->GetSquareString(tempInt, tempInt2, tempString))
+			{
+				cout << tempString << endl;
+			}
+			else
+			{
+				cout << "Error - Square Not Found" << endl;
 			}
 		}
 	}

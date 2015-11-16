@@ -44,8 +44,11 @@ std::vector<UID> GSceneSquare::TransferAgents()
 	std::vector<UID> rejectionList;	//List of the agents no longer in this scene square
 
 	gen::CVector2 position;
-	for (auto ID = m_Agents.begin(); ID != m_Agents.end(); ID++ )
+	auto ID = m_Agents.begin();
+	bool incremented;
+	while (ID != m_Agents.end())
 	{
+		incremented = false;
 		if (sceneManager->GetAgentPosition(*ID, position))	//The agent exists, retrieved the position
 		{
 			//Test if the position is outside of the bounding bos of this scene square
@@ -54,22 +57,33 @@ std::vector<UID> GSceneSquare::TransferAgents()
 				position.x >= (m_Origin.x + m_Size.x) ||
 				position.y >= (m_Origin.y + m_Size.y)	)
 			{
+				//Set the agent to be rejected
 				rejectionList.push_back(*ID);
 				//Remove the agent from this list
 				ID = m_Agents.erase(ID);
-				//Decrement the iterator so the next agent is the correct agent
-				ID--;
-
+				incremented = true;
 			}
 		}
 		else //The agent does not exist
 		{
 			//Remove the agent
 			ID = m_Agents.erase(ID);
-			//Decrement the iterator so the next agent is the correct agent
-			ID--;
+			incremented = true;
+		}
+		//If the agent exists and is still within the bounding box then the iterator has not been incremented
+		if (!incremented)
+		{
+			//Increment the iterator
+			ID++;
 		}
 	}
+
+	return rejectionList;
+}
+
+void GSceneSquare::AddAgent(UID agentID)
+{
+	m_Agents.push_back(agentID);
 }
 
 #ifdef _DEBUG
@@ -77,10 +91,11 @@ std::string GSceneSquare::ToString()
 {
 	std::stringstream builder;
 
-	builder << GObject::ToString() << "Square Width: " << m_Size.x << " Square Height " << m_Size.y << "\n"
-		<< "Square Origin: " << m_Origin << "\n"
-		<< "No of walls: " << m_Walls.size() << "\n";
-
+	builder << GObject::ToString() << "Square Width: " << m_Size.x << " Square Height: " << m_Size.y << std::endl
+		<< "Square Origin: " << m_Origin << std::endl
+		<< "No of Agents: " << m_Agents.size() << std::endl
+		<< "No of walls: " << m_Walls.size() << std::endl;
+		
 	return builder.str();
 }
 

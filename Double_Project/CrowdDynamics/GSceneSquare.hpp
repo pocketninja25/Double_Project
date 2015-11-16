@@ -4,7 +4,6 @@
 #include "GObject.hpp"
 
 
-
 class GSceneSquare : public GObject
 {
 //---------------------------
@@ -24,7 +23,6 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-
 	GSceneSquare(gen::CVector2 iSize, gen::CVector2 iOriginPos, bool iIsActive = true);
 	GSceneSquare(gen::CVector2 iSize, float iOriginXPos, float iOriginYPos, bool iIsActive = true);
 	GSceneSquare(float iXSize, float iYSize, gen::CVector2 iOriginPos, bool iIsActive = true);
@@ -40,6 +38,7 @@ public:
 	//***************************
 	// Setters/Mutators
 	//***************************
+	void AddAgent(UID agentID);
 
 	//***************************
 	// Other Functions

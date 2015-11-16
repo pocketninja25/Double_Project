@@ -36,18 +36,18 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 	m_TimeStep(iTimeStep),
 	m_TimeSinceLastUpdate(0.0f),
 	m_WorldSize(iWorldSize),
+	m_NoOfSquaresX(iXSubdivisions),
+	m_NoOfSquaresY(iYSubdivisions),
 	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions]),
+	m_SquareSize(gen::CVector2(iWorldSize.x / iXSubdivisions, iWorldSize.y / iYSubdivisions)),
 	m_Paused(false)
 {
-	float xSquareSize = iWorldSize.x / iXSubdivisions;
-	float ySquareSize = iWorldSize.y / iYSubdivisions;
-
 	//Construct the scenesquare objects
-	for (int i = 0; i < iXSubdivisions; i++)
+	for (int i = 0; i < m_NoOfSquaresX; i++)
 	{
-		for (int j = 0; j < iYSubdivisions; j++)
+		for (int j = 0; j < m_NoOfSquaresY; j++)
 		{
-			m_SceneSquares[i * j] = new GSceneSquare(xSquareSize, ySquareSize, i * xSquareSize, j * ySquareSize);
+			m_SceneSquares[i * m_NoOfSquaresX + j] = new GSceneSquare(m_SquareSize, gen::CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
 		}
 	}
 }
@@ -62,7 +62,7 @@ GSceneManager::~GSceneManager()
 		delete m_SceneSquares[i];
 	}
 	//Deallocate the scenesquare array
-	delete m_SceneSquares;
+	delete[] m_SceneSquares;
 
 	//Deallocate Managers
 	delete mManager_Entity;
@@ -115,7 +115,18 @@ bool GSceneManager::GetAgentString(UID requestedUID, std::string &agentString)
 		agentString = foundAgent->ToString();
 		return true;
 	}
-	//No helpful data format for failed GetMatrix, just return uninitialised memory garbage
+	//No helpful data format for failed attempt, just return uninitialised memory garbage
+	return false;
+}
+
+bool GSceneManager::GetSquareString(int xPos, int yPos, std::string& squareString)
+{
+	if (xPos >= 0 && xPos < m_NoOfSquaresX && yPos >= 0 && yPos < m_NoOfSquaresY)	//If the square is a valid square
+	{
+		squareString = m_SceneSquares[xPos * m_NoOfSquaresX + yPos]->ToString();
+		return true;
+	}
+	//No helpful data format for failed attempt, just return uninitialised memory garbage
 	return false;
 }
 
@@ -123,7 +134,15 @@ bool GSceneManager::GetAgentString(UID requestedUID, std::string &agentString)
 
 UID GSceneManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 {
-	return mManager_Entity->AddAgent(iPosition, iIsActive);
+	//position/square width rounded down to the nearest integer = the square to add the agent to
+	int xSquare = static_cast<int>(iPosition.x / m_SquareSize.x);
+	int ySquare = static_cast<int>(iPosition.y / m_SquareSize.y);
+	
+	UID agentUID = mManager_Entity->AddAgent(iPosition, iIsActive);	//Create the agent object
+	
+	m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(agentUID); //Add the agent UID to this square's list of agents at the correct position
+
+	return agentUID;
 }
 
 UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
@@ -134,13 +153,19 @@ UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 {
 	std::vector<UID> agentUIDs;
+	
+	int xSquare;
+	int ySquare;
+	gen::CVector2 position;
 
 	for (int i = 0; i < kNoAgents; i++)
 	{
-		agentUIDs.push_back(
-			mManager_Entity->AddAgent(
-				gen::CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y)),
-				iAreActive));
+		position = gen::CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y));
+		xSquare = static_cast<int>(position.x / m_SquareSize.x);
+		ySquare = static_cast<int>(position.y / m_SquareSize.y);
+		
+		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
+		m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(agentUIDs.back());
 	}
 
 	return agentUIDs;
@@ -161,7 +186,8 @@ void GSceneManager::Update(float frameTime)
 		{
 			//Begin the update tree
 			mManager_Entity->Update(m_TimeStep);
-
+			
+			this->MaintainSceneSquares();
 
 			//Time step complete, reduce the time since update by the time step
 			m_TimeSinceLastUpdate -= m_TimeStep;
@@ -170,4 +196,36 @@ void GSceneManager::Update(float frameTime)
 	}
 }
 
+void GSceneManager::MaintainSceneSquares()
+{
+	std::vector<UID>* tempAgents;
+	std::vector<UID> unassignedAgents;	
+	
+	for (int i = 0; i < m_NoOfSquaresX * m_NoOfSquaresY; i++)
+	{
+		//Get list of agents transferring from this scenesquare
+		tempAgents = &m_SceneSquares[i]->TransferAgents();
+		
+		//Append the new agents to the unassignedAgents list
+		if (tempAgents->size() > 0)
+		{
+			unassignedAgents.insert(unassignedAgents.end(), tempAgents->begin(), tempAgents->end());
+		}
+	}
 
+	//Assign the unassignedAgents to their new square
+	gen::CVector2 tempPos;
+	int xSquare;
+	int ySquare;
+	for (int i = 0; i < unassignedAgents.size(); i++)
+	{
+		if (this->GetAgentPosition(unassignedAgents[i], tempPos))	//If agent exists
+		{
+			//position/square width rounded down to the nearest integer = the square to add to
+			xSquare = static_cast<int>(tempPos.x / m_SquareSize.x);
+			ySquare = static_cast<int>(tempPos.y / m_SquareSize.y);
+			m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(unassignedAgents[i]); //Add the current UID to this square's list of agents
+		}
+		//Else ignore this agent, it is removed from the scene system
+	}
+}
