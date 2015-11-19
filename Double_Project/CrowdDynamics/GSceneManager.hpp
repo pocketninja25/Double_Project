@@ -78,13 +78,14 @@ public:
 	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix);
 	bool GetAgentPosition(UID requestedUID, gen::CVector2 &position);
 
+	float GetTimeStep();
+
+	bool GetIsPaused();
 
 #ifdef _DEBUG
 	bool GetAgentString(UID requestedID, std::string& agentString);
 	bool GetSquareString(int xPos, int yPos, std::string& squareString);
 #endif
-
-	bool GetIsPaused();
 
 	//***************************
 	// Setters/Mutators
@@ -92,6 +93,7 @@ public:
 	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
 	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
+	void ComputeAgentVelocities(const std::list<UID>& localAgents);
 
 	void SetPaused(bool iPaused);
 

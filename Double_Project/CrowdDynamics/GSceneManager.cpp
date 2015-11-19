@@ -101,6 +101,11 @@ bool GSceneManager::GetAgentPosition(UID requestedUID, gen::CVector2 &position)
 	return false;
 }
 
+float GSceneManager::GetTimeStep()
+{
+	return m_TimeStep;
+}
+
 bool GSceneManager::GetIsPaused()
 {
 	return m_Paused;
@@ -171,6 +176,11 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 	return agentUIDs;
 }
 
+void GSceneManager::ComputeAgentVelocities(const std::list<UID>& localAgents)
+{
+	mManager_Entity->ComputeAgentVelocities(localAgents);
+}
+
 void GSceneManager::SetPaused(bool iPaused)
 {
 	m_Paused = iPaused;
@@ -184,6 +194,10 @@ void GSceneManager::Update(float frameTime)
 
 		while (m_TimeSinceLastUpdate > m_TimeStep)		//While there are time steps left - this method allows for multiple time steps to be executed if they have built up //TODO: make this functionality independent of a function call
 		{
+			for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
+			{
+				m_SceneSquares[i]->Update(m_TimeStep);
+			}
 			//Begin the update tree
 			mManager_Entity->Update(m_TimeStep);
 			
@@ -192,7 +206,6 @@ void GSceneManager::Update(float frameTime)
 			//Time step complete, reduce the time since update by the time step
 			m_TimeSinceLastUpdate -= m_TimeStep;
 		}
-
 	}
 }
 
@@ -224,6 +237,7 @@ void GSceneManager::MaintainSceneSquares()
 			//position/square width rounded down to the nearest integer = the square to add to
 			xSquare = static_cast<int>(tempPos.x / m_SquareSize.x);
 			ySquare = static_cast<int>(tempPos.y / m_SquareSize.y);
+
 			m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(unassignedAgents[i]); //Add the current UID to this square's list of agents
 		}
 		//Else ignore this agent, it is removed from the scene system

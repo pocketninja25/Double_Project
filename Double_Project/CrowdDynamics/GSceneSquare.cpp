@@ -33,7 +33,7 @@ GSceneSquare::~GSceneSquare()
 
 void GSceneSquare::Update(float updateTime)
 {
-	//TODO: Fill this in
+	GSceneManager::GetInstance()->ComputeAgentVelocities(m_Agents);
 	
 }
 
@@ -51,7 +51,7 @@ std::vector<UID> GSceneSquare::TransferAgents()
 		incremented = false;
 		if (sceneManager->GetAgentPosition(*ID, position))	//The agent exists, retrieved the position
 		{
-			//Test if the position is outside of the bounding bos of this scene square
+			//Test if the position is outside of the bounding box of this scene square
 			if (position.x < m_Origin.x || 
 				position.y < m_Origin.y || 
 				position.x >= (m_Origin.x + m_Size.x) ||

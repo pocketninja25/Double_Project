@@ -11,7 +11,9 @@ class GAgent : public GEntity
 private:
 	gen::CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
 	float m_Velocity;				//The velocity of the agent in units per second
-	gen::CVector2 m_MovementVect;	//The movement vector of the agent in units per second
+	gen::CVector2 m_DesiredMovementVect;	//The desired movement vector of the agent in units per second
+	float m_Radius;
+	gen::CVector2 m_MovementVector;
 
 //---------------------------
 // Public Functions
@@ -39,6 +41,7 @@ public:
 	// Other Functions
 	//***************************
 	virtual void Update(float updateTime);		
+	void ComputePossibleVelocities(const std::vector<GAgent*>& localAgents);
 
 #ifdef _DEBUG
 	virtual std::string ToString();
@@ -48,7 +51,6 @@ public:
 // Private Functions
 //---------------------------
 private:
-
 //***************************
 // Other Functions
 //***************************

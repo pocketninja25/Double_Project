@@ -4,6 +4,7 @@
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
 
+
 GEntityManager::GEntityManager()
 {
 }
@@ -84,6 +85,25 @@ void GEntityManager::Update(float updateTime)
 			agent.second->SetNewDestination(this->GetRandomDestination());
 		}
 	}
+}
+
+void GEntityManager::ComputeAgentVelocities(const std::list<UID>& localAgents)
+{
+	std::vector<GAgent*> allAgents;
+	GAgent* theAgent;
+	for (auto agentID : localAgents)
+	{
+		if (GetAgent(agentID, theAgent))	//Agent with this UID exists 
+		{
+			allAgents.push_back(theAgent);
+		}
+	}
+
+	for (auto agent : allAgents)
+	{
+		agent->ComputePossibleVelocities(allAgents);
+	}
+	
 }
 
 gen::CVector2 GEntityManager::GetRandomDestination()

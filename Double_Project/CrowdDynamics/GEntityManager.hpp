@@ -52,6 +52,8 @@ public:
 
 	void Update(float updateTime);
 
+	void ComputeAgentVelocities(const std::list<UID>& localAgents);
+
 	gen::CVector2 GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
 
 };
