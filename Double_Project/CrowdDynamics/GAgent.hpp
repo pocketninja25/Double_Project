@@ -3,6 +3,8 @@
 #include "Common.hpp"
 #include "GEntity.hpp"
 
+struct SRestrictionObject;
+
 class GAgent : public GEntity
 {
 //---------------------------
@@ -42,6 +44,9 @@ public:
 	//***************************
 	virtual void Update(float updateTime);		
 	void ComputePossibleVelocities(const std::vector<GAgent*>& localAgents);
+private:
+	gen::CVector2 MoveDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement);
+public:
 
 #ifdef _DEBUG
 	virtual std::string ToString();
