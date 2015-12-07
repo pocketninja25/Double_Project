@@ -17,6 +17,7 @@ private:
 	float m_Radius;
 	gen::CVector2 m_MovementVector;
 
+
 //---------------------------
 // Public Functions
 //---------------------------
@@ -39,13 +40,15 @@ public:
 	//***************************
 	void SetNewDestination(gen::CVector2 newDestination);	//Obtain a new goal location
 
+	void SetPosition(gen::CVector2 newPosition);
+
 	//***************************
 	// Other Functions
 	//***************************
 	virtual void Update(float updateTime);		
 	void ComputePossibleVelocities(const std::vector<GAgent*>& localAgents);
 private:
-	gen::CVector2 MoveDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement);
+	gen::CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement);
 public:
 
 #ifdef _DEBUG
@@ -60,5 +63,18 @@ private:
 // Other Functions
 //***************************
 
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// Debug code
+//vvvvvvvvvvvvvvvvvvvvvvvvvvv
+#ifdef _DEBUG
+private:
+	bool dm_BeingWatched;
+
+public:
+	void SetWatched(bool isWatched);
+
+	bool GetWatched();
+#endif
 };
 

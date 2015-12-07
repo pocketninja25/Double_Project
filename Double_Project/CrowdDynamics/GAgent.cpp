@@ -3,8 +3,11 @@
 
 GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive) :
 	GEntity(iPosition, iIsActive),
+#ifdef _DEBUG
+	dm_BeingWatched(false),
+#endif
 	m_Destination(iDestination),
-	m_Velocity(1.5f),//TODO: find a way of calculating this better
+	m_Velocity(15.0f),//TODO: find a way of calculating this better
 	m_Radius(sqrt(200.0f)/2)	//TODO: provide a reliable version of this number based on file data
 {
 	m_DesiredMovementVect = gen::CVector2(GetPosition(), m_Destination);
@@ -43,6 +46,15 @@ void GAgent::SetNewDestination(gen::CVector2 newDestination)
 	m_DesiredMovementVect.Normalise();
 	m_DesiredMovementVect * m_Velocity;
 }
+void GAgent::SetPosition(gen::CVector2 newPosition)
+{
+	gen::CMatrix3x3 tempMatrix = GetMatrix();
+
+	tempMatrix.e20 = newPosition.x;
+	tempMatrix.e21 = newPosition.y;
+
+	SetMatrix(tempMatrix);
+}
 #include <assert.h>
 
 void GAgent::Update(float updateTime)
@@ -52,7 +64,7 @@ void GAgent::Update(float updateTime)
 	matrix.FaceTarget2D(m_Destination);		//Face the agent towards it's destination
 
 	//Move by the movement vector (units per second) modified by update time calculating units this frame
-	matrix.Move2D(m_MovementVector * updateTime);
+	matrix.Move2D(m_MovementVector);// *updateTime);
 
 	m_DesiredMovementVect = m_Destination - GetPosition();
 	m_DesiredMovementVect.Normalise();
@@ -69,7 +81,7 @@ std::string GAgent::ToString()
 
 	builder << GEntity::ToString() << "Destination: X: " << m_Destination.x << " Y: " << m_Destination.y << "\n"
 		<< "Velocity: " << m_Velocity << "\n"
-		<< "DesiredMovementVect: X: " << m_DesiredMovementVect.x << "Y: " << m_DesiredMovementVect.y << "\n";
+		<< "DesiredMovementVect: X: " << m_DesiredMovementVect.x << " Y: " << m_DesiredMovementVect.y << "\n";
 
 	return builder.str();
 }
@@ -111,8 +123,8 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 		if (otherAgent->GetUID() != this->GetUID())
 		{
 			//Determine the distance that the other agent can travel in one frame
-			float mySpeed = this->m_DesiredMovementVect.Length();
-			float otherSpeed = otherAgent->m_DesiredMovementVect.Length();
+			float mySpeed = this->m_DesiredMovementVect.Length() * updateTime;
+			float otherSpeed = otherAgent->m_DesiredMovementVect.Length() * updateTime;
 			float myRadius = this->m_Radius;
 			float otherRadius = otherAgent->m_Radius;
 
@@ -120,8 +132,8 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 			//Determine if the other agent is too far away to matter to this agent's movement
 			if (vecFromOther.Length() <
 				(myRadius + otherRadius +
-					(mySpeed * updateTime) +	//The distance this agent can travel
-					(otherSpeed * updateTime)))	//The distance the other agent can travel
+					mySpeed +	//The distance this agent can travel
+					otherSpeed))	//The distance the other agent can travel
 			{	//Other agent is close enough to consider
 				
 				//Have all points be relative to E (this)
@@ -184,7 +196,7 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 				
 				//Offset the velocity obstacle by (vA + vB)/2 to accomodate for the agents' movement as well as position/size
 				//Only need to affect the points A, B, C, D
-				gen::CVector2 offset = (this->m_DesiredMovementVect + otherAgent->m_DesiredMovementVect) / 2;
+				gen::CVector2 offset = ((this->m_DesiredMovementVect * updateTime) + (otherAgent->m_DesiredMovementVect * updateTime)) / 2;
 				buildRestriction.A += offset;
 				buildRestriction.B += offset;
 				buildRestriction.C += offset;
@@ -196,21 +208,21 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 		}	//else Agent ID is this agent, no calculation
 	}	//End loop through agents
 	
-	m_MovementVector = MoveDesiredVect(restrictions, m_DesiredMovementVect);
+	m_MovementVector = MoveTheDesiredVect(restrictions, m_DesiredMovementVect * updateTime);
 
 }
 
-gen::CVector2 GAgent::MoveDesiredVect(std::vector<SRestrictionObject>& restrictions, gen::CVector2 attemptedMovement)
+gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restrictions, gen::CVector2 attemptedMovement)
 {
 	std::vector<SRestrictionObject> insideRestrictions;	//Vector of restrictions which the movement vector falls inside of
 	for (auto restriction : restrictions)
 	{
 		//Determine if the desired velocity would intersect this restriction object
 
-		if (restriction.ABNormal.Dot(attemptedMovement) < 0 &&
-			restriction.ACNormal.Dot(attemptedMovement) < 0 &&
-			restriction.BDNormal.Dot(attemptedMovement) < 0 &&
-			restriction.CDNormal.Dot(attemptedMovement) < 0)
+		if (restriction.ABNormal.Dot(attemptedMovement) > 0 &&
+			restriction.ACNormal.Dot(attemptedMovement) > 0 &&
+			restriction.BDNormal.Dot(attemptedMovement) > 0 &&
+			restriction.CDNormal.Dot(attemptedMovement) > 0)
 		{
 			//Is inside the box
 			insideRestrictions.push_back(restriction);
@@ -254,9 +266,23 @@ gen::CVector2 GAgent::MoveDesiredVect(std::vector<SRestrictionObject>& restricti
 
 		if (insideRestrictions.size() > 0)
 		{
-			return MoveDesiredVect(insideRestrictions, closest);
+			return MoveTheDesiredVect(insideRestrictions, closest);
 		}
 		return closest;
 	}
 	return attemptedMovement;	//The desired velocity lies outside all restrictions
 }
+
+#ifdef _DEBUG
+
+void GAgent::SetWatched(bool isWatched)
+{
+	dm_BeingWatched = isWatched;
+}
+
+bool GAgent::GetWatched()
+{
+	return dm_BeingWatched;
+}
+
+#endif

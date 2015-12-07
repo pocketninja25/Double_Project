@@ -3,6 +3,8 @@
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
 
+#include "Picking.h"
+
 #include "CrowdDynamics.hpp"
 using namespace gen;
 EKeyCode quitKey = Key_Escape;
@@ -10,9 +12,9 @@ EKeyCode pauseKey = Key_P;
 
 const int kNoAgents = 50;
 const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
-const float kTimeStep = 1.0f / 30.0f;
-const int kXSubDiv = 3;
-const int kYSubDiv = 3;
+const float kTimeStep = 1.0f / 10.0f;
+const int kXSubDiv = 5;
+const int kYSubDiv = 5;
 
 float frameTime = 0;
 
@@ -21,6 +23,39 @@ struct SAgent
 	IModel* model;
 	UID id;
 };
+
+bool FindNearest(SAgent* agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
+{
+	CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+	CVector2 mousePosition = CVector2(tempPos.x, tempPos.z);
+
+	CVector2 agentPosition;
+	bool set = false;
+	UID nearest;
+	CVector2 nearestPosition;
+
+	for (int i = 0; i < kNoAgents; i++)
+	{
+		if (manager->GetAgentPosition(agents[i].id, agentPosition))
+		{
+			if (!set)
+			{
+				nearest = agents[i].id;
+				nearestPosition = agentPosition;
+				set = true;
+			}
+			else if((agentPosition - mousePosition).Length() < (nearestPosition - mousePosition).Length())
+			{
+				nearest = agents[i].id;
+				nearestPosition = agentPosition;
+			}
+
+		}
+	}
+	nearestID = nearest;
+
+	return set;
+}
 
 void main()
 {
@@ -56,19 +91,38 @@ void main()
 	}
 	
 	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(400.0f);
-	cam->SetRotationSpeed(180.0f);
+	cam->SetRotationSpeed(0.0f);// 180.0f);
 
 	float frameRate;
 	stringstream frameStream;
-	frameStream.precision(4);
-
+	
 	gen::CMatrix3x3 tempAgentMat;
 	string tempString;
 	int tempInt, tempInt2;
 	float tempModelMat[16];
+
+	//Assign the simulation matrices to the model matrices - first time only
+	for (int i = 0; i < kNoAgents; i++)
+	{
+		if (crowdEngine->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
+		{
+			//Convert agent matrix to model matrix
+			AGENTS[i].model->GetMatrix(tempModelMat);
+			tempModelMat[0] = tempAgentMat.e00;
+			tempModelMat[2] = tempAgentMat.e01;
+			tempModelMat[8] = tempAgentMat.e10;
+			tempModelMat[10] = tempAgentMat.e11;
+			tempModelMat[12] = tempAgentMat.e20;
+			tempModelMat[14] = tempAgentMat.e21;
+			AGENTS[i].model->SetMatrix(tempModelMat);
+		}
+	}
+
+	UID holding = -1;
+
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
 	{
@@ -81,9 +135,34 @@ void main()
 		gameEngine->DrawScene();
 		
 		frameRate = 1 / frameTime;
-		frameStream << frameRate;
+		frameStream << static_cast<int>(frameRate);
 		gameEngine->SetWindowCaption(frameStream.str());
 		frameStream.str("");
+
+		if (gameEngine->KeyHeld(Key_Numpad4))
+		{
+			cam->MoveX(-80.0f * frameTime);
+		}
+		if (gameEngine->KeyHeld(Key_Numpad6))
+		{
+			cam->MoveX(80.0f * frameTime);
+		}
+		if (gameEngine->KeyHeld(Key_Numpad2))
+		{
+			cam->MoveZ(-80.0f * frameTime);
+		}
+		if (gameEngine->KeyHeld(Key_Numpad8))
+		{
+			cam->MoveZ(80.0f * frameTime);
+		}
+		if (gameEngine->KeyHeld(Key_Numpad7))
+		{
+			cam->MoveY(-80.0f * frameTime);
+		}
+		if (gameEngine->KeyHeld(Key_Numpad9))
+		{
+			cam->MoveY(80.0f * frameTime);
+		}
 
 		/**** Update your scene each frame here ****/
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
@@ -104,10 +183,31 @@ void main()
 				AGENTS[i].model->SetMatrix(tempModelMat);
 			}
 		}
-
+		
 		if (gameEngine->KeyHit(pauseKey))
 		{
 			crowdEngine->SetPaused(!crowdEngine->GetIsPaused());	//Toggle paused
+		}
+		if (gameEngine->KeyHeld(Key_T) && crowdEngine->GetIsPaused())
+		{
+			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
+
+			//Assign the simulation matrices to the model matrices
+			for (int i = 0; i < kNoAgents; i++)
+			{
+				if (crowdEngine->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
+				{
+					//Convert agent matrix to model matrix
+					AGENTS[i].model->GetMatrix(tempModelMat);
+					tempModelMat[0] = tempAgentMat.e00;
+					tempModelMat[2] = tempAgentMat.e01;
+					tempModelMat[8] = tempAgentMat.e10;
+					tempModelMat[10] = tempAgentMat.e11;
+					tempModelMat[12] = tempAgentMat.e20;
+					tempModelMat[14] = tempAgentMat.e21;
+					AGENTS[i].model->SetMatrix(tempModelMat);
+				}
+			}
 		}
 		if (gameEngine->KeyHit(Key_M) && crowdEngine->GetIsPaused())
 		{
@@ -138,6 +238,116 @@ void main()
 			else
 			{
 				cout << "Error - Square Not Found" << endl;
+			}
+		}
+		if (gameEngine->KeyHeld(Mouse_LButton))
+		{	
+			if (holding == -1)	//If not holding anything, pick the nearest item up
+			{
+				UID tempHold;
+				if (FindNearest(AGENTS, crowdEngine, tempHold, gameEngine, cam))
+				{
+					holding = tempHold;
+					string agentString;
+					if (crowdEngine->GetAgentString(holding, agentString))
+					{
+						cout << "Picked up: " << endl;
+						cout << agentString << endl;
+					}
+					for (int i = 0; i < kNoAgents; i++)
+					{
+						if (AGENTS[i].id == holding)
+						{
+							AGENTS[i].model->SetSkin("tiles3.jpg");
+						}
+					}
+				}
+			}
+			
+			if (holding != -1)
+			{
+				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+				crowdEngine->SetAgentPosition(holding, CVector2(tempPos.x, tempPos.z));
+
+				if (crowdEngine->GetAgentMatrix(holding, tempAgentMat))
+				{
+					for (int i = 0; i < kNoAgents; i++)
+					{
+						if (AGENTS[i].id == holding)
+						{
+							AGENTS[i].model->GetMatrix(tempModelMat);
+							tempModelMat[0] = tempAgentMat.e00;
+							tempModelMat[2] = tempAgentMat.e01;
+							tempModelMat[8] = tempAgentMat.e10;
+							tempModelMat[10] = tempAgentMat.e11;
+							tempModelMat[12] = tempAgentMat.e20;
+							tempModelMat[14] = tempAgentMat.e21;
+							AGENTS[i].model->SetMatrix(tempModelMat);
+						}
+					}//Convert agent matrix to model matrix
+				}
+			}
+		}
+		else
+		{
+			if (holding != -1)
+			{
+				string agentString;
+				if (crowdEngine->GetAgentString(holding, agentString))
+				{
+					cout << "Dropped: " << endl;
+					cout << agentString << endl;
+				}
+				for (int i = 0; i < kNoAgents; i++)
+				{
+					if (AGENTS[i].id == holding)
+					{
+						if (crowdEngine->GetAgentWatched(holding))
+						{
+							AGENTS[i].model->SetSkin("tiles2.jpg");
+						}
+						else
+						{
+							AGENTS[i].model->SetSkin("tiles1.jpg");
+						}
+					}
+				}
+
+				holding = -1;
+			}
+		}
+		if (gameEngine->KeyHit(Mouse_RButton))
+		{
+			UID foundNearest;
+			if (FindNearest(AGENTS, crowdEngine, foundNearest, gameEngine, cam))
+			{
+				bool isWatched = crowdEngine->GetAgentWatched(foundNearest);
+				if (crowdEngine->SetAgentWatched(foundNearest, !crowdEngine->GetAgentWatched(foundNearest)))
+				{
+					cout << "Agent: " << foundNearest << " Is ";
+					if (isWatched)	//Was being watched before change, is now not being watched
+					{
+						for (int i = 0; i < kNoAgents; i++)
+						{
+							if (AGENTS[i].id == foundNearest)
+							{
+								AGENTS[i].model->SetSkin("tiles1.jpg");
+							}
+						}
+						cout << "Not ";
+					}
+					else
+					{
+						for (int i = 0; i < kNoAgents; i++)
+						{
+							if (AGENTS[i].id == foundNearest)
+							{
+								AGENTS[i].model->SetSkin("tiles2.jpg");
+							}
+						}
+					}
+					cout << "Being Watched" << endl;
+				}
 			}
 		}
 	}

@@ -20,10 +20,10 @@ public:
 //This is the primary manager, it manages the scene, as well as the other managers
 class GSceneManager
 {
-//---------------------------
-// Singleton Data
-//---------------------------
-public: 
+	//---------------------------
+	// Singleton Data
+	//---------------------------
+public:
 	static GSceneManager* GetInstance(SWorldInfo* iWorldData = 0);	//Accepts struct pointer of world data - this allows the Scene manager to have a complex setup through getinstance but not require any data to get the instance subsequent times
 																	//All objects created by this class will also reference it this way, they do not need to worry about the instance not existing because they cannot exist without this
 private:
@@ -31,24 +31,24 @@ private:
 	GSceneManager(SWorldInfo iWorldInfo);
 	GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
 	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions);
-	
+
 	//Delete copy constructor and = operator
-	
+
 	//Deleted
 	GSceneManager(GSceneManager const&) = delete;
 	//Deleted
 	void operator=(GSceneManager const&) = delete;
 
-//---------------------------
-// Manager classes
-//---------------------------
+	//---------------------------
+	// Manager classes
+	//---------------------------
 private:
 	GEntityManager* mManager_Entity;
 	GObstacleManager* mManager_Obstacle;
 
-//---------------------------
-// Private Data Members
-//---------------------------
+	//---------------------------
+	// Private Data Members
+	//---------------------------
 private:
 	float m_TimeStep;				//The amount of time updated each frame TODO: make this work concurrently with the client program, updating without a call to the update function (will need to set the program to 'Enabled'/'Disabled'
 	float m_TimeSinceLastUpdate;	//The amount of time elapsed since the last update
@@ -62,9 +62,9 @@ private:
 
 	bool m_Paused;
 
-//---------------------------
-// Public Functions
-//---------------------------
+	//---------------------------
+	// Public Functions
+	//---------------------------
 public:
 	//***************************
 	// Constructors/Destructors
@@ -95,17 +95,33 @@ public:
 	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
 	void ComputeAgentVelocities(const std::list<UID>& localAgents);
 
+	bool SetAgentPosition(UID agent, gen::CVector2 newPosition);
+
 	void SetPaused(bool iPaused);
 
 	//***************************
 	// Other Functions
 	//***************************
 	void Update(float frameTime);
+	void PerformOneTimeStep();
+
+	int GetWhichSquare(gen::CVector2 itemPosition);	//Returns the array index of the square that owns this position
 
 //---------------------------
 // Private Functions
 //---------------------------
 private:
 	void MaintainSceneSquares();
+
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// Debug code
+//vvvvvvvvvvvvvvvvvvvvvvvvvvv
+#ifdef _DEBUG
+	public:
+		bool SetAgentWatched(UID agentID, bool isWatched);
+		bool GetAgentWatched(UID agentID);
+#endif
+
 };
 

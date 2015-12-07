@@ -56,5 +56,15 @@ public:
 
 	gen::CVector2 GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
 
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// Debug code
+//vvvvvvvvvvvvvvvvvvvvvvvvvvv
+#ifdef _DEBUG
+public:
+	bool SetAgentWatched(UID agentID, bool isWatched);
+	bool GetAgentWatched(UID agentID);
+#endif
+
 };
 

@@ -86,6 +86,11 @@ void GSceneSquare::AddAgent(UID agentID)
 	m_Agents.push_back(agentID);
 }
 
+void GSceneSquare::RemoveAgent(UID agentID)
+{
+	m_Agents.remove(agentID);
+}
+
 #ifdef _DEBUG
 std::string GSceneSquare::ToString()
 {
@@ -98,5 +103,4 @@ std::string GSceneSquare::ToString()
 		
 	return builder.str();
 }
-
 #endif

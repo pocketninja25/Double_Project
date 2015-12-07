@@ -112,3 +112,27 @@ gen::CVector2 GEntityManager::GetRandomDestination()
 
 	return gen::CVector2(RandomFloat(0, size.x), RandomFloat(0, size.y));
 }
+
+#ifdef _DEBUG
+bool GEntityManager::SetAgentWatched(UID agentID, bool isWatched)
+{
+	GAgent* theAgent;
+	if (GetAgent(agentID, theAgent))
+	{
+		theAgent->SetWatched(isWatched);
+		return true;
+	}
+	return false;
+}
+bool GEntityManager::GetAgentWatched(UID agentID)
+{
+	GAgent* theAgent;
+	if (GetAgent(agentID, theAgent))
+	{
+		return theAgent->GetWatched();
+	}
+	return false;
+
+}
+
+#endif

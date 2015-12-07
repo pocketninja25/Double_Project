@@ -39,14 +39,20 @@ public:
 	// Setters/Mutators
 	//***************************
 	void AddAgent(UID agentID);
+	void RemoveAgent(UID agentID);
 
 	//***************************
 	// Other Functions
 	//***************************
 	virtual void Update(float updateTime);
 
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// Debug code
+//vvvvvvvvvvvvvvvvvvvvvvvvvvv
 #ifdef _DEBUG
 	virtual std::string ToString();
+
 #endif
 };
 

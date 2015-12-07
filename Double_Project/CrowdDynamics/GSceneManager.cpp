@@ -139,13 +139,9 @@ bool GSceneManager::GetSquareString(int xPos, int yPos, std::string& squareStrin
 
 UID GSceneManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 {
-	//position/square width rounded down to the nearest integer = the square to add the agent to
-	int xSquare = static_cast<int>(iPosition.x / m_SquareSize.x);
-	int ySquare = static_cast<int>(iPosition.y / m_SquareSize.y);
-	
 	UID agentUID = mManager_Entity->AddAgent(iPosition, iIsActive);	//Create the agent object
 	
-	m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(agentUID); //Add the agent UID to this square's list of agents at the correct position
+	m_SceneSquares[GetWhichSquare(iPosition)]->AddAgent(agentUID); //Add the agent UID to this square's list of agents at the correct position
 
 	return agentUID;
 }
@@ -166,11 +162,9 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 	for (int i = 0; i < kNoAgents; i++)
 	{
 		position = gen::CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y));
-		xSquare = static_cast<int>(position.x / m_SquareSize.x);
-		ySquare = static_cast<int>(position.y / m_SquareSize.y);
 		
 		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
-		m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(agentUIDs.back());
+		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
 	}
 
 	return agentUIDs;
@@ -181,9 +175,41 @@ void GSceneManager::ComputeAgentVelocities(const std::list<UID>& localAgents)
 	mManager_Entity->ComputeAgentVelocities(localAgents);
 }
 
+bool GSceneManager::SetAgentPosition(UID agent, gen::CVector2 newPosition)
+{
+	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
+	if (mManager_Entity->GetAgent(agent, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
+	{
+		//Remove from original square		
+		m_SceneSquares[GetWhichSquare(foundAgent->GetPosition())]->RemoveAgent(agent);
+
+		//Set new position
+		foundAgent->SetPosition(newPosition);
+
+		//Add to new square
+		m_SceneSquares[GetWhichSquare(foundAgent->GetPosition())]->AddAgent(agent);
+		return true;
+	}
+
+	return false;
+}
+
 void GSceneManager::SetPaused(bool iPaused)
 {
 	m_Paused = iPaused;
+}
+
+void GSceneManager::PerformOneTimeStep()
+{
+	for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
+	{
+		m_SceneSquares[i]->Update(m_TimeStep);
+	}
+	//Begin the update tree
+	mManager_Entity->Update(m_TimeStep);
+
+	this->MaintainSceneSquares();
+
 }
 
 void GSceneManager::Update(float frameTime)
@@ -209,6 +235,25 @@ void GSceneManager::Update(float frameTime)
 	}
 }
 
+int GSceneManager::GetWhichSquare(gen::CVector2 itemPosition)
+{
+	//position/square width rounded down to the nearest integer = the square to add to
+	int xSquare = static_cast<int>(itemPosition.x / m_SquareSize.x);
+	int ySquare = static_cast<int>(itemPosition.y / m_SquareSize.y);
+
+	//Do the clamp
+	if (xSquare >= m_NoOfSquaresX)
+	{
+		xSquare = m_NoOfSquaresX - 1;
+	}
+	if (ySquare >= m_NoOfSquaresY)
+	{
+		ySquare = m_NoOfSquaresY - 1;
+	}
+
+	return xSquare * m_NoOfSquaresX + ySquare;
+}
+
 void GSceneManager::MaintainSceneSquares()
 {
 	std::vector<UID> tempAgents;
@@ -228,19 +273,25 @@ void GSceneManager::MaintainSceneSquares()
 
 	//Assign the unassignedAgents to their new square
 	gen::CVector2 tempPos;
-	int xSquare;
-	int ySquare;
 	for (int i = 0; i < unassignedAgents.size(); i++)
 	{
 		if (this->GetAgentPosition(unassignedAgents[i], tempPos))	//If agent exists
 		{
-			//position/square width rounded down to the nearest integer = the square to add to
-			xSquare = static_cast<int>(tempPos.x / m_SquareSize.x);
-			ySquare = static_cast<int>(tempPos.y / m_SquareSize.y);
-
-			m_SceneSquares[xSquare * m_NoOfSquaresX + ySquare]->AddAgent(unassignedAgents[i]); //Add the current UID to this square's list of agents
+			m_SceneSquares[GetWhichSquare(tempPos)]->AddAgent(unassignedAgents[i]); //Add the current UID to this square's list of agents
 		}
 		//Else ignore this agent, it is removed from the scene system
 	}
 }
 
+
+#ifdef _DEBUG
+bool GSceneManager::SetAgentWatched(UID agentID, bool isWatched)
+{
+	return mManager_Entity->SetAgentWatched(agentID, isWatched);
+}
+
+bool GSceneManager::GetAgentWatched(UID agentID)
+{
+	return mManager_Entity->GetAgentWatched(agentID);
+}
+#endif
