@@ -36,6 +36,11 @@ bool GAgent::HasReachedDestination()
 	return false;
 }
 
+gen::CVector2 GAgent::GetDesiredMovement()
+{
+	return m_DesiredMovementVect;
+}
+
 void GAgent::SetNewDestination(gen::CVector2 newDestination)
 {
 	//Recieve a new destination (from the manager class) when the manager determines the agent has arrived, or should change destination otherwise
@@ -128,9 +133,9 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 			float myRadius = this->m_Radius;
 			float otherRadius = otherAgent->m_Radius;
 
-			gen::CVector2 vecFromOther = this->GetPosition() - otherAgent->GetPosition();	//Vector from other agent to this agent
+			gen::CVector2 vecToOther = otherAgent->GetPosition() - this->GetPosition();	//Vector from other agent to this agent
 			//Determine if the other agent is too far away to matter to this agent's movement
-			if (vecFromOther.Length() <
+			if (vecToOther.Length() <
 				(myRadius + otherRadius +
 					mySpeed +	//The distance this agent can travel
 					otherSpeed))	//The distance the other agent can travel
@@ -144,16 +149,21 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 				buildRestriction.F = otherAgent->GetPosition() - this->GetPosition();
 
 				//Get direction vector from E to F
-				buildRestriction.I = vecFromOther;
+				buildRestriction.I = vecToOther;
 				buildRestriction.I.Normalise();
 				buildRestriction.J = buildRestriction.I;
 
 				//Scale by the correct length
-				buildRestriction.I *= (vecFromOther.Length() - (this->m_Radius + otherAgent->m_Radius));
-				buildRestriction.J *= (vecFromOther.Length() + (this->m_Radius + otherAgent->m_Radius));
+				buildRestriction.I *= (vecToOther.Length() - (this->m_Radius + otherAgent->m_Radius));
+				buildRestriction.J *= (vecToOther.Length() + (this->m_Radius + otherAgent->m_Radius));
 				
-				buildRestriction.x = gen::ToDegrees(asinf((this->m_Radius + otherAgent->m_Radius) / vecFromOther.Length()));
+				buildRestriction.x = gen::ToDegrees(asinf((this->m_Radius + otherAgent->m_Radius) / vecToOther.Length()));
 				buildRestriction.y = 90 - buildRestriction.x;
+				if (this->dm_BeingWatched && buildRestriction.x != buildRestriction.x)
+				{
+					GSceneManager::GetInstance()->SetPaused(true);
+
+				}
 
 				buildRestriction.C = buildRestriction.I;	//Direction //Should be I - E but i is represented as Zero
 				buildRestriction.C = buildRestriction.C * gen::Matrix2x2Rotation(gen::ToRadians(-buildRestriction.x));	//Rotate C x degrees counter-clockwise
@@ -219,7 +229,7 @@ gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restri
 	{
 		//Determine if the desired velocity would intersect this restriction object
 
-		if (restriction.ABNormal.Dot(attemptedMovement) > 0 &&
+		if (//restriction.ABNormal.Dot(attemptedMovement) > 0 &&
 			restriction.ACNormal.Dot(attemptedMovement) > 0 &&
 			restriction.BDNormal.Dot(attemptedMovement) > 0 &&
 			restriction.CDNormal.Dot(attemptedMovement) > 0)

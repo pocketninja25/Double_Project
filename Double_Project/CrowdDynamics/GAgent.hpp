@@ -35,6 +35,8 @@ public:
 	//***************************
 	bool HasReachedDestination();	//Returns whether or not the agent has reached their destination
 
+	gen::CVector2 GetDesiredMovement();
+
 	//***************************
 	// Setters/Mutators
 	//***************************
@@ -47,11 +49,12 @@ public:
 	//***************************
 	virtual void Update(float updateTime);		
 	void ComputePossibleVelocities(const std::vector<GAgent*>& localAgents);
+
 private:
 	gen::CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement);
-public:
 
 #ifdef _DEBUG
+public:
 	virtual std::string ToString();
 #endif
 

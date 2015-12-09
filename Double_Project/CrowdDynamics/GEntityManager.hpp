@@ -40,6 +40,8 @@ public:
 
 	bool GetAgent(UID request, GAgent* &returnedAgent);
 
+	bool GetAgentDesiredVector(UID request, gen::CVector2 &returnedVector);
+
 	//***************************
 	// Setters/Mutators
 	//***************************

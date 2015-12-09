@@ -37,7 +37,7 @@ bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 	{
 		try
 		{
-			returnedAgent = m_ActiveAgents.at(request);
+			returnedAgent = m_InactiveAgents.at(request);
 
 		}
 		catch (std::out_of_range err)

@@ -92,7 +92,7 @@ bool GSceneManager::GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix)
 bool GSceneManager::GetAgentPosition(UID requestedUID, gen::CVector2 &position)
 {
 	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
-	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
+	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
 	{
 		position = foundAgent->GetPosition();
 		return true;
@@ -100,6 +100,19 @@ bool GSceneManager::GetAgentPosition(UID requestedUID, gen::CVector2 &position)
 	//No helpful data format for failed GetMatrix, just return uninitialised memory garbage
 	return false;
 }
+
+bool GSceneManager::GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desiredVector)
+{
+	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
+	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
+	{
+		desiredVector = foundAgent->GetDesiredMovement();
+		return true;
+	}
+	//No helpful data format for failed GetMatrix, just return existing desiredVector
+	return false;
+}
+
 
 float GSceneManager::GetTimeStep()
 {
@@ -110,32 +123,6 @@ bool GSceneManager::GetIsPaused()
 {
 	return m_Paused;
 }
-
-#ifdef _DEBUG
-bool GSceneManager::GetAgentString(UID requestedUID, std::string &agentString)
-{
-	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
-	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
-	{
-		agentString = foundAgent->ToString();
-		return true;
-	}
-	//No helpful data format for failed attempt, just return uninitialised memory garbage
-	return false;
-}
-
-bool GSceneManager::GetSquareString(int xPos, int yPos, std::string& squareString)
-{
-	if (xPos >= 0 && xPos < m_NoOfSquaresX && yPos >= 0 && yPos < m_NoOfSquaresY)	//If the square is a valid square
-	{
-		squareString = m_SceneSquares[xPos * m_NoOfSquaresX + yPos]->ToString();
-		return true;
-	}
-	//No helpful data format for failed attempt, just return uninitialised memory garbage
-	return false;
-}
-
-#endif
 
 UID GSceneManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 {
@@ -283,8 +270,36 @@ void GSceneManager::MaintainSceneSquares()
 	}
 }
 
-
 #ifdef _DEBUG
+bool GSceneManager::GetAgentString(UID requestedUID, std::string &agentString)
+{
+	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
+	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
+	{
+		agentString = foundAgent->ToString();
+		return true;
+	}
+	//No helpful data format for failed attempt, just return uninitialised memory garbage
+	return false;
+}
+
+bool GSceneManager::GetSquareString(int xPos, int yPos, std::string& squareString)
+{
+	if (xPos >= 0 && xPos < m_NoOfSquaresX && yPos >= 0 && yPos < m_NoOfSquaresY)	//If the square is a valid square
+	{
+		squareString = m_SceneSquares[xPos * m_NoOfSquaresX + yPos]->ToString();
+		return true;
+	}
+	//No helpful data format for failed attempt, just return uninitialised memory garbage
+	return false;
+}
+
+bool GSceneManager::GetSquareString(gen::CVector2 coordinate, std::string& squareString)
+{
+	squareString = m_SceneSquares[this->GetWhichSquare(coordinate)]->ToString();
+	return true;
+}
+
 bool GSceneManager::SetAgentWatched(UID agentID, bool isWatched)
 {
 	return mManager_Entity->SetAgentWatched(agentID, isWatched);

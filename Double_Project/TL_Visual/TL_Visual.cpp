@@ -2,7 +2,8 @@
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
-
+#include <map>
+using std::map;
 #include "Picking.h"
 
 #include "CrowdDynamics.hpp"
@@ -13,8 +14,8 @@ EKeyCode pauseKey = Key_P;
 const int kNoAgents = 50;
 const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
 const float kTimeStep = 1.0f / 10.0f;
-const int kXSubDiv = 5;
-const int kYSubDiv = 5;
+const int kXSubDiv = 20;
+const int kYSubDiv = 20;
 
 float frameTime = 0;
 
@@ -24,7 +25,7 @@ struct SAgent
 	UID id;
 };
 
-bool FindNearest(SAgent* agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
+bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
 {
 	CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 	CVector2 mousePosition = CVector2(tempPos.x, tempPos.z);
@@ -34,24 +35,24 @@ bool FindNearest(SAgent* agents, GSceneManager* manager, UID &nearestID, I3DEngi
 	UID nearest;
 	CVector2 nearestPosition;
 
-	for (int i = 0; i < kNoAgents; i++)
+	for (auto agent : agents)
 	{
-		if (manager->GetAgentPosition(agents[i].id, agentPosition))
+		if (manager->GetAgentPosition(agent.first, agentPosition))
 		{
 			if (!set)
 			{
-				nearest = agents[i].id;
+				nearest = agent.first;
 				nearestPosition = agentPosition;
 				set = true;
 			}
-			else if((agentPosition - mousePosition).Length() < (nearestPosition - mousePosition).Length())
+			else if ((agentPosition - mousePosition).Length() < (nearestPosition - mousePosition).Length())
 			{
-				nearest = agents[i].id;
+				nearest = agent.first;
 				nearestPosition = agentPosition;
 			}
-
 		}
 	}
+
 	nearestID = nearest;
 
 	return set;
@@ -66,12 +67,26 @@ void main()
 	// Add default folder for meshes and other media
 	gameEngine->AddMediaFolder( ".\\Media" );
 
-	IMesh* floorMesh = gameEngine->LoadMesh("Floor.x");
-	IModel* floorModel = floorMesh->CreateModel(kWorldSize.x / 2.0f, 0.0f, kWorldSize.y / 2.0f);
+	//IMesh* floorMesh = gameEngine->LoadMesh("Floor.x");
+	//IModel* floorModel = floorMesh->CreateModel(kWorldSize.x / 2.0f, 0.0f, kWorldSize.y / 2.0f);
 	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
+	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
+
+	map<UID, IModel*> AGENTS;
+	IModel** FloorTiles;
 	
-	SAgent AGENTS[kNoAgents];
-	
+	FloorTiles = new IModel*[kXSubDiv * kYSubDiv];
+	for (int i = 0; i < kXSubDiv; i++)
+	{
+		for (int j = 0; j < kYSubDiv; j++)
+		{
+			FloorTiles[i * kXSubDiv + j] = floorTileMesh->CreateModel(i * (kWorldSize.x/kXSubDiv), 0.0f, j * (kWorldSize.y / kYSubDiv));
+			FloorTiles[i * kXSubDiv + j]->ScaleX(kWorldSize.x / kXSubDiv);
+			FloorTiles[i * kXSubDiv + j]->ScaleZ(kWorldSize.y / kYSubDiv);
+		}
+	}
+
+
 	//--------------------------
 	// CrowdDynamics Setup
 	//--------------------------
@@ -86,8 +101,7 @@ void main()
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
 		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
-		AGENTS[i].model = agentMesh->CreateModel();
-		AGENTS[i].id = IDs[i];
+		AGENTS.insert(make_pair(IDs[i], agentMesh->CreateModel()));
 	}
 	
 	/**** Set up your scene here ****/
@@ -105,19 +119,18 @@ void main()
 	float tempModelMat[16];
 
 	//Assign the simulation matrices to the model matrices - first time only
-	for (int i = 0; i < kNoAgents; i++)
+	for (auto agent : AGENTS)
 	{
-		if (crowdEngine->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
+		if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
 		{
-			//Convert agent matrix to model matrix
-			AGENTS[i].model->GetMatrix(tempModelMat);
+			agent.second->GetMatrix(tempModelMat);
 			tempModelMat[0] = tempAgentMat.e00;
 			tempModelMat[2] = tempAgentMat.e01;
 			tempModelMat[8] = tempAgentMat.e10;
 			tempModelMat[10] = tempAgentMat.e11;
 			tempModelMat[12] = tempAgentMat.e20;
 			tempModelMat[14] = tempAgentMat.e21;
-			AGENTS[i].model->SetMatrix(tempModelMat);
+			agent.second->SetMatrix(tempModelMat);
 		}
 	}
 
@@ -168,19 +181,18 @@ void main()
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
 
 		//Assign the simulation matrices to the model matrices
-		for (int i = 0; i < kNoAgents; i++)
+		for (auto agent : AGENTS)
 		{
-			if (crowdEngine->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
+			if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
 			{
-				//Convert agent matrix to model matrix
-				AGENTS[i].model->GetMatrix(tempModelMat);
+				agent.second->GetMatrix(tempModelMat);
 				tempModelMat[0] = tempAgentMat.e00;
 				tempModelMat[2] = tempAgentMat.e01;
 				tempModelMat[8] = tempAgentMat.e10;
 				tempModelMat[10] = tempAgentMat.e11;
 				tempModelMat[12] = tempAgentMat.e20;
 				tempModelMat[14] = tempAgentMat.e21;
-				AGENTS[i].model->SetMatrix(tempModelMat);
+				agent.second->SetMatrix(tempModelMat);
 			}
 		}
 		
@@ -193,59 +205,35 @@ void main()
 			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
 
 			//Assign the simulation matrices to the model matrices
-			for (int i = 0; i < kNoAgents; i++)
+			for (auto agent : AGENTS)
 			{
-				if (crowdEngine->GetAgentMatrix(AGENTS[i].id, tempAgentMat))
+				if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
 				{
-					//Convert agent matrix to model matrix
-					AGENTS[i].model->GetMatrix(tempModelMat);
+					agent.second->GetMatrix(tempModelMat);
 					tempModelMat[0] = tempAgentMat.e00;
 					tempModelMat[2] = tempAgentMat.e01;
 					tempModelMat[8] = tempAgentMat.e10;
 					tempModelMat[10] = tempAgentMat.e11;
 					tempModelMat[12] = tempAgentMat.e20;
 					tempModelMat[14] = tempAgentMat.e21;
-					AGENTS[i].model->SetMatrix(tempModelMat);
+					agent.second->SetMatrix(tempModelMat);
 				}
 			}
 		}
-		if (gameEngine->KeyHit(Key_M) && crowdEngine->GetIsPaused())
+		if (gameEngine->KeyHit(Key_N))
 		{
-			cout << "Enter a number between 0 and " << kNoAgents << endl;
-			cin >> tempInt;	//TODO: add validation
-			
-			cout << "Agent " << tempInt << " details: " << endl;
-			if (crowdEngine->GetAgentString(AGENTS[tempInt].id, tempString))
-			{
-				cout << tempString << endl;
-			}
-			else
-			{
-				cout << "Error - Agent Not Found" << endl;
-			}
-		}
-		if (gameEngine->KeyHit(Key_N) && crowdEngine->GetIsPaused())
-		{
-			cout << "Enter a number between 0 and " << kXSubDiv << endl;
-			cin >> tempInt;
-			cout << "Enter a number between 0 and " << kYSubDiv << endl;
-			cin >> tempInt2;
-			cout << "Square " << tempInt << ", " << tempInt2 << " details: " << endl;
-			if (crowdEngine->GetSquareString(tempInt, tempInt2, tempString))
-			{
-				cout << tempString << endl;
-			}
-			else
-			{
-				cout << "Error - Square Not Found" << endl;
-			}
+			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+			CVector2 mousePosition = CVector2(tempPos.x, tempPos.z);
+
+			crowdEngine->GetSquareString(mousePosition, tempString);
+			cout << tempString;
 		}
 		if (gameEngine->KeyHeld(Mouse_LButton))
 		{	
 			if (holding == -1)	//If not holding anything, pick the nearest item up
 			{
 				UID tempHold;
-				if (FindNearest(AGENTS, crowdEngine, tempHold, gameEngine, cam))
+				if (FindNearestAgent(AGENTS, crowdEngine, tempHold, gameEngine, cam))
 				{
 					holding = tempHold;
 					string agentString;
@@ -254,16 +242,17 @@ void main()
 						cout << "Picked up: " << endl;
 						cout << agentString << endl;
 					}
-					for (int i = 0; i < kNoAgents; i++)
+					try		//Find the agent 'holding' and set the holding skin
 					{
-						if (AGENTS[i].id == holding)
-						{
-							AGENTS[i].model->SetSkin("tiles3.jpg");
-						}
+						AGENTS.at(holding)->SetSkin("tiles3.jpg");
+
+					}
+					catch (std::out_of_range err)
+					{
+						cout << err.what();
 					}
 				}
 			}
-			
 			if (holding != -1)
 			{
 				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
@@ -271,20 +260,21 @@ void main()
 
 				if (crowdEngine->GetAgentMatrix(holding, tempAgentMat))
 				{
-					for (int i = 0; i < kNoAgents; i++)
+					try		//Find the agent 'holding' and set the holding skin
 					{
-						if (AGENTS[i].id == holding)
-						{
-							AGENTS[i].model->GetMatrix(tempModelMat);
-							tempModelMat[0] = tempAgentMat.e00;
-							tempModelMat[2] = tempAgentMat.e01;
-							tempModelMat[8] = tempAgentMat.e10;
-							tempModelMat[10] = tempAgentMat.e11;
-							tempModelMat[12] = tempAgentMat.e20;
-							tempModelMat[14] = tempAgentMat.e21;
-							AGENTS[i].model->SetMatrix(tempModelMat);
-						}
-					}//Convert agent matrix to model matrix
+						AGENTS.at(holding)->GetMatrix(tempModelMat);
+						tempModelMat[0] = tempAgentMat.e00;
+						tempModelMat[2] = tempAgentMat.e01;
+						tempModelMat[8] = tempAgentMat.e10;
+						tempModelMat[10] = tempAgentMat.e11;
+						tempModelMat[12] = tempAgentMat.e20;
+						tempModelMat[14] = tempAgentMat.e21;
+						AGENTS.at(holding)->SetMatrix(tempModelMat);
+					}
+					catch (std::out_of_range err)
+					{
+						cout << err.what();
+					}
 				}
 			}
 		}
@@ -298,28 +288,29 @@ void main()
 					cout << "Dropped: " << endl;
 					cout << agentString << endl;
 				}
-				for (int i = 0; i < kNoAgents; i++)
+				try
 				{
-					if (AGENTS[i].id == holding)
+					if (crowdEngine->GetAgentWatched(holding))
 					{
-						if (crowdEngine->GetAgentWatched(holding))
-						{
-							AGENTS[i].model->SetSkin("tiles2.jpg");
-						}
-						else
-						{
-							AGENTS[i].model->SetSkin("tiles1.jpg");
-						}
+						AGENTS.at(holding)->SetSkin("tiles2.jpg");
+					}
+					else
+					{
+						AGENTS.at(holding)->SetSkin("tiles1.jpg");
 					}
 				}
-
+				catch (std::out_of_range err)
+				{
+					cout << err.what();
+				}
+				
 				holding = -1;
 			}
 		}
 		if (gameEngine->KeyHit(Mouse_RButton))
 		{
 			UID foundNearest;
-			if (FindNearest(AGENTS, crowdEngine, foundNearest, gameEngine, cam))
+			if (FindNearestAgent(AGENTS, crowdEngine, foundNearest, gameEngine, cam))
 			{
 				bool isWatched = crowdEngine->GetAgentWatched(foundNearest);
 				if (crowdEngine->SetAgentWatched(foundNearest, !crowdEngine->GetAgentWatched(foundNearest)))
@@ -327,23 +318,25 @@ void main()
 					cout << "Agent: " << foundNearest << " Is ";
 					if (isWatched)	//Was being watched before change, is now not being watched
 					{
-						for (int i = 0; i < kNoAgents; i++)
+						try
 						{
-							if (AGENTS[i].id == foundNearest)
-							{
-								AGENTS[i].model->SetSkin("tiles1.jpg");
-							}
+							AGENTS.at(foundNearest)->SetSkin("tiles1.jpg");
+						}
+						catch (std::out_of_range err)
+						{
+							cout << endl << err.what() << endl;
 						}
 						cout << "Not ";
 					}
 					else
 					{
-						for (int i = 0; i < kNoAgents; i++)
+						try
 						{
-							if (AGENTS[i].id == foundNearest)
-							{
-								AGENTS[i].model->SetSkin("tiles2.jpg");
-							}
+							AGENTS.at(foundNearest)->SetSkin("tiles2.jpg");
+						}
+						catch (std::out_of_range err)
+						{
+							cout << endl << err.what() << endl;
 						}
 					}
 					cout << "Being Watched" << endl;
@@ -354,6 +347,6 @@ void main()
 
 	// Delete the 3D engine now we are finished with it
 	gameEngine->Delete();
-
+	delete[] FloorTiles;
 	delete crowdEngine;
 }

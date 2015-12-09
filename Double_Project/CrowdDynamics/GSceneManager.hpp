@@ -77,6 +77,7 @@ public:
 	gen::CVector2 GetWorldSize();
 	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix);
 	bool GetAgentPosition(UID requestedUID, gen::CVector2 &position);
+	bool GetAgentDesiredVector(UID requestedUID, gen::CVector2 & desiredVector);
 
 	float GetTimeStep();
 
@@ -85,6 +86,7 @@ public:
 #ifdef _DEBUG
 	bool GetAgentString(UID requestedID, std::string& agentString);
 	bool GetSquareString(int xPos, int yPos, std::string& squareString);
+	bool GetSquareString(gen::CVector2 coordinate, std::string& squareString);
 #endif
 
 	//***************************
