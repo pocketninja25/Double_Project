@@ -73,6 +73,35 @@ UID GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 	return this->AddAgent(gen::CVector2(iXPos, iYPos), iIsActive);
 }
 
+bool GEntityManager::SetAgentActivation(UID agent, bool isEnabled)
+{
+	GAgent* theAgent;
+	if (this->GetAgent(agent, theAgent))
+	{
+		if (theAgent->IsActive() != isEnabled)	//If the agent is not already in the desired state
+		{
+			if (isEnabled)
+			{
+				//Enable the agent
+				theAgent->Activate();
+				m_InactiveAgents.erase(agent);
+				m_ActiveAgents.insert(std::make_pair(agent, theAgent));
+			}
+			else
+			{
+				//Disable the agent
+				theAgent->Deactivate();
+				m_ActiveAgents.erase(agent);
+				m_InactiveAgents.insert(std::make_pair(agent, theAgent));
+			}
+		}
+
+	}
+	
+	return false;
+
+}
+
 void GEntityManager::Update(float updateTime)
 {
 	for (auto &agent: m_ActiveAgents)

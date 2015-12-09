@@ -98,6 +98,8 @@ public:
 	void ComputeAgentVelocities(const std::list<UID>& localAgents);
 
 	bool SetAgentPosition(UID agent, gen::CVector2 newPosition);
+	bool SetAgentActivation(UID agent, bool isEnabled);
+
 
 	void SetPaused(bool iPaused);
 

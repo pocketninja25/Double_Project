@@ -157,10 +157,12 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 	return agentUIDs;
 }
 
+
 void GSceneManager::ComputeAgentVelocities(const std::list<UID>& localAgents)
 {
 	mManager_Entity->ComputeAgentVelocities(localAgents);
 }
+
 
 bool GSceneManager::SetAgentPosition(UID agent, gen::CVector2 newPosition)
 {
@@ -181,10 +183,17 @@ bool GSceneManager::SetAgentPosition(UID agent, gen::CVector2 newPosition)
 	return false;
 }
 
+bool GSceneManager::SetAgentActivation(UID agent, bool isEnabled)
+{
+	return mManager_Entity->SetAgentActivation(agent, isEnabled);
+}
+
+
 void GSceneManager::SetPaused(bool iPaused)
 {
 	m_Paused = iPaused;
 }
+
 
 void GSceneManager::PerformOneTimeStep()
 {
@@ -233,9 +242,17 @@ int GSceneManager::GetWhichSquare(gen::CVector2 itemPosition)
 	{
 		xSquare = m_NoOfSquaresX - 1;
 	}
+	else if (xSquare < 0)
+	{
+		xSquare = 0;
+	}
 	if (ySquare >= m_NoOfSquaresY)
 	{
 		ySquare = m_NoOfSquaresY - 1;
+	}
+	else if (ySquare < 0)
+	{
+		ySquare = 0;
 	}
 
 	return xSquare * m_NoOfSquaresX + ySquare;

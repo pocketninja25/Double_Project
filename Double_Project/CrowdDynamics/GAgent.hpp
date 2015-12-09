@@ -17,6 +17,8 @@ private:
 	float m_Radius;
 	gen::CVector2 m_MovementVector;
 
+	gen::CVector2 m_PreviousDesiredMovementVect;
+	gen::CVector2 m_PreviousMovementVect;
 
 //---------------------------
 // Public Functions

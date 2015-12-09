@@ -3,6 +3,9 @@
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
 #include <map>
+#include <sstream>
+#include <iomanip>
+using std::stringstream;
 using std::map;
 #include "Picking.h"
 
@@ -11,19 +14,13 @@ using namespace gen;
 EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
 
-const int kNoAgents = 50;
+const int kNoStartingAgents = 10;
 const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
 const float kTimeStep = 1.0f / 10.0f;
-const int kXSubDiv = 20;
-const int kYSubDiv = 20;
+const int kXSubDiv = 3;
+const int kYSubDiv = 3;
 
 float frameTime = 0;
-
-struct SAgent
-{
-	IModel* model;
-	UID id;
-};
 
 bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
 {
@@ -58,6 +55,131 @@ bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nea
 	return set;
 }
 
+void CameraControls(I3DEngine* gameEngine, ICamera* cam)
+{
+	if (gameEngine->KeyHeld(Key_Numpad4))
+	{
+		cam->MoveX(-80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad6))
+	{
+		cam->MoveX(80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad2))
+	{
+		cam->MoveZ(-80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad8))
+	{
+		cam->MoveZ(80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad7))
+	{
+		cam->MoveY(-80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad9))
+	{
+		cam->MoveY(80.0f * frameTime);
+	}
+}
+
+void UpdateModelsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*> AGENTS, map<UID, IModel*> MovementVectors)
+{
+	gen::CMatrix3x3 tempAgentMat;
+	float tempModelMat[16];
+
+	for (auto agent : AGENTS)
+	{
+		if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
+		{
+			agent.second->GetMatrix(tempModelMat);
+			tempModelMat[0] = tempAgentMat.e00;
+			tempModelMat[2] = tempAgentMat.e01;
+			tempModelMat[8] = tempAgentMat.e10;
+			tempModelMat[10] = tempAgentMat.e11;
+			tempModelMat[12] = tempAgentMat.e20;
+			tempModelMat[14] = tempAgentMat.e21;
+			agent.second->SetMatrix(tempModelMat);
+		}
+	}
+
+	gen::CVector2 tempDesiredVect;
+	for (auto desiredVector : MovementVectors)
+	{
+		if (crowdEngine->GetAgentDesiredVector(desiredVector.first, tempDesiredVect))
+		{
+			IModel* thisAgentModel = AGENTS.at(desiredVector.first);
+			desiredVector.second->SetPosition(thisAgentModel->GetX(),
+				thisAgentModel->GetY() + 10.0f,
+				thisAgentModel->GetZ());
+			CVector2 vectorEnd = tempDesiredVect;
+			vectorEnd.x += thisAgentModel->GetX();
+			vectorEnd.y += thisAgentModel->GetZ();
+
+			desiredVector.second->LookAt(vectorEnd.x, 10.0f, vectorEnd.y);
+			desiredVector.second->ScaleZ(tempDesiredVect.Length() * (1 / kTimeStep));
+		}
+	}
+}
+
+void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*> AGENTS, map<UID, IModel*> MovementVectors)
+{
+	gen::CMatrix3x3 tempAgentMat;
+
+	if (crowdEngine->GetAgentMatrix(agentID, tempAgentMat))
+	{
+		try		//Find the agent 'holding' and set the holding skin
+		{
+			float tempModelMat[16];
+			IModel* thisAgentModel;
+			thisAgentModel = AGENTS.at(agentID);
+			thisAgentModel->GetMatrix(tempModelMat);
+			tempModelMat[0] = tempAgentMat.e00;
+			tempModelMat[2] = tempAgentMat.e01;
+			tempModelMat[8] = tempAgentMat.e10;
+			tempModelMat[10] = tempAgentMat.e11;
+			tempModelMat[12] = tempAgentMat.e20;
+			tempModelMat[14] = tempAgentMat.e21;
+			thisAgentModel->SetMatrix(tempModelMat);
+		}
+		catch (std::out_of_range err)
+		{
+			cout << err.what();
+		}
+	}
+
+	gen::CVector2 tempDesiredVect;
+	if (crowdEngine->GetAgentDesiredVector(agentID, tempDesiredVect))
+	{
+		IModel* thisVectorModel;
+		IModel* thisAgentModel;
+		thisAgentModel = AGENTS.at(agentID);
+		thisVectorModel = MovementVectors.at(agentID);
+		
+		thisVectorModel->SetPosition(thisAgentModel->GetX(),
+			thisAgentModel->GetY() + 10.0f,
+			thisAgentModel->GetZ());
+		CVector2 vectorEnd = tempDesiredVect;
+		vectorEnd.x += thisAgentModel->GetX();
+		vectorEnd.y += thisAgentModel->GetZ();
+
+		thisVectorModel->LookAt(vectorEnd.x, 10.0f, vectorEnd.y);
+		thisVectorModel->ScaleZ(tempDesiredVect.Length() * (1 / kTimeStep));
+	}
+}
+
+void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, stringstream &sstream)
+{
+	CVector3 mousePos = WorldPosFromPixel(gameEngine, cam);
+	sstream << "X: " << std::setprecision(4) << mousePos.x;
+	theFont->Draw(sstream.str(), 0.0f, 0.0f, kBlack);
+	int height = theFont->MeasureTextHeight(sstream.str());
+	sstream.str("");
+	sstream << "Z: " << std::setprecision(4) << mousePos.z;
+	theFont->Draw(sstream.str(), 0.0f, height, kBlack);
+	sstream.str("");
+}
+
 void main()
 {
 	// Create a 3D engine (using TLX engine here) and open a window for it
@@ -67,12 +189,15 @@ void main()
 	// Add default folder for meshes and other media
 	gameEngine->AddMediaFolder( ".\\Media" );
 
-	//IMesh* floorMesh = gameEngine->LoadMesh("Floor.x");
-	//IModel* floorModel = floorMesh->CreateModel(kWorldSize.x / 2.0f, 0.0f, kWorldSize.y / 2.0f);
+	IFont* mousePosFont = gameEngine->LoadFont("Font1.bmp");
+
+
 	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
 	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
+	IMesh* vectorMesh = gameEngine->LoadMesh("Vector.x");
 
 	map<UID, IModel*> AGENTS;
+	map<UID, IModel*> MovementVectors;
 	IModel** FloorTiles;
 	
 	FloorTiles = new IModel*[kXSubDiv * kYSubDiv];
@@ -96,43 +221,32 @@ void main()
 	worldData.xSubdivisions = kXSubDiv;
 	worldData.ySubdivisions = kYSubDiv;
 	GSceneManager* crowdEngine = GSceneManager::GetInstance(&worldData);
-	vector<UID> IDs = crowdEngine->AddXAgents(kNoAgents);
-	for (int i = 0; i < kNoAgents; i++)
+	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents);
+	for (int i = 0; i < kNoStartingAgents; i++)
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
 		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
 		AGENTS.insert(make_pair(IDs[i], agentMesh->CreateModel()));
+		MovementVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
 	}
 	
-	/**** Set up your scene here ****/
-	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	//ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x / 2.0f, 220.0f, kWorldSize.y / 2.0f);
 	cam->RotateX(90.0f);
-	cam->SetMovementSpeed(400.0f);
-	cam->SetRotationSpeed(0.0f);// 180.0f);
+	cam->SetMovementSpeed(100.0f);
+	cam->SetRotationSpeed(180.0f);
 
 	float frameRate;
 	stringstream frameStream;
-	
+
 	gen::CMatrix3x3 tempAgentMat;
 	string tempString;
 	int tempInt, tempInt2;
 	float tempModelMat[16];
 
-	//Assign the simulation matrices to the model matrices - first time only
-	for (auto agent : AGENTS)
-	{
-		if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
-		{
-			agent.second->GetMatrix(tempModelMat);
-			tempModelMat[0] = tempAgentMat.e00;
-			tempModelMat[2] = tempAgentMat.e01;
-			tempModelMat[8] = tempAgentMat.e10;
-			tempModelMat[10] = tempAgentMat.e11;
-			tempModelMat[12] = tempAgentMat.e20;
-			tempModelMat[14] = tempAgentMat.e21;
-			agent.second->SetMatrix(tempModelMat);
-		}
-	}
+	//Assign the simulation matrices to the model matrices - first time
+	UpdateModelsFromCrowdData(crowdEngine, AGENTS, MovementVectors);
+
 
 	UID holding = -1;
 
@@ -143,59 +257,29 @@ void main()
 		{
 			gameEngine->Stop();
 		}
+		
 		frameTime = gameEngine->Timer();
 		// Draw the scene
 		gameEngine->DrawScene();
 		
+		DrawPointingPosition(gameEngine, cam, mousePosFont, frameStream);
+		
 		frameRate = 1 / frameTime;
-		frameStream << static_cast<int>(frameRate);
+		frameStream << setprecision(4) << (frameRate);
 		gameEngine->SetWindowCaption(frameStream.str());
 		frameStream.str("");
 
-		if (gameEngine->KeyHeld(Key_Numpad4))
-		{
-			cam->MoveX(-80.0f * frameTime);
-		}
-		if (gameEngine->KeyHeld(Key_Numpad6))
-		{
-			cam->MoveX(80.0f * frameTime);
-		}
-		if (gameEngine->KeyHeld(Key_Numpad2))
-		{
-			cam->MoveZ(-80.0f * frameTime);
-		}
-		if (gameEngine->KeyHeld(Key_Numpad8))
-		{
-			cam->MoveZ(80.0f * frameTime);
-		}
-		if (gameEngine->KeyHeld(Key_Numpad7))
-		{
-			cam->MoveY(-80.0f * frameTime);
-		}
-		if (gameEngine->KeyHeld(Key_Numpad9))
-		{
-			cam->MoveY(80.0f * frameTime);
-		}
+
+
+		CameraControls(gameEngine, cam);
 
 		/**** Update your scene each frame here ****/
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
 
 		//Assign the simulation matrices to the model matrices
-		for (auto agent : AGENTS)
-		{
-			if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
-			{
-				agent.second->GetMatrix(tempModelMat);
-				tempModelMat[0] = tempAgentMat.e00;
-				tempModelMat[2] = tempAgentMat.e01;
-				tempModelMat[8] = tempAgentMat.e10;
-				tempModelMat[10] = tempAgentMat.e11;
-				tempModelMat[12] = tempAgentMat.e20;
-				tempModelMat[14] = tempAgentMat.e21;
-				agent.second->SetMatrix(tempModelMat);
-			}
-		}
-		
+		UpdateModelsFromCrowdData(crowdEngine, AGENTS, MovementVectors);
+
+
 		if (gameEngine->KeyHit(pauseKey))
 		{
 			crowdEngine->SetPaused(!crowdEngine->GetIsPaused());	//Toggle paused
@@ -205,20 +289,8 @@ void main()
 			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
 
 			//Assign the simulation matrices to the model matrices
-			for (auto agent : AGENTS)
-			{
-				if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
-				{
-					agent.second->GetMatrix(tempModelMat);
-					tempModelMat[0] = tempAgentMat.e00;
-					tempModelMat[2] = tempAgentMat.e01;
-					tempModelMat[8] = tempAgentMat.e10;
-					tempModelMat[10] = tempAgentMat.e11;
-					tempModelMat[12] = tempAgentMat.e20;
-					tempModelMat[14] = tempAgentMat.e21;
-					agent.second->SetMatrix(tempModelMat);
-				}
-			}
+			UpdateModelsFromCrowdData(crowdEngine, AGENTS, MovementVectors);
+
 		}
 		if (gameEngine->KeyHit(Key_N))
 		{
@@ -258,27 +330,11 @@ void main()
 				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 				crowdEngine->SetAgentPosition(holding, CVector2(tempPos.x, tempPos.z));
 
-				if (crowdEngine->GetAgentMatrix(holding, tempAgentMat))
-				{
-					try		//Find the agent 'holding' and set the holding skin
-					{
-						AGENTS.at(holding)->GetMatrix(tempModelMat);
-						tempModelMat[0] = tempAgentMat.e00;
-						tempModelMat[2] = tempAgentMat.e01;
-						tempModelMat[8] = tempAgentMat.e10;
-						tempModelMat[10] = tempAgentMat.e11;
-						tempModelMat[12] = tempAgentMat.e20;
-						tempModelMat[14] = tempAgentMat.e21;
-						AGENTS.at(holding)->SetMatrix(tempModelMat);
-					}
-					catch (std::out_of_range err)
-					{
-						cout << err.what();
-					}
-				}
+				UpdateAgentFromCrowdData(holding, crowdEngine, AGENTS, MovementVectors);
+
 			}
 		}
-		else
+		else //Release the held item if there is a held item
 		{
 			if (holding != -1)
 			{
@@ -342,6 +398,13 @@ void main()
 					cout << "Being Watched" << endl;
 				}
 			}
+		}
+		if (gameEngine->KeyHit(Key_Space))
+		{
+			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+			UID newID = crowdEngine->AddAgent(CVector2(tempPos.x, tempPos.z), true);
+			AGENTS.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
+			MovementVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
 		}
 	}
 

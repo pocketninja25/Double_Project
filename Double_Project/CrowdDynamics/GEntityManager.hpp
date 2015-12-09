@@ -40,13 +40,13 @@ public:
 
 	bool GetAgent(UID request, GAgent* &returnedAgent);
 
-	bool GetAgentDesiredVector(UID request, gen::CVector2 &returnedVector);
-
 	//***************************
 	// Setters/Mutators
 	//***************************
 	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
+
+	bool SetAgentActivation(UID agent, bool isEnabled);
 
 	//***************************
 	// Other Functions

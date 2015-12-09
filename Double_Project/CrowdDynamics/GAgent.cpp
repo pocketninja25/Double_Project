@@ -8,6 +8,8 @@ GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActi
 #endif
 	m_Destination(iDestination),
 	m_Velocity(15.0f),//TODO: find a way of calculating this better
+	m_PreviousMovementVect(gen::CVector2(0.0f, 0.0f)),
+	m_PreviousDesiredMovementVect(gen::CVector2(0.0f, 0.0f)),
 	m_Radius(sqrt(200.0f)/2)	//TODO: provide a reliable version of this number based on file data
 {
 	m_DesiredMovementVect = gen::CVector2(GetPosition(), m_Destination);
@@ -60,10 +62,12 @@ void GAgent::SetPosition(gen::CVector2 newPosition)
 
 	SetMatrix(tempMatrix);
 }
-#include <assert.h>
 
 void GAgent::Update(float updateTime)
 {
+	m_PreviousDesiredMovementVect = m_DesiredMovementVect;
+	m_PreviousMovementVect = m_MovementVector;
+
 	//Apply physics to model
 	gen::CMatrix3x3 matrix = GetMatrix();	//Get matrix of this agent
 	matrix.FaceTarget2D(m_Destination);		//Face the agent towards it's destination
@@ -159,10 +163,14 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 				
 				buildRestriction.x = gen::ToDegrees(asinf((this->m_Radius + otherAgent->m_Radius) / vecToOther.Length()));
 				buildRestriction.y = 90 - buildRestriction.x;
-				if (this->dm_BeingWatched && buildRestriction.x != buildRestriction.x)
+				if (this->dm_BeingWatched && buildRestriction.x > 85.0f)
 				{
 					GSceneManager::GetInstance()->SetPaused(true);
-
+										
+				}
+				if (this->dm_BeingWatched && buildRestriction.x != buildRestriction.x)
+				{
+					
 				}
 
 				buildRestriction.C = buildRestriction.I;	//Direction //Should be I - E but i is represented as Zero
@@ -218,8 +226,8 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 		}	//else Agent ID is this agent, no calculation
 	}	//End loop through agents
 	
+	
 	m_MovementVector = MoveTheDesiredVect(restrictions, m_DesiredMovementVect * updateTime);
-
 }
 
 gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restrictions, gen::CVector2 attemptedMovement)

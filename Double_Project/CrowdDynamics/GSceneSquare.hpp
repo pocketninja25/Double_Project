@@ -14,7 +14,7 @@ private:
 	gen::CVector2 m_Size;		//Width * Height of the Scene Square
 	gen::CVector2 m_Origin;		//The bottom left position of the square
 	std::list<UID> m_Walls;		//TODO: Consider static wall list & dynamic wall list //Vector of UID's to wall objects that occupy/intersect this scene square : This class does not own these pointers
-	std::list<UID> m_Agents;
+	std::list<UID> m_Agents;	//TODO: have the SceneSquare care about if agent is active
 
 //---------------------------
 // Public Functions
