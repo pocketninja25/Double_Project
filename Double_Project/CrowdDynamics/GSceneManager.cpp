@@ -50,6 +50,13 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 			m_SceneSquares[i * m_NoOfSquaresX + j] = new GSceneSquare(m_SquareSize, gen::CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
 		}
 	}
+
+	//Have the influence map represent 1 square = 1 unit, any incomplete integer in world size is represented by a single square (e.g. world size x = 3.2 so have 4 squares for x)
+	int tempX = static_cast<int>(m_WorldSize.x) + 1;
+	int tempY = static_cast<int>(m_WorldSize.y) + 1;
+
+	m_InfluenceMap = new GInfluenceMap(tempX, tempY);
+
 }
 
 GSceneManager::~GSceneManager()
@@ -63,6 +70,9 @@ GSceneManager::~GSceneManager()
 	}
 	//Deallocate the scenesquare array
 	delete[] m_SceneSquares;
+
+	//Deallocate the influence map
+	delete m_InfluenceMap;
 
 	//Deallocate Managers
 	delete mManager_Entity;

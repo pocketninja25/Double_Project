@@ -141,8 +141,40 @@ struct SRestrictionObject
 
 void GAgent::PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents)
 {
-	
-	
+	//Draw the egg at 0, 0 with no rotation
+	//Given a value of Y this formula determines if there is a value of X (Nan) otherwise provides 2 values for x, one positive and one negative
+
+	float y = 12.27;	//This value needs to be provided
+
+	float radius = 7.07;
+	float dist = 5.0f;
+
+	float a = 1 / (2 * radius);
+
+	float b = 1 / (radius + dist);
+
+	float c = (17.0f / 13.0f);
+	c *= b;
+	c *= y;
+	c -= 0.33;
+
+	float coeffx = (17.0f / 26.0f);
+	coeffx *= a;
+
+	float topright = 1 - (c * c);
+	topright = sqrt(topright);
+
+	float bottomright = pow(1.4, c);
+	bottomright *= 3.2;
+
+	float right = topright / bottomright;
+	cout << right << endl << endl;
+
+	float x = right / coeffx;
+
+	float x2 = -x;
+
+	//At this point the point x, y and -x, y need to be modified by the matrix of the object this egg belongs to
 
 }
 

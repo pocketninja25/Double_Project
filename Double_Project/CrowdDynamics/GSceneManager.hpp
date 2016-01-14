@@ -2,6 +2,7 @@
 
 #include "Common.hpp"
 #include "GSceneSquare.hpp"
+#include "GInfluenceMap.hpp"
 
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
@@ -62,7 +63,7 @@ private:
 
 	bool m_Paused;
 
-	
+	GInfluenceMap* m_InfluenceMap;
 	
 
 	//---------------------------
