@@ -14,7 +14,8 @@ GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActi
 {
 	m_DesiredMovementVect = gen::CVector2(GetPosition(), m_Destination);
 	m_DesiredMovementVect.Normalise();
-	m_DesiredMovementVect * m_Velocity;
+	m_DesiredMovementVect *= m_Velocity;
+
 }
 
 GAgent::GAgent(float iXPos, float iYPos, float iXDest, float iYDest, bool iIsActive) : 
@@ -41,6 +42,11 @@ bool GAgent::HasReachedDestination()
 gen::CVector2 GAgent::GetDesiredMovement()
 {
 	return m_DesiredMovementVect;
+}
+
+gen::CVector2 GAgent::GetDestination()
+{
+	return m_Destination;
 }
 
 void GAgent::SetNewDestination(gen::CVector2 newDestination)
@@ -75,9 +81,9 @@ void GAgent::Update(float updateTime)
 	//Move by the movement vector (units per second) modified by update time calculating units this frame
 	matrix.Move2D(m_MovementVector);// *updateTime);
 
-	m_DesiredMovementVect = m_Destination - GetPosition();
+	//m_DesiredMovementVect = m_Destination - GetPosition();
 	m_DesiredMovementVect.Normalise();
-	m_DesiredMovementVect * m_Velocity;
+	m_DesiredMovementVect *= m_Velocity;
 
 	SetMatrix(matrix);
 
@@ -98,16 +104,20 @@ std::string GAgent::ToString()
 
 struct SRestrictionObject
 {
-	gen::CVector2 A;
-	gen::CVector2 B;
-	gen::CVector2 C;
-	gen::CVector2 D;
-	gen::CVector2 E;
-	gen::CVector2 F;
-	gen::CVector2 G;
-	gen::CVector2 H;
-	gen::CVector2 I;
-	gen::CVector2 J;
+
+
+
+
+	gen::CVector2 A;	//The back left vertex of the potential collision trapezium (line AE has points H and C on it)
+	gen::CVector2 B;	//The back right vertex of the potential collision trapezium (line BE has points G and D on it)
+	gen::CVector2 C;	//The front left vertex of the potential collision trapezium
+	gen::CVector2 D;	//The front right vertex of the potential collision trapezium
+	gen::CVector2 E;	//The position of this agent
+	gen::CVector2 F;	//The position of the other agent
+	gen::CVector2 G;	//The point of tangential intersection of the combined radii circle and the line BE
+	gen::CVector2 H;	//The point of tangential intersection of the combined radii circle and the line AE
+	gen::CVector2 I;	//The point along the line FE that intersects the agents' combined radii circle
+	gen::CVector2 J;	//The point at which the extension of the line FE intersects the combined radii of the agents
 
 	gen::CVector2 ABNormal;
 	gen::CVector2 CDNormal;
@@ -119,8 +129,27 @@ struct SRestrictionObject
 
 	GAgent* associatedAgent;
 };
+ 
+//void GAgent::PerformCollisionAvoidance(const std::vector<GAgent*>& localAgents)
+//{
+//	//Perform global collision avoidance - manipulates the directions of the agents based on the position of other agents in the scene
+//	this->PerformGlobalCollisionAvoidance(localAgents);
+//
+//	//Perform local collision avoidance - fine tunes the direction and speed of the agent each frame based on potential collisions within this time step
+//	this->PerformLocalCollisionAvoidance(localAgents);
+//}
 
-void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
+void GAgent::PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents)
+{
+	
+	
+
+}
+
+//-------------------------------------------------------------------------------------------
+// This only covers local avoidance (essentially there as collision detection and resolution)
+//-------------------------------------------------------------------------------------------
+void GAgent::PerformLocalCollisionAvoidance(const std::vector<GAgent*>& localAgents)
 {
 	float updateTime = GSceneManager::GetInstance()->GetTimeStep();
 	std::vector<SRestrictionObject> restrictions;
@@ -137,7 +166,7 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 			float myRadius = this->m_Radius;
 			float otherRadius = otherAgent->m_Radius;
 
-			gen::CVector2 vecToOther = otherAgent->GetPosition() - this->GetPosition();	//Vector from other agent to this agent
+			gen::CVector2 vecToOther = this->GetPosition() - otherAgent->GetPosition();	//Vector from other agent to this agent
 			//Determine if the other agent is too far away to matter to this agent's movement
 			if (vecToOther.Length() <
 				(myRadius + otherRadius +
@@ -150,7 +179,7 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 
 				//Create a restriction object to represent arc where collisions are possible
 				buildRestriction.E = gen::CVector2(0.0f, 0.0f);
-				buildRestriction.F = otherAgent->GetPosition() - this->GetPosition();
+				buildRestriction.F = this->GetPosition() - otherAgent->GetPosition();
 
 				//Get direction vector from E to F
 				buildRestriction.I = vecToOther;
@@ -227,15 +256,16 @@ void GAgent::ComputePossibleVelocities(const std::vector<GAgent*>& localAgents)
 	}	//End loop through agents
 	
 	
-	m_MovementVector = MoveTheDesiredVect(restrictions, m_DesiredMovementVect * updateTime);
+	m_MovementVector = MoveTheDesiredVect(restrictions, m_DesiredMovementVect, updateTime);
 }
 
-gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restrictions, gen::CVector2 attemptedMovement)
+gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restrictions, gen::CVector2 attemptedMovement, float updateTime)
 {
 	std::vector<SRestrictionObject> insideRestrictions;	//Vector of restrictions which the movement vector falls inside of
+	
+	//Determine if the desired velocity would intersect this restriction object
 	for (auto restriction : restrictions)
 	{
-		//Determine if the desired velocity would intersect this restriction object
 
 		if (//restriction.ABNormal.Dot(attemptedMovement) > 0 &&
 			restriction.ACNormal.Dot(attemptedMovement) > 0 &&
@@ -245,51 +275,64 @@ gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restri
 			//Is inside the box
 			insideRestrictions.push_back(restriction);
 		}
+		else if (restriction.x != restriction.x)
+		{ 
+			insideRestrictions.push_back(restriction);
+		}
+
 	}
+	
+
 	if (insideRestrictions.size() > 0)
 	{
-		//Move the attempted movement then pass it to this function if insideRestrictions is > 0
-		//TODO: MOVE THE MOVEMENT VECTOR AND POP THE RELEVANT RESTRICTION
-		gen::CVector2 newPoints[4];
-		gen::CVector2 AB = insideRestrictions[0].B - insideRestrictions[0].A;
-		gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
-		float scale = (AE.Dot(AB)) / AB.LengthSquared();
-		newPoints[0] = (AB * scale) + insideRestrictions[0].A;
-
-		gen::CVector2 AC = insideRestrictions[0].C - insideRestrictions[0].A;
-		//gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
-		scale = (AE.Dot(AC)) / AC.LengthSquared();
-		newPoints[1] = (AC * scale) + insideRestrictions[0].A;
-
-		gen::CVector2 DB = insideRestrictions[0].B - insideRestrictions[0].D;
-		gen::CVector2 DE = attemptedMovement - insideRestrictions[0].D;
-		scale = (DE.Dot(DB)) / DB.LengthSquared();
-		newPoints[2] = (DB * scale) + insideRestrictions[0].D;
-
-		gen::CVector2 DC = insideRestrictions[0].C - insideRestrictions[0].D;
-		//gen::CVector2 DE = attemptedMovement - insideRestrictions[0].D;
-		scale = (DE.Dot(DC)) / DC.LengthSquared();
-		newPoints[3] = (DC * scale) + insideRestrictions[0].D;
-
-		gen::CVector2 closest = newPoints[0];
-		for (int i = 1; i < 4; i++)
+		if (insideRestrictions[0].x == insideRestrictions[0].x)
 		{
-			if (newPoints[i].Length() < closest.Length())
+			//Move the attempted movement then pass it to this function if insideRestrictions is > 0
+			//TODO: MOVE THE MOVEMENT VECTOR AND POP THE RELEVANT RESTRICTION
+			gen::CVector2 newPoints[4];
+			gen::CVector2 AB = insideRestrictions[0].B - insideRestrictions[0].A;
+			gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
+			float scale = (AE.Dot(AB)) / AB.LengthSquared();
+			newPoints[0] = (AB * scale) + insideRestrictions[0].A;
+
+			gen::CVector2 AC = insideRestrictions[0].C - insideRestrictions[0].A;
+			//gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
+			scale = (AE.Dot(AC)) / AC.LengthSquared();
+			newPoints[1] = (AC * scale) + insideRestrictions[0].A;
+
+			gen::CVector2 DB = insideRestrictions[0].B - insideRestrictions[0].D;
+			gen::CVector2 DE = attemptedMovement - insideRestrictions[0].D;
+			scale = (DE.Dot(DB)) / DB.LengthSquared();
+			newPoints[2] = (DB * scale) + insideRestrictions[0].D;
+
+			gen::CVector2 DC = insideRestrictions[0].C - insideRestrictions[0].D;
+			//gen::CVector2 DE = attemptedMovement - insideRestrictions[0].D;
+			scale = (DE.Dot(DC)) / DC.LengthSquared();
+			newPoints[3] = (DC * scale) + insideRestrictions[0].D;
+
+			gen::CVector2 closest = newPoints[0];
+			for (int i = 1; i < 4; i++)
 			{
-				closest = newPoints[i];
+				if (newPoints[i].Length() < closest.Length())
+				{
+					closest = newPoints[i];
+				}
 			}
-		}
 
-		insideRestrictions.erase(insideRestrictions.begin());	//Remove the 0th item
+			insideRestrictions.erase(insideRestrictions.begin());	//Remove the 0th item
 
-		if (insideRestrictions.size() > 0)
-		{
-			return MoveTheDesiredVect(insideRestrictions, closest);
+			if (insideRestrictions.size() > 0)
+			{
+				return MoveTheDesiredVect(insideRestrictions, closest, updateTime);
+			}
+			return closest * updateTime;
 		}
-		return closest;
 	}
-	return attemptedMovement;	//The desired velocity lies outside all restrictions
+	return attemptedMovement * updateTime;	//The desired velocity lies outside all restrictions
 }
+//-------------------------------------------------------------------------------------------
+//END OF LOCAL AVOIDANCE ALGORITHM
+//-------------------------------------------------------------------------------------------
 
 #ifdef _DEBUG
 

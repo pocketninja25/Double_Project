@@ -64,6 +64,9 @@
     <ClInclude Include="GSceneManager.hpp">
       <Filter>Managers\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="GInfluenceMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GEntityManager.cpp">
@@ -100,6 +103,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GStaticObstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GInfluenceMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

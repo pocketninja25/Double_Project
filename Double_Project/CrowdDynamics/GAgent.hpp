@@ -39,6 +39,8 @@ public:
 
 	gen::CVector2 GetDesiredMovement();
 
+	gen::CVector2 GetDestination();
+
 	//***************************
 	// Setters/Mutators
 	//***************************
@@ -50,10 +52,13 @@ public:
 	// Other Functions
 	//***************************
 	virtual void Update(float updateTime);		
-	void ComputePossibleVelocities(const std::vector<GAgent*>& localAgents);
+
+	//void PerformCollisionAvoidance(const std::vector<GAgent*>& localAgents);	//Run global and local collision avoidance algorithms
+	void PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents);
+	void PerformLocalCollisionAvoidance(const std::vector<GAgent*>& localAgents);	
 
 private:
-	gen::CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement);
+	gen::CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement, float updateTime);	//Used by PerformLocalCollisionAvoidance to manipulate the desired movement vector based on the passed restriction objects
 
 #ifdef _DEBUG
 public:

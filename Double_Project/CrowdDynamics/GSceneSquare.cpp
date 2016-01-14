@@ -26,14 +26,14 @@ GSceneSquare::GSceneSquare(float iXSize, float iYSize, float iOriginXPos, float 
 {
 	//Delagated Constructor - No Body
 }
-
+Making a change
 GSceneSquare::~GSceneSquare()
 {
 }
 
 void GSceneSquare::Update(float updateTime)
 {
-	GSceneManager::GetInstance()->ComputeAgentVelocities(m_Agents);
+	GSceneManager::GetInstance()->PerformCollisionAvoidance(m_Agents);
 	
 }
 

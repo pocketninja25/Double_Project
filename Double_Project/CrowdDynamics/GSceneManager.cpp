@@ -113,6 +113,18 @@ bool GSceneManager::GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desir
 	return false;
 }
 
+bool GSceneManager::GetAgentDestination(UID requestedUID, gen::CVector2 & destination)
+{
+	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
+	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
+	{
+		destination = foundAgent->GetDestination();
+		return true;
+	}
+	//No helpful data format for failed GetMatrix, just return existing desiredVector
+	return false;
+}
+
 
 float GSceneManager::GetTimeStep()
 {
@@ -158,9 +170,9 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 }
 
 
-void GSceneManager::ComputeAgentVelocities(const std::list<UID>& localAgents)
+void GSceneManager::PerformCollisionAvoidance(const std::list<UID>& localAgents)
 {
-	mManager_Entity->ComputeAgentVelocities(localAgents);
+	mManager_Entity->PerformCollisionAvoidance(localAgents);
 }
 
 

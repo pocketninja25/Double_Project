@@ -62,6 +62,9 @@ private:
 
 	bool m_Paused;
 
+	
+	
+
 	//---------------------------
 	// Public Functions
 	//---------------------------
@@ -77,7 +80,8 @@ public:
 	gen::CVector2 GetWorldSize();
 	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix);
 	bool GetAgentPosition(UID requestedUID, gen::CVector2 &position);
-	bool GetAgentDesiredVector(UID requestedUID, gen::CVector2 & desiredVector);
+	bool GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desiredVector);
+	bool GetAgentDestination(UID requestedUID, gen::CVector2 &destination);
 
 	float GetTimeStep();
 
@@ -95,7 +99,7 @@ public:
 	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
 	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
-	void ComputeAgentVelocities(const std::list<UID>& localAgents);
+	void PerformCollisionAvoidance(const std::list<UID>& localAgents);
 
 	bool SetAgentPosition(UID agent, gen::CVector2 newPosition);
 	bool SetAgentActivation(UID agent, bool isEnabled);

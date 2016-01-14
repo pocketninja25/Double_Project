@@ -16,7 +16,7 @@ EKeyCode pauseKey = Key_P;
 
 const int kNoStartingAgents = 10;
 const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
-const float kTimeStep = 1.0f / 10.0f;
+const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 3;
 const int kYSubDiv = 3;
 
@@ -83,7 +83,7 @@ void CameraControls(I3DEngine* gameEngine, ICamera* cam)
 	}
 }
 
-void UpdateModelsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*> AGENTS, map<UID, IModel*> MovementVectors)
+void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AGENTS, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
 	gen::CMatrix3x3 tempAgentMat;
 	float tempModelMat[16];
@@ -103,26 +103,45 @@ void UpdateModelsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*> AGE
 		}
 	}
 
-	gen::CVector2 tempDesiredVect;
-	for (auto desiredVector : MovementVectors)
+	gen::CVector2 tempDestination;
+	for (auto destinationVector : DestinationVectors)
 	{
-		if (crowdEngine->GetAgentDesiredVector(desiredVector.first, tempDesiredVect))
+		if (crowdEngine->GetAgentDestination(destinationVector.first, tempDestination))
 		{
-			IModel* thisAgentModel = AGENTS.at(desiredVector.first);
-			desiredVector.second->SetPosition(thisAgentModel->GetX(),
-				thisAgentModel->GetY() + 10.0f,
-				thisAgentModel->GetZ());
-			CVector2 vectorEnd = tempDesiredVect;
-			vectorEnd.x += thisAgentModel->GetX();
-			vectorEnd.y += thisAgentModel->GetZ();
+			IModel* thisAgentModel = AGENTS.at(destinationVector.first);
 
-			desiredVector.second->LookAt(vectorEnd.x, 10.0f, vectorEnd.y);
-			desiredVector.second->ScaleZ(tempDesiredVect.Length() * (1 / kTimeStep));
+			//Set the vector model to the agent model's position
+			destinationVector.second->SetPosition(thisAgentModel->GetX(),
+				thisAgentModel->GetY() + 10.0f,		//+10 to have to vector model rest atop the agent model
+				thisAgentModel->GetZ());
+
+			destinationVector.second->LookAt(tempDestination.x, 10.0f, tempDestination.y);
+			
+			CVector2 vectorToEnd = tempDestination - CVector2(thisAgentModel->GetX(), thisAgentModel->GetZ());
+			destinationVector.second->ScaleZ(vectorToEnd.Length());
+		}
+	}
+
+	for (auto movementVector : MovementVectors)
+	{
+		//Will only fetch the results of global collision avoidance
+		if (crowdEngine->GetAgentDesiredVector(movementVector.first, tempDestination))
+		{
+			IModel* thisAgentModel = AGENTS.at(movementVector.first);
+
+			//Set the vector model to the agent model's position
+			movementVector.second->SetPosition(thisAgentModel->GetX(),
+				thisAgentModel->GetY() + 11.0f,		//+11 to have to vector model rest atop the agent model
+				thisAgentModel->GetZ());
+
+			movementVector.second->LookAt(tempDestination.x + thisAgentModel->GetX(), 10.0f, tempDestination.y + thisAgentModel->GetZ());
+
+			movementVector.second->ScaleZ(tempDestination.Length());
 		}
 	}
 }
 
-void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*> AGENTS, map<UID, IModel*> MovementVectors)
+void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*>& AGENTS, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
 	gen::CMatrix3x3 tempAgentMat;
 
@@ -148,23 +167,40 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 		}
 	}
 
-	gen::CVector2 tempDesiredVect;
-	if (crowdEngine->GetAgentDesiredVector(agentID, tempDesiredVect))
+	gen::CVector2 tempDestination;
+	if (crowdEngine->GetAgentDestination(agentID, tempDestination))
+	{
+		IModel* thisVectorModel;
+		IModel* thisAgentModel;
+		thisAgentModel = AGENTS.at(agentID);
+		thisVectorModel = DestinationVectors.at(agentID);
+		
+		//Set the vector model to the agent model's position
+		thisVectorModel->SetPosition(thisAgentModel->GetX(),
+		thisAgentModel->GetY() + 10.0f,
+		thisAgentModel->GetZ());
+		
+		thisVectorModel->LookAt(tempDestination.x, 10.0f, tempDestination.y);
+
+		CVector2 vectorToEnd = tempDestination - CVector2(thisAgentModel->GetX(), thisAgentModel->GetZ());
+		thisVectorModel->ScaleZ(vectorToEnd.Length());
+	}
+
+	if (crowdEngine->GetAgentDesiredVector(agentID, tempDestination))
 	{
 		IModel* thisVectorModel;
 		IModel* thisAgentModel;
 		thisAgentModel = AGENTS.at(agentID);
 		thisVectorModel = MovementVectors.at(agentID);
-		
+
+		//Set the vector model to the agent model's position
 		thisVectorModel->SetPosition(thisAgentModel->GetX(),
 			thisAgentModel->GetY() + 10.0f,
 			thisAgentModel->GetZ());
-		CVector2 vectorEnd = tempDesiredVect;
-		vectorEnd.x += thisAgentModel->GetX();
-		vectorEnd.y += thisAgentModel->GetZ();
 
-		thisVectorModel->LookAt(vectorEnd.x, 10.0f, vectorEnd.y);
-		thisVectorModel->ScaleZ(tempDesiredVect.Length() * (1 / kTimeStep));
+		thisVectorModel->LookAt(tempDestination.x + thisAgentModel->GetX(), 10.0f, tempDestination.y + thisAgentModel->GetZ());
+
+		thisVectorModel->ScaleZ(tempDestination.Length());
 	}
 }
 
@@ -197,6 +233,7 @@ void main()
 	IMesh* vectorMesh = gameEngine->LoadMesh("Vector.x");
 
 	map<UID, IModel*> AGENTS;
+	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
 	IModel** FloorTiles;
 	
@@ -227,9 +264,14 @@ void main()
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
 		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
 		AGENTS.insert(make_pair(IDs[i], agentMesh->CreateModel()));
+		DestinationVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
 		MovementVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
 	}
-	
+	for (auto item : MovementVectors)
+	{
+		item.second->SetSkin("vectortex2.jpg");
+	}
+
 	//ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
 	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x / 2.0f, 220.0f, kWorldSize.y / 2.0f);
 	cam->RotateX(90.0f);
@@ -245,7 +287,7 @@ void main()
 	float tempModelMat[16];
 
 	//Assign the simulation matrices to the model matrices - first time
-	UpdateModelsFromCrowdData(crowdEngine, AGENTS, MovementVectors);
+	UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
 
 
 	UID holding = -1;
@@ -277,7 +319,7 @@ void main()
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
 
 		//Assign the simulation matrices to the model matrices
-		UpdateModelsFromCrowdData(crowdEngine, AGENTS, MovementVectors);
+		UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
 
 
 		if (gameEngine->KeyHit(pauseKey))
@@ -289,7 +331,7 @@ void main()
 			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
 
 			//Assign the simulation matrices to the model matrices
-			UpdateModelsFromCrowdData(crowdEngine, AGENTS, MovementVectors);
+			UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
 
 		}
 		if (gameEngine->KeyHit(Key_N))
@@ -330,7 +372,7 @@ void main()
 				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 				crowdEngine->SetAgentPosition(holding, CVector2(tempPos.x, tempPos.z));
 
-				UpdateAgentFromCrowdData(holding, crowdEngine, AGENTS, MovementVectors);
+				UpdateAgentFromCrowdData(holding, crowdEngine, AGENTS, DestinationVectors, MovementVectors);
 
 			}
 		}
@@ -404,7 +446,9 @@ void main()
 			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 			UID newID = crowdEngine->AddAgent(CVector2(tempPos.x, tempPos.z), true);
 			AGENTS.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
-			MovementVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
+			DestinationVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 10.0f, tempPos.z)));
+			MovementVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 11.0f, tempPos.z)));
+			MovementVectors.at(newID)->SetSkin("vectortex2.jpg");
 		}
 	}
 
