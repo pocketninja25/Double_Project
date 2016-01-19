@@ -46,7 +46,6 @@ public:
 	//***************************
 	virtual void Update(float updateTime);
 
-
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // Debug code
 //vvvvvvvvvvvvvvvvvvvvvvvvvvv

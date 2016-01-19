@@ -2,7 +2,7 @@
 
 #include "Common.hpp"
 #include "GEntity.hpp"
-
+#include "GInfluenceMap.hpp"
 struct SRestrictionObject;
 
 class GAgent : public GEntity
@@ -54,6 +54,7 @@ public:
 	virtual void Update(float updateTime);		
 
 	//void PerformCollisionAvoidance(const std::vector<GAgent*>& localAgents);	//Run global and local collision avoidance algorithms
+	void CalculateInfluence(GInfluenceMap* influenceMap);
 	void PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents);
 	void PerformLocalCollisionAvoidance(const std::vector<GAgent*>& localAgents);	
 

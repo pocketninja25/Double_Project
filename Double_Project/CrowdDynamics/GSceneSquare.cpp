@@ -26,7 +26,7 @@ GSceneSquare::GSceneSquare(float iXSize, float iYSize, float iOriginXPos, float 
 {
 	//Delagated Constructor - No Body
 }
-Making a change
+
 GSceneSquare::~GSceneSquare()
 {
 }

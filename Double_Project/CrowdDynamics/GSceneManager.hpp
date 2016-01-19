@@ -84,6 +84,8 @@ public:
 	bool GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desiredVector);
 	bool GetAgentDestination(UID requestedUID, gen::CVector2 &destination);
 
+	GInfluenceMap* GetInfluenceMap();
+
 	float GetTimeStep();
 
 	bool GetIsPaused();

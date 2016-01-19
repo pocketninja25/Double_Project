@@ -51,12 +51,11 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 		}
 	}
 
-	//Have the influence map represent 1 square = 1 unit, any incomplete integer in world size is represented by a single square (e.g. world size x = 3.2 so have 4 squares for x)
-	int tempX = static_cast<int>(m_WorldSize.x) + 1;
-	int tempY = static_cast<int>(m_WorldSize.y) + 1;
+	//Have the influence map represent 1 square = 1 unit, any incomplete integer in world size is clamped into the nearest square (e.g. world size x = 3.2 so have 3 squares for x, item at position 3.1 clamps to square 3)
+	int tempX = static_cast<int>(m_WorldSize.x);
+	int tempY = static_cast<int>(m_WorldSize.y);
 
-	m_InfluenceMap = new GInfluenceMap(tempX, tempY);
-
+	m_InfluenceMap = new GInfluenceMap(tempX, tempY, gen::CVector2(1.0f, 1.0f));
 }
 
 GSceneManager::~GSceneManager()
@@ -133,6 +132,11 @@ bool GSceneManager::GetAgentDestination(UID requestedUID, gen::CVector2 & destin
 	}
 	//No helpful data format for failed GetMatrix, just return existing desiredVector
 	return false;
+}
+
+GInfluenceMap * GSceneManager::GetInfluenceMap()
+{
+	return m_InfluenceMap;
 }
 
 
@@ -219,13 +223,15 @@ void GSceneManager::SetPaused(bool iPaused)
 
 void GSceneManager::PerformOneTimeStep()
 {
+	m_InfluenceMap->ResetMap();
+
 	for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
 	{
 		m_SceneSquares[i]->Update(m_TimeStep);
 	}
-	//Begin the update tree
+	
 	mManager_Entity->Update(m_TimeStep);
-
+	
 	this->MaintainSceneSquares();
 
 }
@@ -238,10 +244,13 @@ void GSceneManager::Update(float frameTime)
 
 		while (m_TimeSinceLastUpdate > m_TimeStep)		//While there are time steps left - this method allows for multiple time steps to be executed if they have built up //TODO: make this functionality independent of a function call
 		{
+			m_InfluenceMap->ResetMap();
+
 			for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
 			{
 				m_SceneSquares[i]->Update(m_TimeStep);
 			}
+			
 			//Begin the update tree
 			mManager_Entity->Update(m_TimeStep);
 			

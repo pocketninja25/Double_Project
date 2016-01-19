@@ -139,40 +139,71 @@ struct SRestrictionObject
 //	this->PerformLocalCollisionAvoidance(localAgents);
 //}
 
+void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
+{
+	
+	//Get influence square coords for position
+	int topCoord;
+	int bottomCoord;
+	int leftCoord;
+	int rightCoord;
+
+	//For now use influence range as radius + 1/2 velocity
+	gen::CVector2 myPos = GetPosition();
+	float influenceRange = m_Radius + (m_Velocity / 2);
+
+	influenceMap->GetGridSquareFromPosition(gen::CVector2(myPos.x - influenceRange, myPos.y - influenceRange), leftCoord, bottomCoord);
+	influenceMap->GetGridSquareFromPosition(gen::CVector2(myPos.x + influenceRange, myPos.y + influenceRange), rightCoord, topCoord);
+
+	gen::CVector2 squareCentre;
+	for (int x = leftCoord; x <= rightCoord; x++)
+	{
+		for (int y = bottomCoord; y <= topCoord; y++)
+		{
+			influenceMap->GetSquareCentre(x, y, squareCentre);
+			
+			float influence = pow(m_Radius, 2) - pow(squareCentre.x - myPos.x, 2) - pow(squareCentre.y - myPos.y, 2);
+			if (influence >= 0)	//If influence is not negative then square root and save the influence, otherwise ignore this square
+			{
+				influence = sqrt(influence);
+				influenceMap->AddValue(x, y, influence);
+			}
+		}
+	}
+
+}
+
 void GAgent::PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents)
 {
 	//Draw the egg at 0, 0 with no rotation
 	//Given a value of Y this formula determines if there is a value of X (Nan) otherwise provides 2 values for x, one positive and one negative
+	//This method determines which squares are edges, and sets them to the correct height, then the interior squares are determined by rasterisation and their heights are also set
+	//Note: dont set heights, augment them
+
+	///Go from the centre of the egg (the position that the object exists at leftwards using the centre of the square, then do the same going rightwards
 
 	float y = 12.27;	//This value needs to be provided
+	gen::CVector2 objectPosition = gen::CVector2(0.0f, 0.0f);
+	float objectRotation = 0.0f;	//In radians
 
-	float radius = 7.07;
-	float dist = 5.0f;
+	float r = m_Radius;
+	float distPerSecond = m_Velocity;
+	float y2 = y - objectPosition.y;
+	float cosinetheta = cos(objectRotation);
+	float sinetheta = sin(objectRotation);
+	float a = 1 / (2 * r);
+	float b = r + distPerSecond;
+	float y1 = y2 * cosinetheta;
 
-	float a = 1 / (2 * radius);
+	float x2 = ((y2 * cosinetheta) - y1) / sinetheta;
 
-	float b = 1 / (radius + dist);
+	float x = x2 + objectPosition.x;
 
-	float c = (17.0f / 13.0f);
-	c *= b;
-	c *= y;
-	c -= 0.33;
 
-	float coeffx = (17.0f / 26.0f);
-	coeffx *= a;
+	if (x == x)
+	{
 
-	float topright = 1 - (c * c);
-	topright = sqrt(topright);
-
-	float bottomright = pow(1.4, c);
-	bottomright *= 3.2;
-
-	float right = topright / bottomright;
-	cout << right << endl << endl;
-
-	float x = right / coeffx;
-
-	float x2 = -x;
+	}
 
 	//At this point the point x, y and -x, y need to be modified by the matrix of the object this egg belongs to
 

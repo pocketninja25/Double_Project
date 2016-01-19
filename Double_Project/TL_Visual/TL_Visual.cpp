@@ -20,6 +20,9 @@ const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 3;
 const int kYSubDiv = 3;
 
+const int kInfluenceSubDivX = static_cast<int>(kWorldSize.x);
+const int kInfluenceSubDivY = static_cast<int>(kWorldSize.y);
+
 float frameTime = 0;
 
 bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
@@ -204,6 +207,27 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 	}
 }
 
+void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influenceTiles)
+{
+	GInfluenceMap* influenceMap = crowdEngine->GetInfluenceMap();
+
+	float influence;
+
+	for (int i = 0; i < kInfluenceSubDivX; i++)
+	{
+		for (int j = 0; j < kInfluenceSubDivY; j++)
+		{
+			influence = influenceMap->GetValue(i, j);
+
+			influenceTiles[i * kInfluenceSubDivX + j]->ResetScale();
+			if (influence > 0)
+			{
+				influenceTiles[i * kInfluenceSubDivX + j]->ScaleY(10 * influence);
+			}
+		}
+	}
+}
+
 void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, stringstream &sstream)
 {
 	CVector3 mousePos = WorldPosFromPixel(gameEngine, cam);
@@ -242,12 +266,24 @@ void main()
 	{
 		for (int j = 0; j < kYSubDiv; j++)
 		{
-			FloorTiles[i * kXSubDiv + j] = floorTileMesh->CreateModel(i * (kWorldSize.x/kXSubDiv), 0.0f, j * (kWorldSize.y / kYSubDiv));
+			FloorTiles[i * kXSubDiv + j] = floorTileMesh->CreateModel(i * (kWorldSize.x / kXSubDiv), 0.0f, j * (kWorldSize.y / kYSubDiv));
 			FloorTiles[i * kXSubDiv + j]->ScaleX(kWorldSize.x / kXSubDiv);
 			FloorTiles[i * kXSubDiv + j]->ScaleZ(kWorldSize.y / kYSubDiv);
+			FloorTiles[i*kXSubDiv + j]->Scale(0.0f);
 		}
 	}
 
+	IModel** InfluenceTiles;
+	
+	InfluenceTiles = new IModel*[kInfluenceSubDivX * kInfluenceSubDivY];
+	for (int i = 0; i < kInfluenceSubDivX; i++)
+	{
+		for (int j = 0; j < kInfluenceSubDivY; j++)
+		{
+			InfluenceTiles[i * kInfluenceSubDivX + j] = floorTileMesh->CreateModel(static_cast<float>(i) , 0.5f, static_cast<float>(j) );
+			InfluenceTiles[i * kInfluenceSubDivX + j]->RotateX(180.0f);
+		}
+	}
 
 	//--------------------------
 	// CrowdDynamics Setup
@@ -317,6 +353,9 @@ void main()
 
 		/**** Update your scene each frame here ****/
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
+
+		//Update the influence representation from the crowd engine
+		UpdateInfluenceFromCrowdData(crowdEngine, InfluenceTiles);
 
 		//Assign the simulation matrices to the model matrices
 		UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
@@ -455,5 +494,6 @@ void main()
 	// Delete the 3D engine now we are finished with it
 	gameEngine->Delete();
 	delete[] FloorTiles;
+	delete[] InfluenceTiles;
 	delete crowdEngine;
 }

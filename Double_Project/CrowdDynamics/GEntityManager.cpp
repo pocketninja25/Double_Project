@@ -104,6 +104,13 @@ bool GEntityManager::SetAgentActivation(UID agent, bool isEnabled)
 
 void GEntityManager::Update(float updateTime)
 {
+	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
+
+	for (auto &agent : m_ActiveAgents)
+	{
+		agent.second->CalculateInfluence(influenceMap);
+	}
+
 	for (auto &agent: m_ActiveAgents)
 	{
 		agent.second->Update(updateTime);
