@@ -139,11 +139,7 @@ void GEntityManager::PerformCollisionAvoidance(const std::list<UID>& localAgents
 	//One by one perform collision avoidance algorithms on the list of agents
 	for (auto agent : potentiallyCollidingAgents)
 	{
-		agent->PerformGlobalCollisionAvoidance(potentiallyCollidingAgents);
-	}
-	for (auto agent : potentiallyCollidingAgents)
-	{
-		agent->PerformLocalCollisionAvoidance(potentiallyCollidingAgents);
+		agent->GiveLocalAgentsList(potentiallyCollidingAgents);
 	}
 	
 }

@@ -20,8 +20,11 @@ public:
 	~GInfluenceMap();
 
 	float GetValue(int xPos, int yPos);
-	void ResetMap();
+	void ResetMap();	//Sets all squares to 0 influence
 	void AddValue(int xPos, int yPos, float value);
+	//Deprecated: float GetAccumulatedCost(int xPos, int yPos, float radius);
+	float GetSquareGradient(int xPos, int yPos);	//Determines the gradient for the provided grid reference //TODO: implement this
+
 
 	void GetGridSquareFromPosition(const gen::CVector2 &position, int &xPos, int &yPos);
 	void GetSquareCentre(int xPos, int yPos, gen::CVector2 &position);

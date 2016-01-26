@@ -20,6 +20,8 @@ private:
 	gen::CVector2 m_PreviousDesiredMovementVect;
 	gen::CVector2 m_PreviousMovementVect;
 
+	std::vector<GAgent*> m_PotentiallyCollidingAgents;
+
 //---------------------------
 // Public Functions
 //---------------------------
@@ -53,10 +55,11 @@ public:
 	//***************************
 	virtual void Update(float updateTime);		
 
-	//void PerformCollisionAvoidance(const std::vector<GAgent*>& localAgents);	//Run global and local collision avoidance algorithms
 	void CalculateInfluence(GInfluenceMap* influenceMap);
-	void PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents);
-	void PerformLocalCollisionAvoidance(const std::vector<GAgent*>& localAgents);	
+	void GiveLocalAgentsList(std::vector<GAgent*> localAgents);
+private:
+	void PerformGlobalCollisionAvoidance();
+	void PerformLocalCollisionAvoidance();
 
 private:
 	gen::CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement, float updateTime);	//Used by PerformLocalCollisionAvoidance to manipulate the desired movement vector based on the passed restriction objects

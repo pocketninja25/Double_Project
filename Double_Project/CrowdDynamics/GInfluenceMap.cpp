@@ -73,6 +73,36 @@ void GInfluenceMap::AddValue(int xPos, int yPos, float value)
 	m_Map[xPos * m_xSquares + yPos] += value;
 }
 
+float GInfluenceMap::GetAccumulatedCost(int xPos, int yPos, float radius)
+{
+	int convertedRadius = static_cast<int>(radius);
+	
+	int left = xPos - convertedRadius;
+	int right = xPos + convertedRadius;
+	int bottom = yPos - convertedRadius;
+	int top = yPos + convertedRadius;
+	
+	gen::CVector2 centrePosition;
+	GetSquareCentre(xPos, yPos, centrePosition);
+
+	gen::CVector2 thisSquarePosition;
+	float total = 0.0f;
+
+	for (int x = left; x <= right; x++)
+	{
+		for (int y = bottom; y <= top; y++)
+		{
+			GetSquareCentre(x, y, thisSquarePosition); 
+			if ((centrePosition-thisSquarePosition).Length() <= radius)
+			{
+				total += GetValue(x, y);
+			}
+		}
+	}
+
+	return total;
+}
+
 void GInfluenceMap::GetGridSquareFromPosition(const gen::CVector2 & position, int & xPos, int & yPos)
 {
 	//position/square width rounded down to the nearest integer = the square to add to

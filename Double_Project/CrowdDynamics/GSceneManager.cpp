@@ -186,6 +186,7 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 
 void GSceneManager::PerformCollisionAvoidance(const std::list<UID>& localAgents)
 {
+
 	mManager_Entity->PerformCollisionAvoidance(localAgents);
 }
 

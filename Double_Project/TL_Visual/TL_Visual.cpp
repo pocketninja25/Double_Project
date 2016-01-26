@@ -1,5 +1,7 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
+#define InfluenceVisualiserEnabled
+
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
 #include <map>
@@ -22,6 +24,8 @@ const int kYSubDiv = 3;
 
 const int kInfluenceSubDivX = static_cast<int>(kWorldSize.x);
 const int kInfluenceSubDivY = static_cast<int>(kWorldSize.y);
+
+
 
 float frameTime = 0;
 
@@ -269,10 +273,11 @@ void main()
 			FloorTiles[i * kXSubDiv + j] = floorTileMesh->CreateModel(i * (kWorldSize.x / kXSubDiv), 0.0f, j * (kWorldSize.y / kYSubDiv));
 			FloorTiles[i * kXSubDiv + j]->ScaleX(kWorldSize.x / kXSubDiv);
 			FloorTiles[i * kXSubDiv + j]->ScaleZ(kWorldSize.y / kYSubDiv);
-			FloorTiles[i*kXSubDiv + j]->Scale(0.0f);
+			FloorTiles[i*kXSubDiv + j]->Scale(1.0f);
 		}
 	}
 
+#ifdef InfluenceVisualiserEnabled
 	IModel** InfluenceTiles;
 	
 	InfluenceTiles = new IModel*[kInfluenceSubDivX * kInfluenceSubDivY];
@@ -284,6 +289,7 @@ void main()
 			InfluenceTiles[i * kInfluenceSubDivX + j]->RotateX(180.0f);
 		}
 	}
+#endif
 
 	//--------------------------
 	// CrowdDynamics Setup
@@ -327,7 +333,7 @@ void main()
 
 
 	UID holding = -1;
-
+	crowdEngine->SetPaused(true);
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
 	{
@@ -355,7 +361,9 @@ void main()
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
 
 		//Update the influence representation from the crowd engine
+#ifdef InfluenceVisualiserEnabled
 		UpdateInfluenceFromCrowdData(crowdEngine, InfluenceTiles);
+#endif
 
 		//Assign the simulation matrices to the model matrices
 		UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
@@ -494,6 +502,8 @@ void main()
 	// Delete the 3D engine now we are finished with it
 	gameEngine->Delete();
 	delete[] FloorTiles;
+#ifdef InfluenceVisualiserEnabled
 	delete[] InfluenceTiles;
+#endif
 	delete crowdEngine;
 }

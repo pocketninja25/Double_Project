@@ -32,7 +32,7 @@ bool GAgent::HasReachedDestination()
 {
 	float distTo = gen::Abs(this->GetPosition().DistanceToSquared(m_Destination));
 
-	if (distTo < 4.0f /*TODO: Make this less magic*/)	
+	if (distTo < m_Radius)	
 	{
 		return true;
 	}
@@ -73,18 +73,20 @@ void GAgent::Update(float updateTime)
 {
 	m_PreviousDesiredMovementVect = m_DesiredMovementVect;
 	m_PreviousMovementVect = m_MovementVector;
-
+	
 	//Apply physics to model
 	gen::CMatrix3x3 matrix = GetMatrix();	//Get matrix of this agent
 	matrix.FaceTarget2D(m_Destination);		//Face the agent towards it's destination
 
-	//Move by the movement vector (units per second) modified by update time calculating units this frame
-	matrix.Move2D(m_MovementVector);// *updateTime);
-
-	//m_DesiredMovementVect = m_Destination - GetPosition();
+	m_DesiredMovementVect = m_Destination - GetPosition();
 	m_DesiredMovementVect.Normalise();
 	m_DesiredMovementVect *= m_Velocity;
 
+	PerformGlobalCollisionAvoidance();
+	//PerformLocalCollisionAvoidance();
+
+	//Move by the movement vector (units per second) modified by update time calculating units this frame
+	matrix.Move2D(m_MovementVector);// *updateTime);
 	SetMatrix(matrix);
 
 }
@@ -130,15 +132,6 @@ struct SRestrictionObject
 	GAgent* associatedAgent;
 };
  
-//void GAgent::PerformCollisionAvoidance(const std::vector<GAgent*>& localAgents)
-//{
-//	//Perform global collision avoidance - manipulates the directions of the agents based on the position of other agents in the scene
-//	this->PerformGlobalCollisionAvoidance(localAgents);
-//
-//	//Perform local collision avoidance - fine tunes the direction and speed of the agent each frame based on potential collisions within this time step
-//	this->PerformLocalCollisionAvoidance(localAgents);
-//}
-
 void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 {
 	
@@ -150,7 +143,7 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 
 	//For now use influence range as radius + 1/2 velocity
 	gen::CVector2 myPos = GetPosition();
-	float influenceRange = m_Radius + (m_Velocity / 2);
+	float influenceRange = (m_Radius + (m_Velocity));
 
 	influenceMap->GetGridSquareFromPosition(gen::CVector2(myPos.x - influenceRange, myPos.y - influenceRange), leftCoord, bottomCoord);
 	influenceMap->GetGridSquareFromPosition(gen::CVector2(myPos.x + influenceRange, myPos.y + influenceRange), rightCoord, topCoord);
@@ -162,7 +155,7 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 		{
 			influenceMap->GetSquareCentre(x, y, squareCentre);
 			
-			float influence = pow(m_Radius, 2) - pow(squareCentre.x - myPos.x, 2) - pow(squareCentre.y - myPos.y, 2);
+			float influence = pow(influenceRange, 2) - pow(squareCentre.x - myPos.x, 2) - pow(squareCentre.y - myPos.y, 2);
 			if (influence >= 0)	//If influence is not negative then square root and save the influence, otherwise ignore this square
 			{
 				influence = sqrt(influence);
@@ -173,52 +166,89 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 
 }
 
-void GAgent::PerformGlobalCollisionAvoidance(const std::vector<GAgent*>& localAgents)
+void GAgent::PerformGlobalCollisionAvoidance()
 {
-	//Draw the egg at 0, 0 with no rotation
-	//Given a value of Y this formula determines if there is a value of X (Nan) otherwise provides 2 values for x, one positive and one negative
-	//This method determines which squares are edges, and sets them to the correct height, then the interior squares are determined by rasterisation and their heights are also set
-	//Note: dont set heights, augment them
+	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
 
-	///Go from the centre of the egg (the position that the object exists at leftwards using the centre of the square, then do the same going rightwards
+	//Determine this agent's current position in world space and on the influence map
+	int xCoord = 0;
+	int yCoord = 0;
+	gen::CVector2 myPos = GetPosition();
+	influenceMap->GetGridSquareFromPosition(myPos, xCoord, yCoord);
 
-	float y = 12.27;	//This value needs to be provided
-	gen::CVector2 objectPosition = gen::CVector2(0.0f, 0.0f);
-	float objectRotation = 0.0f;	//In radians
-
-	float r = m_Radius;
-	float distPerSecond = m_Velocity;
-	float y2 = y - objectPosition.y;
-	float cosinetheta = cos(objectRotation);
-	float sinetheta = sin(objectRotation);
-	float a = 1 / (2 * r);
-	float b = r + distPerSecond;
-	float y1 = y2 * cosinetheta;
-
-	float x2 = ((y2 * cosinetheta) - y1) / sinetheta;
-
-	float x = x2 + objectPosition.x;
-
-
-	if (x == x)
+	//Calculate the gradient of the surrounding 4/8 squares(TODO: determine best option) 
+	float optimalGradient = 999999.9f;	//TODO: get some worst possible gradient value to put here, or calculate first gradient before the loop
+	///Using xCoord & yCoord to encourage staying still as a reasonable option
+	int bestX = xCoord;
+	int bestY = yCoord;
+	//Calculate the coordinates of surrounding squares, in some sort of loop probably
+	float gradient = influenceMap->GetSquareGradient(xCoord, yCoord);
+	if (gradient < optimalGradient)
 	{
-
+		optimalGradient = gradient;
 	}
 
-	//At this point the point x, y and -x, y need to be modified by the matrix of the object this egg belongs to
+	//After determining the best option, take action upon it //TODO: Give agents a maximum turning angle per second/frame
+	
+	
+	///gen::CVector2 movementVector = this->GetDesiredMovement();
+	///gen::CVector3 movementVector3 = gen::CVector3(movementVector);
+	///
+	///gen::CVector3 rotatedMovementVector;
+	///gen::CVector2 postMovementPosition;
+	///
+	///float rotationIncrement = 10.0f;
+	///
+	///gen::CMatrix3x3 rotationMatrix;// = gen::Matrix3x3RotationY(gen::ToRadians(rotationIncrement));
+	///
+	///float thisCost;
+	///float lowestCost = 9999999.0f;
+	///gen::CVector2 lowestResistanceVector;
+	///
+	///for (float i = -90.0f; i <= 90.0f; i+= rotationIncrement)
+	///{
+	///	rotationMatrix.MakeRotationY(gen::ToRadians(i));
+	///
+	///	rotatedMovementVector = rotationMatrix.Transform(movementVector3);
+	///
+	///	postMovementPosition = myPos + gen::CVector2(rotatedMovementVector);
+	///	influenceMap->GetGridSquareFromPosition(postMovementPosition, xCoord, yCoord);
+	///	thisCost = influenceMap->GetAccumulatedCost(xCoord, yCoord, m_Radius);
+	///
+	///	if (thisCost < lowestCost)
+	///	{
+	///		lowestResistanceVector = gen::CVector2(rotatedMovementVector);
+	///		lowestCost = thisCost;
+	///	}
+	///	//else if (fabs(thisCost - lowestCost) < 5.0f && fabs(i - 90) < fabs(angleOfLowestCost - 90))	//If within the range of 0.5 influence difference
+	///	//	//{
+	///	//	//	lowestResistanceVector = rotatedMovementVector;
+	///	//	//	lowestCost = thisCost;
+	///	//	//	
+	///	//	//}
+	///}
+	///m_DesiredMovementVect = lowestResistanceVector;
 
+
+	m_MovementVector = m_DesiredMovementVect * GSceneManager::GetInstance()->GetTimeStep();	//This will allow the two collision avoidance algorithms to work together or seperately, if the local avoidance is used this value will just be overridden, otherwise it is used for movement;
+	
 }
 
 //-------------------------------------------------------------------------------------------
 // This only covers local avoidance (essentially there as collision detection and resolution)
 //-------------------------------------------------------------------------------------------
-void GAgent::PerformLocalCollisionAvoidance(const std::vector<GAgent*>& localAgents)
+void GAgent::GiveLocalAgentsList(std::vector<GAgent*> localAgents)
+{
+	m_PotentiallyCollidingAgents = localAgents;
+}
+
+void GAgent::PerformLocalCollisionAvoidance()
 {
 	float updateTime = GSceneManager::GetInstance()->GetTimeStep();
 	std::vector<SRestrictionObject> restrictions;
 	std::vector<SRestrictionObject> insideRestrictions;
 	SRestrictionObject buildRestriction;
-	for (auto otherAgent : localAgents)
+	for (auto otherAgent : m_PotentiallyCollidingAgents)
 	{
 		//Test to see if this agent is the agent referenced in agent, if so then skip calcualtions for that agent
 		if (otherAgent->GetUID() != this->GetUID())
@@ -255,15 +285,7 @@ void GAgent::PerformLocalCollisionAvoidance(const std::vector<GAgent*>& localAge
 				
 				buildRestriction.x = gen::ToDegrees(asinf((this->m_Radius + otherAgent->m_Radius) / vecToOther.Length()));
 				buildRestriction.y = 90 - buildRestriction.x;
-				if (this->dm_BeingWatched && buildRestriction.x > 85.0f)
-				{
-					GSceneManager::GetInstance()->SetPaused(true);
-										
-				}
-				if (this->dm_BeingWatched && buildRestriction.x != buildRestriction.x)
-				{
-					
-				}
+			
 
 				buildRestriction.C = buildRestriction.I;	//Direction //Should be I - E but i is represented as Zero
 				buildRestriction.C = buildRestriction.C * gen::Matrix2x2Rotation(gen::ToRadians(-buildRestriction.x));	//Rotate C x degrees counter-clockwise
@@ -351,7 +373,7 @@ gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restri
 		if (insideRestrictions[0].x == insideRestrictions[0].x)
 		{
 			//Move the attempted movement then pass it to this function if insideRestrictions is > 0
-			//TODO: MOVE THE MOVEMENT VECTOR AND POP THE RELEVANT RESTRICTION
+			//TODO: MOVE THE MOVEMENT VECTOR AND POP THE RELEVANT RESTRICTION //THIS MAY BE COMPLETE ALREADY, look again
 			gen::CVector2 newPoints[4];
 			gen::CVector2 AB = insideRestrictions[0].B - insideRestrictions[0].A;
 			gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
