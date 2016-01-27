@@ -9,7 +9,7 @@ class GEntity :	public GObject
 // Private Data Members
 //---------------------------
 private:
-	gen::CMatrix3x3 m_Matrix;
+	CMatrix3x3 m_Matrix;
 
 //---------------------------
 // Public Functions
@@ -19,7 +19,7 @@ public:
 	// Constructors/Destructors
 	//***************************
 
-	GEntity(gen::CVector2 iPosition, bool iIsActive = true);
+	GEntity(CVector2 iPosition, bool iIsActive = true);
 	GEntity(float iXPos, float iYPos, bool iIsActive = true);
 
 	virtual ~GEntity();
@@ -27,9 +27,9 @@ public:
 	//***************************
 	// Getters/Accessors
 	//***************************
-	gen::CVector2 GetPosition();
-	gen::CVector2 GetFacingVector();
-	gen::CMatrix3x3 GetMatrix();
+	CVector2 GetPosition();
+	CVector2 GetFacingVector();
+	CMatrix3x3 GetMatrix();
 
 	//***************************
 	// Setters/Mutators
@@ -51,6 +51,6 @@ protected:
 	//***************************
 	// Getters/Accessors
 	//***************************
-	void SetMatrix(gen::CMatrix3x3& iMatrix);
+	void SetMatrix(CMatrix3x3& iMatrix);
 
 };

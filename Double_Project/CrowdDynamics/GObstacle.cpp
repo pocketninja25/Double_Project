@@ -3,7 +3,7 @@
 #include "GObstacleTemplate.hpp"
 #include "GWall.hpp"
 
-GObstacle::GObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive) :
+GObstacle::GObstacle(GObstacleTemplate* iTemplate, CVector2 iPosition, bool iIsActive) :
 	GObject(iIsActive),
 	m_Template(iTemplate),
 	m_Matrix(iPosition)
@@ -23,14 +23,14 @@ GObstacle::~GObstacle()
 	//Dont need to deallocate template as dont own it
 }
 
-gen::CVector2 GObstacle::GetPosition()
+CVector2 GObstacle::GetPosition()
 {
 	return m_Matrix.GetPosition2D();
 }
 
-gen::CVector2 GObstacle::GetFacingVector()
+CVector2 GObstacle::GetFacingVector()
 {
-	return gen::CVector2(m_Matrix.GetRow(1));	//Get the 2nd 'Facing' row of the matrix
+	return CVector2(m_Matrix.GetRow(1));	//Get the 2nd 'Facing' row of the matrix
 }
 
 void GObstacle::Update(float updateTime)

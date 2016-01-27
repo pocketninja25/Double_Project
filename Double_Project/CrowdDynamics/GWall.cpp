@@ -1,7 +1,7 @@
 #include "GWall.hpp"
 
 //TODO: Improve this constructor
-GWall::GWall(gen::CVector2 iVertexA, gen::CVector2 iVertexB, gen::CVector2 iFacingVector, UID iObstacle, bool iIsActive) : 
+GWall::GWall(CVector2 iVertexA, CVector2 iVertexB, CVector2 iFacingVector, UID iObstacle, bool iIsActive) : 
 	GObject(iIsActive),
 	m_Vertices(VertexPair(iVertexA, iVertexB)),
 	m_FacingVect(iFacingVector),
@@ -32,10 +32,10 @@ std::string GWall::ToString()
 }
 #endif
 
-bool GWall::IsInFront(gen::CVector2 objectPosition)	//Return true if the passed object is in front of the wall
+bool GWall::IsInFront(CVector2 objectPosition)	//Return true if the passed object is in front of the wall
 {
 	//Take vector from either point on the wall to the object
-	gen::CVector2 toObject = objectPosition - m_Vertices.a;
+	CVector2 toObject = objectPosition - m_Vertices.a;
 	toObject.Normalise();	//Make vector to object a normalised vector
 
 	//Take facing vector and perform dot product with toObject

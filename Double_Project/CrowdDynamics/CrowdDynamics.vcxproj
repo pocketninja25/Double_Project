@@ -26,6 +26,7 @@
     <ClInclude Include="GEntity.hpp" />
     <ClInclude Include="GEntityManager.hpp" />
     <ClInclude Include="GInfluenceMap.hpp" />
+    <ClInclude Include="GIntPair.hpp" />
     <ClInclude Include="GObject.hpp" />
     <ClInclude Include="GObstacle.hpp" />
     <ClInclude Include="GObstacleManager.hpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="GEntity.cpp" />
     <ClCompile Include="GEntityManager.cpp" />
     <ClCompile Include="GInfluenceMap.cpp" />
+    <ClCompile Include="GIntPair.cpp" />
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GObstacle.cpp" />
     <ClCompile Include="GObstacleManager.cpp" />

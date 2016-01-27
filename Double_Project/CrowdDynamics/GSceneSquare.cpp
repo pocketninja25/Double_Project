@@ -2,27 +2,27 @@
 #include "GSceneManager.hpp"
 
 
-GSceneSquare::GSceneSquare(gen::CVector2 iSize, gen::CVector2 iOriginPos, bool iIsActive) :
+GSceneSquare::GSceneSquare(CVector2 iSize, CVector2 iOriginPos, bool iIsActive) :
 	GObject(iIsActive),
 	m_Size(iSize),
 	m_Origin(iOriginPos)
 {
 }
 
-GSceneSquare::GSceneSquare(gen::CVector2 iSize, float iOriginXPos, float iOriginYPos, bool iIsActive) :
-	GSceneSquare(iSize, gen::CVector2(iOriginXPos, iOriginYPos))
+GSceneSquare::GSceneSquare(CVector2 iSize, float iOriginXPos, float iOriginYPos, bool iIsActive) :
+	GSceneSquare(iSize, CVector2(iOriginXPos, iOriginYPos))
 {
 	//Delagated Constructor - No Body
 }
 
-GSceneSquare::GSceneSquare(float iXSize, float iYSize, gen::CVector2 iOriginPos, bool iIsActive) :
-	GSceneSquare(gen::CVector2(iXSize, iYSize), iOriginPos, iIsActive)
+GSceneSquare::GSceneSquare(float iXSize, float iYSize, CVector2 iOriginPos, bool iIsActive) :
+	GSceneSquare(CVector2(iXSize, iYSize), iOriginPos, iIsActive)
 {
 	//Delagated Constructor - No Body
 }
 
 GSceneSquare::GSceneSquare(float iXSize, float iYSize, float iOriginXPos, float iOriginYPos, bool iIsActive) :
-	GSceneSquare(gen::CVector2(iXSize, iYSize), gen::CVector2(iOriginXPos, iOriginYPos), iIsActive)
+	GSceneSquare(CVector2(iXSize, iYSize), CVector2(iOriginXPos, iOriginYPos), iIsActive)
 {
 	//Delagated Constructor - No Body
 }
@@ -43,7 +43,7 @@ std::vector<UID> GSceneSquare::TransferAgents()
 	
 	std::vector<UID> rejectionList;	//List of the agents no longer in this scene square
 
-	gen::CVector2 position;
+	CVector2 position;
 	auto ID = m_Agents.begin();
 	bool incremented;
 	while (ID != m_Agents.end())

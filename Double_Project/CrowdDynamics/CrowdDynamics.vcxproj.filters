@@ -67,6 +67,9 @@
     <ClInclude Include="GInfluenceMap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GIntPair.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GEntityManager.cpp">
@@ -106,6 +109,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GInfluenceMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GIntPair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

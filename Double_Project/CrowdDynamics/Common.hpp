@@ -7,6 +7,12 @@
 #include <list>
 #include <vector>
 
+#include "GIntPair.hpp"
+
+using gen::CVector2;
+using gen::CVector3;
+using gen::CMatrix3x3;
+
 typedef int UID;
 
 inline float RandomFloat(float min, float max)	//Returns a random float between min and max

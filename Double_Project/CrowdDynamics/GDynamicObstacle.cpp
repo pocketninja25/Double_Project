@@ -1,6 +1,6 @@
 #include "GDynamicObstacle.hpp"
 
-GDynamicObstacle::GDynamicObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive) : 
+GDynamicObstacle::GDynamicObstacle(GObstacleTemplate* iTemplate, CVector2 iPosition, bool iIsActive) : 
 	GObstacle(iTemplate, iPosition, iIsActive)
 {
 
@@ -11,14 +11,14 @@ GDynamicObstacle::~GDynamicObstacle()
 
 }
 
-void GDynamicObstacle::SetPosition(gen::CVector2 iXY)
+void GDynamicObstacle::SetPosition(CVector2 iXY)
 {
 	m_Matrix.SetRow(2, iXY);	//Set row 2 (position row) with new position
 }
 
 void GDynamicObstacle::SetPosition(float iX, float iY) 
 {
-	SetPosition(gen::CVector2(iX, iY));			//Delegate to alternate argument version of this function
+	SetPosition(CVector2(iX, iY));			//Delegate to alternate argument version of this function
 }
 
 void GDynamicObstacle::MoveX(float dX)
@@ -31,14 +31,14 @@ void GDynamicObstacle::MoveY(float dY)
 	m_Matrix.MoveY2D(dY);
 }
 
-void GDynamicObstacle::Move(gen::CVector2 dXY)
+void GDynamicObstacle::Move(CVector2 dXY)
 {
 	m_Matrix.Move2D(dXY);
 }
 
 void GDynamicObstacle::Move(float dX, float dY)
 {
-	Move(gen::CVector2(dX, dY));				//Delegate to alternate argument version of this function
+	Move(CVector2(dX, dY));				//Delegate to alternate argument version of this function
 }
 
 void GDynamicObstacle::MoveLocalX(float dX)
@@ -51,14 +51,14 @@ void GDynamicObstacle::MoveLocalY(float dY)
 	m_Matrix.MoveLocalY2D(dY);
 }
 
-void GDynamicObstacle::MoveLocal(gen::CVector2 dXY)
+void GDynamicObstacle::MoveLocal(CVector2 dXY)
 {
 	m_Matrix.MoveLocal2D(dXY);
 }
 
 void GDynamicObstacle::MoveLocal(float dX, float dY)
 {
-	MoveLocal(gen::CVector2(dX, dY));			//Delegate to alternate argument version of this function
+	MoveLocal(CVector2(dX, dY));			//Delegate to alternate argument version of this function
 }
 
 void GDynamicObstacle::RotateXDeg(float dAlpha)

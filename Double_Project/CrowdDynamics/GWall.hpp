@@ -5,14 +5,14 @@
 
 struct VertexPair
 {
-	VertexPair(gen::CVector2 iVertexA, gen::CVector2 iVertexB) :
+	VertexPair(CVector2 iVertexA, CVector2 iVertexB) :
 		a(iVertexA),
 		b(iVertexB)
 	{
 	}
 
-	gen::CVector2 a;
-	gen::CVector2 b;
+	CVector2 a;
+	CVector2 b;
 };
 
 class GWall : public GObject
@@ -22,7 +22,7 @@ class GWall : public GObject
 //---------------------------
 private:
 	VertexPair m_Vertices;		//Points to a pair of vertices
-	gen::CVector2 m_FacingVect;	//The facing vector of the wall (the direction the wall influences)
+	CVector2 m_FacingVect;	//The facing vector of the wall (the direction the wall influences)
 	UID m_Parent;				//The UID of the static or dynamic obstacle that this wall belongs to
 
 //---------------------------
@@ -33,7 +33,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GWall(gen::CVector2 iVertexA, gen::CVector2 iVertexB, gen::CVector2 iFacingVector, UID iParent, bool iIsActive = true);
+	GWall(CVector2 iVertexA, CVector2 iVertexB, CVector2 iFacingVector, UID iParent, bool iIsActive = true);
 	virtual ~GWall();
 
 	//***************************
@@ -53,7 +53,7 @@ public:
 	virtual std::string ToString();
 #endif
 
-	bool IsInFront(gen::CVector2 objectPosition);	//Returns true if the passed object position is "In front" of this wall (within 90 degrees either side of the wall's facing vector)
+	bool IsInFront(CVector2 objectPosition);	//Returns true if the passed object position is "In front" of this wall (within 90 degrees either side of the wall's facing vector)
 
 
 };

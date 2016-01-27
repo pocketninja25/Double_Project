@@ -43,7 +43,7 @@ public:
 	//***************************
 	// Setters/Mutators
 	//***************************
-	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
+	UID AddAgent(CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
 
 	bool SetAgentActivation(UID agent, bool isEnabled);
@@ -56,7 +56,7 @@ public:
 
 	void PerformCollisionAvoidance(const std::list<UID>& localAgents);	//Performs collision avoidance algorithms on the provided list of agents (each agent in the list checks collision with each other agent in the list)
 
-	gen::CVector2 GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
+	CVector2 GetRandomDestination();		//Return a random position in the game world TODO: Make sure that position is not within an obstacle
 
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^

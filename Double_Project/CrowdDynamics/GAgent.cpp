@@ -1,25 +1,27 @@
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
 
-GAgent::GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive) :
+GAgent::GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive) :
 	GEntity(iPosition, iIsActive),
 #ifdef _DEBUG
 	dm_BeingWatched(false),
 #endif
 	m_Destination(iDestination),
-	m_Velocity(15.0f),//TODO: find a way of calculating this better
-	m_PreviousMovementVect(gen::CVector2(0.0f, 0.0f)),
-	m_PreviousDesiredMovementVect(gen::CVector2(0.0f, 0.0f)),
-	m_Radius(sqrt(200.0f)/2)	//TODO: provide a reliable version of this number based on file data
+	m_Velocity(15.0f),//TODO: find a way of calculating this better - or make it programmable
+	m_MaxTurn(gen::ToRadians(45.0f)),
+	m_PreviousMovementVect(CVector2(0.0f, 0.0f)),
+	m_PreviousDesiredMovementVect(CVector2(0.0f, 0.0f)),
+	m_Radius(sqrt(200.0f)/2),	//TODO: provide a reliable version of this number based on file data
+	m_MaxGradientTraversal(sqrt(pow(m_Radius+m_Velocity, 2) - (2 * pow(m_Radius, 2)) ) + 1)	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) TODO: Pick a better number
 {
-	m_DesiredMovementVect = gen::CVector2(GetPosition(), m_Destination);
+	m_DesiredMovementVect = CVector2(GetPosition(), m_Destination);
 	m_DesiredMovementVect.Normalise();
 	m_DesiredMovementVect *= m_Velocity;
 
 }
 
 GAgent::GAgent(float iXPos, float iYPos, float iXDest, float iYDest, bool iIsActive) : 
-	GAgent(gen::CVector2(iXPos, iYPos), gen::CVector2(iXDest, iYDest), iIsActive)
+	GAgent(CVector2(iXPos, iYPos), CVector2(iXDest, iYDest), iIsActive)
 {
 	//Delagated Constructor - No Body
 }
@@ -39,17 +41,17 @@ bool GAgent::HasReachedDestination()
 	return false;
 }
 
-gen::CVector2 GAgent::GetDesiredMovement()
+CVector2 GAgent::GetDesiredMovement()
 {
 	return m_DesiredMovementVect;
 }
 
-gen::CVector2 GAgent::GetDestination()
+CVector2 GAgent::GetDestination()
 {
 	return m_Destination;
 }
 
-void GAgent::SetNewDestination(gen::CVector2 newDestination)
+void GAgent::SetNewDestination(CVector2 newDestination)
 {
 	//Recieve a new destination (from the manager class) when the manager determines the agent has arrived, or should change destination otherwise
 	m_Destination = newDestination;
@@ -59,9 +61,9 @@ void GAgent::SetNewDestination(gen::CVector2 newDestination)
 	m_DesiredMovementVect.Normalise();
 	m_DesiredMovementVect * m_Velocity;
 }
-void GAgent::SetPosition(gen::CVector2 newPosition)
+void GAgent::SetPosition(CVector2 newPosition)
 {
-	gen::CMatrix3x3 tempMatrix = GetMatrix();
+	CMatrix3x3 tempMatrix = GetMatrix();
 
 	tempMatrix.e20 = newPosition.x;
 	tempMatrix.e21 = newPosition.y;
@@ -75,7 +77,7 @@ void GAgent::Update(float updateTime)
 	m_PreviousMovementVect = m_MovementVector;
 	
 	//Apply physics to model
-	gen::CMatrix3x3 matrix = GetMatrix();	//Get matrix of this agent
+	CMatrix3x3 matrix = GetMatrix();	//Get matrix of this agent
 	matrix.FaceTarget2D(m_Destination);		//Face the agent towards it's destination
 
 	m_DesiredMovementVect = m_Destination - GetPosition();
@@ -107,24 +109,21 @@ std::string GAgent::ToString()
 struct SRestrictionObject
 {
 
+	CVector2 A;	//The back left vertex of the potential collision trapezium (line AE has points H and C on it)
+	CVector2 B;	//The back right vertex of the potential collision trapezium (line BE has points G and D on it)
+	CVector2 C;	//The front left vertex of the potential collision trapezium
+	CVector2 D;	//The front right vertex of the potential collision trapezium
+	CVector2 E;	//The position of this agent
+	CVector2 F;	//The position of the other agent
+	CVector2 G;	//The point of tangential intersection of the combined radii circle and the line BE
+	CVector2 H;	//The point of tangential intersection of the combined radii circle and the line AE
+	CVector2 I;	//The point along the line FE that intersects the agents' combined radii circle
+	CVector2 J;	//The point at which the extension of the line FE intersects the combined radii of the agents
 
-
-
-	gen::CVector2 A;	//The back left vertex of the potential collision trapezium (line AE has points H and C on it)
-	gen::CVector2 B;	//The back right vertex of the potential collision trapezium (line BE has points G and D on it)
-	gen::CVector2 C;	//The front left vertex of the potential collision trapezium
-	gen::CVector2 D;	//The front right vertex of the potential collision trapezium
-	gen::CVector2 E;	//The position of this agent
-	gen::CVector2 F;	//The position of the other agent
-	gen::CVector2 G;	//The point of tangential intersection of the combined radii circle and the line BE
-	gen::CVector2 H;	//The point of tangential intersection of the combined radii circle and the line AE
-	gen::CVector2 I;	//The point along the line FE that intersects the agents' combined radii circle
-	gen::CVector2 J;	//The point at which the extension of the line FE intersects the combined radii of the agents
-
-	gen::CVector2 ABNormal;
-	gen::CVector2 CDNormal;
-	gen::CVector2 ACNormal;
-	gen::CVector2 BDNormal;
+	CVector2 ABNormal;
+	CVector2 CDNormal;
+	CVector2 ACNormal;
+	CVector2 BDNormal;
 
 	float x;
 	float y;
@@ -136,24 +135,22 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 {
 	
 	//Get influence square coords for position
-	int topCoord;
-	int bottomCoord;
-	int leftCoord;
-	int rightCoord;
+	GIntPair bottomLeft;
+	GIntPair topRight;
 
-	//For now use influence range as radius + 1/2 velocity
-	gen::CVector2 myPos = GetPosition();
-	float influenceRange = (m_Radius + (m_Velocity));
+	//For now use influence range as radius + velocity
+	CVector2 myPos = GetPosition();
+	float influenceRange = (m_Radius + m_Velocity);
 
-	influenceMap->GetGridSquareFromPosition(gen::CVector2(myPos.x - influenceRange, myPos.y - influenceRange), leftCoord, bottomCoord);
-	influenceMap->GetGridSquareFromPosition(gen::CVector2(myPos.x + influenceRange, myPos.y + influenceRange), rightCoord, topCoord);
+	bottomLeft = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x - influenceRange, myPos.y - influenceRange));
+	topRight = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x + influenceRange, myPos.y + influenceRange));
 
-	gen::CVector2 squareCentre;
-	for (int x = leftCoord; x <= rightCoord; x++)
+	CVector2 squareCentre;
+	for (int x = bottomLeft.x; x <= topRight.x; x++)
 	{
-		for (int y = bottomCoord; y <= topCoord; y++)
+		for (int y = bottomLeft.y; y <= topRight.y; y++)
 		{
-			influenceMap->GetSquareCentre(x, y, squareCentre);
+			squareCentre = influenceMap->GetSquareCentre(x, y);
 			
 			float influence = pow(influenceRange, 2) - pow(squareCentre.x - myPos.x, 2) - pow(squareCentre.y - myPos.y, 2);
 			if (influence >= 0)	//If influence is not negative then square root and save the influence, otherwise ignore this square
@@ -168,42 +165,99 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 
 void GAgent::PerformGlobalCollisionAvoidance()
 {
+	
 	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
-
+	
 	//Determine this agent's current position in world space and on the influence map
-	int xCoord = 0;
-	int yCoord = 0;
-	gen::CVector2 myPos = GetPosition();
-	influenceMap->GetGridSquareFromPosition(myPos, xCoord, yCoord);
+	CVector2 myPos = GetPosition();
+	GIntPair coord = influenceMap->GetGridSquareFromPosition(myPos);
+	
+	float gradient[9];
 
 	//Calculate the gradient of the surrounding 4/8 squares(TODO: determine best option) 
-	float optimalGradient = 999999.9f;	//TODO: get some worst possible gradient value to put here, or calculate first gradient before the loop
-	///Using xCoord & yCoord to encourage staying still as a reasonable option
-	int bestX = xCoord;
-	int bestY = yCoord;
-	//Calculate the coordinates of surrounding squares, in some sort of loop probably
-	float gradient = influenceMap->GetSquareGradient(xCoord, yCoord);
-	if (gradient < optimalGradient)
+	int count = 0;
+	for (int i = -1; i < 1; i++)
 	{
-		optimalGradient = gradient;
+		for (int j = -1; j < 1; j++)
+		{
+			if (i != 0 && j != 0)
+			{
+				gradient[count] = influenceMap->GetSquareGradient(coord.x + i, coord.y + j, myPos);
+			}
+			else
+			{
+				gradient[count] = 0;
+			}
+			count++;
+		}
 	}
+
+
+	int bestIndex = 0;
+	for (int i = 1; i < 9; i++)
+	{
+		if (gradient[i] < gradient[bestIndex])
+		{
+			bestIndex = i;
+		}
+	}
+
+	CVector2 targetPosition;
+	switch (bestIndex)
+	{
+	case 0:	//bottomleft
+		targetPosition = influenceMap->GetSquareCentre(coord.x - 1, coord.y - 1  );
+		break;																   
+	case 1:	//left															   
+		targetPosition = influenceMap->GetSquareCentre(coord.x - 1, coord.y  );
+		break;																   
+	case 2:	//topleft														   
+		targetPosition = influenceMap->GetSquareCentre(coord.x - 1, coord.y + 1  );
+		break;																   
+	case 3:	//bottom														   
+		targetPosition = influenceMap->GetSquareCentre(coord.x, coord.y - 1 );
+		break;																   
+	case 4:	//centre														   
+		targetPosition = influenceMap->GetSquareCentre(coord.x, coord.y  );
+		break;																   
+	case 5:	//top															   
+		targetPosition = influenceMap->GetSquareCentre(coord.x, coord.y + 1  );
+		break;																   
+	case 6:	//bottomright													 
+		targetPosition = influenceMap->GetSquareCentre(coord.x + 1, coord.y - 1  );
+		break;																   
+	case 7:	//right															   
+		targetPosition = influenceMap->GetSquareCentre(coord.x + 1, coord.y  );
+		break;																   
+	case 8:	//topright														   
+		targetPosition = influenceMap->GetSquareCentre(coord.x + 1, coord.y + 1  );
+		break;
+	default:
+		break;
+	}
+
+	//TODO: apply limitations
+
+	m_DesiredMovementVect = targetPosition - myPos;
 
 	//After determining the best option, take action upon it //TODO: Give agents a maximum turning angle per second/frame
 	
 	
-	///gen::CVector2 movementVector = this->GetDesiredMovement();
-	///gen::CVector3 movementVector3 = gen::CVector3(movementVector);
+
+
+	///CVector2 movementVector = this->GetDesiredMovement();
+	///CVector3 movementVector3 = CVector3(movementVector);
 	///
-	///gen::CVector3 rotatedMovementVector;
-	///gen::CVector2 postMovementPosition;
+	///CVector3 rotatedMovementVector;
+	///CVector2 postMovementPosition;
 	///
 	///float rotationIncrement = 10.0f;
 	///
-	///gen::CMatrix3x3 rotationMatrix;// = gen::Matrix3x3RotationY(gen::ToRadians(rotationIncrement));
+	///CMatrix3x3 rotationMatrix;// = gen::Matrix3x3RotationY(gen::ToRadians(rotationIncrement));
 	///
 	///float thisCost;
 	///float lowestCost = 9999999.0f;
-	///gen::CVector2 lowestResistanceVector;
+	///CVector2 lowestResistanceVector;
 	///
 	///for (float i = -90.0f; i <= 90.0f; i+= rotationIncrement)
 	///{
@@ -211,13 +265,13 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	///
 	///	rotatedMovementVector = rotationMatrix.Transform(movementVector3);
 	///
-	///	postMovementPosition = myPos + gen::CVector2(rotatedMovementVector);
+	///	postMovementPosition = myPos + CVector2(rotatedMovementVector);
 	///	influenceMap->GetGridSquareFromPosition(postMovementPosition, xCoord, yCoord);
 	///	thisCost = influenceMap->GetAccumulatedCost(xCoord, yCoord, m_Radius);
 	///
 	///	if (thisCost < lowestCost)
 	///	{
-	///		lowestResistanceVector = gen::CVector2(rotatedMovementVector);
+	///		lowestResistanceVector = CVector2(rotatedMovementVector);
 	///		lowestCost = thisCost;
 	///	}
 	///	//else if (fabs(thisCost - lowestCost) < 5.0f && fabs(i - 90) < fabs(angleOfLowestCost - 90))	//If within the range of 0.5 influence difference
@@ -259,7 +313,7 @@ void GAgent::PerformLocalCollisionAvoidance()
 			float myRadius = this->m_Radius;
 			float otherRadius = otherAgent->m_Radius;
 
-			gen::CVector2 vecToOther = this->GetPosition() - otherAgent->GetPosition();	//Vector from other agent to this agent
+			CVector2 vecToOther = this->GetPosition() - otherAgent->GetPosition();	//Vector from other agent to this agent
 			//Determine if the other agent is too far away to matter to this agent's movement
 			if (vecToOther.Length() <
 				(myRadius + otherRadius +
@@ -271,7 +325,7 @@ void GAgent::PerformLocalCollisionAvoidance()
 
 
 				//Create a restriction object to represent arc where collisions are possible
-				buildRestriction.E = gen::CVector2(0.0f, 0.0f);
+				buildRestriction.E = CVector2(0.0f, 0.0f);
 				buildRestriction.F = this->GetPosition() - otherAgent->GetPosition();
 
 				//Get direction vector from E to F
@@ -328,7 +382,7 @@ void GAgent::PerformLocalCollisionAvoidance()
 				
 				//Offset the velocity obstacle by (vA + vB)/2 to accomodate for the agents' movement as well as position/size
 				//Only need to affect the points A, B, C, D
-				gen::CVector2 offset = ((this->m_DesiredMovementVect * updateTime) + (otherAgent->m_DesiredMovementVect * updateTime)) / 2;
+				CVector2 offset = ((this->m_DesiredMovementVect * updateTime) + (otherAgent->m_DesiredMovementVect * updateTime)) / 2;
 				buildRestriction.A += offset;
 				buildRestriction.B += offset;
 				buildRestriction.C += offset;
@@ -344,7 +398,7 @@ void GAgent::PerformLocalCollisionAvoidance()
 	m_MovementVector = MoveTheDesiredVect(restrictions, m_DesiredMovementVect, updateTime);
 }
 
-gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restrictions, gen::CVector2 attemptedMovement, float updateTime)
+CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restrictions, CVector2 attemptedMovement, float updateTime)
 {
 	std::vector<SRestrictionObject> insideRestrictions;	//Vector of restrictions which the movement vector falls inside of
 	
@@ -374,28 +428,28 @@ gen::CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restri
 		{
 			//Move the attempted movement then pass it to this function if insideRestrictions is > 0
 			//TODO: MOVE THE MOVEMENT VECTOR AND POP THE RELEVANT RESTRICTION //THIS MAY BE COMPLETE ALREADY, look again
-			gen::CVector2 newPoints[4];
-			gen::CVector2 AB = insideRestrictions[0].B - insideRestrictions[0].A;
-			gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
+			CVector2 newPoints[4];
+			CVector2 AB = insideRestrictions[0].B - insideRestrictions[0].A;
+			CVector2 AE = attemptedMovement - insideRestrictions[0].A;
 			float scale = (AE.Dot(AB)) / AB.LengthSquared();
 			newPoints[0] = (AB * scale) + insideRestrictions[0].A;
 
-			gen::CVector2 AC = insideRestrictions[0].C - insideRestrictions[0].A;
-			//gen::CVector2 AE = attemptedMovement - insideRestrictions[0].A;
+			CVector2 AC = insideRestrictions[0].C - insideRestrictions[0].A;
+			//CVector2 AE = attemptedMovement - insideRestrictions[0].A;
 			scale = (AE.Dot(AC)) / AC.LengthSquared();
 			newPoints[1] = (AC * scale) + insideRestrictions[0].A;
 
-			gen::CVector2 DB = insideRestrictions[0].B - insideRestrictions[0].D;
-			gen::CVector2 DE = attemptedMovement - insideRestrictions[0].D;
+			CVector2 DB = insideRestrictions[0].B - insideRestrictions[0].D;
+			CVector2 DE = attemptedMovement - insideRestrictions[0].D;
 			scale = (DE.Dot(DB)) / DB.LengthSquared();
 			newPoints[2] = (DB * scale) + insideRestrictions[0].D;
 
-			gen::CVector2 DC = insideRestrictions[0].C - insideRestrictions[0].D;
-			//gen::CVector2 DE = attemptedMovement - insideRestrictions[0].D;
+			CVector2 DC = insideRestrictions[0].C - insideRestrictions[0].D;
+			//CVector2 DE = attemptedMovement - insideRestrictions[0].D;
 			scale = (DE.Dot(DC)) / DC.LengthSquared();
 			newPoints[3] = (DC * scale) + insideRestrictions[0].D;
 
-			gen::CVector2 closest = newPoints[0];
+			CVector2 closest = newPoints[0];
 			for (int i = 1; i < 4; i++)
 			{
 				if (newPoints[i].Length() < closest.Length())

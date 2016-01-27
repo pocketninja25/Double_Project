@@ -11,14 +11,19 @@ class GAgent : public GEntity
 // Private Data Members
 //---------------------------
 private:
-	gen::CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
-	float m_Velocity;				//The velocity of the agent in units per second
-	gen::CVector2 m_DesiredMovementVect;	//The desired movement vector of the agent in units per second
-	float m_Radius;
-	gen::CVector2 m_MovementVector;
+	//Constants that define movement restrictions
+	float m_Velocity;				//The maximum velocity of the agent in units per second
+	float m_MaxTurn;				//The maximum rotation an agent can perform per second (in radians)
+	float m_MaxGradientTraversal;	//THe maximum gradient increase an agent can climb
 
-	gen::CVector2 m_PreviousDesiredMovementVect;
-	gen::CVector2 m_PreviousMovementVect;
+	CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
+	
+	CVector2 m_DesiredMovementVect;	//The desired movement vector of the agent in units per second
+	float m_Radius;
+	CVector2 m_MovementVector;
+
+	CVector2 m_PreviousDesiredMovementVect;
+	CVector2 m_PreviousMovementVect;
 
 	std::vector<GAgent*> m_PotentiallyCollidingAgents;
 
@@ -29,7 +34,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent(gen::CVector2 iPosition, gen::CVector2 iDestination, bool iIsActive = true);
+	GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive = true);
 	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, float iXDest = 0.0f, float iYDest = 0.0f, bool iIsActive = true);
 
 	virtual ~GAgent();
@@ -39,16 +44,16 @@ public:
 	//***************************
 	bool HasReachedDestination();	//Returns whether or not the agent has reached their destination
 
-	gen::CVector2 GetDesiredMovement();
+	CVector2 GetDesiredMovement();
 
-	gen::CVector2 GetDestination();
+	CVector2 GetDestination();
 
 	//***************************
 	// Setters/Mutators
 	//***************************
-	void SetNewDestination(gen::CVector2 newDestination);	//Obtain a new goal location
+	void SetNewDestination(CVector2 newDestination);	//Obtain a new goal location
 
-	void SetPosition(gen::CVector2 newPosition);
+	void SetPosition(CVector2 newPosition);
 
 	//***************************
 	// Other Functions
@@ -62,7 +67,7 @@ private:
 	void PerformLocalCollisionAvoidance();
 
 private:
-	gen::CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, gen::CVector2 attemptedMovement, float updateTime);	//Used by PerformLocalCollisionAvoidance to manipulate the desired movement vector based on the passed restriction objects
+	CVector2 MoveTheDesiredVect(std::vector<SRestrictionObject> &restrictions, CVector2 attemptedMovement, float updateTime);	//Used by PerformLocalCollisionAvoidance to manipulate the desired movement vector based on the passed restriction objects
 
 #ifdef _DEBUG
 public:

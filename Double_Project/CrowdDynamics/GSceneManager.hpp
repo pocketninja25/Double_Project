@@ -13,7 +13,7 @@ struct SWorldInfo
 	//Struct of data required to create a 'world instance' - scene manager
 public:
 	float TimeStep = 0.0f;
-	gen::CVector2 WorldSize = gen::CVector2(0.0f, 0.0f);
+	CVector2 WorldSize = CVector2(0.0f, 0.0f);
 	int xSubdivisions = 0;
 	int ySubdivisions = 0;
 };
@@ -30,7 +30,7 @@ public:
 private:
 	static GSceneManager* mManager_Scene;
 	GSceneManager(SWorldInfo iWorldInfo);
-	GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
+	GSceneManager(float iTimeStep, CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
 	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions);
 
 	//Delete copy constructor and = operator
@@ -54,8 +54,8 @@ private:
 	float m_TimeStep;				//The amount of time updated each frame TODO: make this work concurrently with the client program, updating without a call to the update function (will need to set the program to 'Enabled'/'Disabled'
 	float m_TimeSinceLastUpdate;	//The amount of time elapsed since the last update
 
-	gen::CVector2 m_WorldSize;		//The total size of the world space /*Can be calculated, but less expensive to just store*/
-	gen::CVector2 m_SquareSize;		//The size of a single grid square /*Can be calculated, but less expensive to just store*/
+	CVector2 m_WorldSize;		//The total size of the world space /*Can be calculated, but less expensive to just store*/
+	CVector2 m_SquareSize;		//The size of a single grid square /*Can be calculated, but less expensive to just store*/
 	GSceneSquare** m_SceneSquares;	//Pointer to the 0th element in a dynamically allocated array sized m_NoOfSquaresX * m_NoOfSquaresY, access/positioning of elements defined by m_SceneSquares[x][y]
 	int m_NoOfSquaresX;				//Number of squares in the X (horizontal) direction
 	int m_NoOfSquaresY;				//Number of squares in the Y (vertical) direction
@@ -78,11 +78,11 @@ public:
 	//***************************
 	// Getters/Accessors
 	//***************************
-	gen::CVector2 GetWorldSize();
-	bool GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix);
-	bool GetAgentPosition(UID requestedUID, gen::CVector2 &position);
-	bool GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desiredVector);
-	bool GetAgentDestination(UID requestedUID, gen::CVector2 &destination);
+	CVector2 GetWorldSize();
+	bool GetAgentMatrix(UID requestedUID, CMatrix3x3 &matrix);
+	bool GetAgentPosition(UID requestedUID, CVector2 &position);
+	bool GetAgentDesiredVector(UID requestedUID, CVector2 &desiredVector);
+	bool GetAgentDestination(UID requestedUID, CVector2 &destination);
 
 	GInfluenceMap* GetInfluenceMap();
 
@@ -93,18 +93,18 @@ public:
 #ifdef _DEBUG
 	bool GetAgentString(UID requestedID, std::string& agentString);
 	bool GetSquareString(int xPos, int yPos, std::string& squareString);
-	bool GetSquareString(gen::CVector2 coordinate, std::string& squareString);
+	bool GetSquareString(CVector2 coordinate, std::string& squareString);
 #endif
 
 	//***************************
 	// Setters/Mutators
 	//***************************
-	UID AddAgent(gen::CVector2 iPosition, bool iIsActive);
+	UID AddAgent(CVector2 iPosition, bool iIsActive);
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
 	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
 	void PerformCollisionAvoidance(const std::list<UID>& localAgents);
 
-	bool SetAgentPosition(UID agent, gen::CVector2 newPosition);
+	bool SetAgentPosition(UID agent, CVector2 newPosition);
 	bool SetAgentActivation(UID agent, bool isEnabled);
 
 
@@ -116,7 +116,7 @@ public:
 	void Update(float frameTime);
 	void PerformOneTimeStep();
 
-	int GetWhichSquare(gen::CVector2 itemPosition);	//Returns the array index of the square that owns this position
+	int GetWhichSquare(CVector2 itemPosition);	//Returns the array index of the square that owns this position
 
 //---------------------------
 // Private Functions

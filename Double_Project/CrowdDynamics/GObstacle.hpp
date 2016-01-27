@@ -23,7 +23,7 @@ private:
 // Protected Data Members
 //---------------------------
 protected:
-	gen::CMatrix3x3 m_Matrix;		//Matrix of obstacle
+	CMatrix3x3 m_Matrix;		//Matrix of obstacle
 
 //---------------------------
 // Public Functions
@@ -33,15 +33,15 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GObstacle(GObstacleTemplate* iTemplate, gen::CVector2 iPosition, bool iIsActive = true);
+	GObstacle(GObstacleTemplate* iTemplate, CVector2 iPosition, bool iIsActive = true);
 	//TODO: Write a delegating constructor for iPosition
 	virtual ~GObstacle();
 	
 	//***************************
 	// Getters/Accessors
 	//***************************
-	gen::CVector2 GetPosition();
-	gen::CVector2 GetFacingVector();
+	CVector2 GetPosition();
+	CVector2 GetFacingVector();
 
 	//***************************
 	// Setters/Mutators

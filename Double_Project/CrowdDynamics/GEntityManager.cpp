@@ -49,7 +49,7 @@ bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 	return true;	//Havent fallen into both catch blocks, one of the lists succeeded, returnedagent has been populated
 }
 
-UID GEntityManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
+UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
 {
 	//Construct a new agent
 	GAgent* newAgent = new GAgent(iPosition, GetRandomDestination(), iIsActive);
@@ -70,7 +70,7 @@ UID GEntityManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 UID GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 {
 	//Delegate implementation to other version of the function - preventing duplication errors
-	return this->AddAgent(gen::CVector2(iXPos, iYPos), iIsActive);
+	return this->AddAgent(CVector2(iXPos, iYPos), iIsActive);
 }
 
 bool GEntityManager::SetAgentActivation(UID agent, bool isEnabled)
@@ -144,11 +144,11 @@ void GEntityManager::PerformCollisionAvoidance(const std::list<UID>& localAgents
 	
 }
 
-gen::CVector2 GEntityManager::GetRandomDestination()
+CVector2 GEntityManager::GetRandomDestination()
 {
-	gen::CVector2 size = GSceneManager::GetInstance()->GetWorldSize();
+	CVector2 size = GSceneManager::GetInstance()->GetWorldSize();
 
-	return gen::CVector2(RandomFloat(0, size.x), RandomFloat(0, size.y));
+	return CVector2(RandomFloat(0, size.x), RandomFloat(0, size.y));
 }
 
 #ifdef _DEBUG

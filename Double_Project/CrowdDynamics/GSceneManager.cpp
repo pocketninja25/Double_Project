@@ -25,12 +25,12 @@ GSceneManager::GSceneManager(SWorldInfo iWorldInfo) :
 }
 
 GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions) :
-	GSceneManager(iTimeStep, gen::CVector2(iWorldXSize, iWorldYSize), iXSubdivisions, iYSubdivisions)
+	GSceneManager(iTimeStep, CVector2(iWorldXSize, iWorldYSize), iXSubdivisions, iYSubdivisions)
 {
 	//Delegating Constructor
 }
 
-GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions) :
+GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions) :
 	mManager_Entity(new GEntityManager()),
 	mManager_Obstacle(new GObstacleManager()),
 	m_TimeStep(iTimeStep),
@@ -39,7 +39,7 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 	m_NoOfSquaresX(iXSubdivisions),
 	m_NoOfSquaresY(iYSubdivisions),
 	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions]),
-	m_SquareSize(gen::CVector2(iWorldSize.x / iXSubdivisions, iWorldSize.y / iYSubdivisions)),
+	m_SquareSize(CVector2(iWorldSize.x / iXSubdivisions, iWorldSize.y / iYSubdivisions)),
 	m_Paused(false)
 {
 	//Construct the scenesquare objects
@@ -47,7 +47,7 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 	{
 		for (int j = 0; j < m_NoOfSquaresY; j++)
 		{
-			m_SceneSquares[i * m_NoOfSquaresX + j] = new GSceneSquare(m_SquareSize, gen::CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
+			m_SceneSquares[i * m_NoOfSquaresX + j] = new GSceneSquare(m_SquareSize, CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
 		}
 	}
 
@@ -55,7 +55,7 @@ GSceneManager::GSceneManager(float iTimeStep, gen::CVector2 iWorldSize, int iXSu
 	int tempX = static_cast<int>(m_WorldSize.x);
 	int tempY = static_cast<int>(m_WorldSize.y);
 
-	m_InfluenceMap = new GInfluenceMap(tempX, tempY, gen::CVector2(1.0f, 1.0f));
+	m_InfluenceMap = new GInfluenceMap(tempX, tempY, CVector2(1.0f, 1.0f));
 }
 
 GSceneManager::~GSceneManager()
@@ -81,12 +81,12 @@ GSceneManager::~GSceneManager()
 	mManager_Scene = 0;
 }
 
-gen::CVector2 GSceneManager::GetWorldSize()
+CVector2 GSceneManager::GetWorldSize()
 {
 	return m_WorldSize;
 }
 
-bool GSceneManager::GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix)
+bool GSceneManager::GetAgentMatrix(UID requestedUID, CMatrix3x3 &matrix)
 {
 	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
 	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
@@ -98,7 +98,7 @@ bool GSceneManager::GetAgentMatrix(UID requestedUID, gen::CMatrix3x3 &matrix)
 	return false;
 }
 
-bool GSceneManager::GetAgentPosition(UID requestedUID, gen::CVector2 &position)
+bool GSceneManager::GetAgentPosition(UID requestedUID, CVector2 &position)
 {
 	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
 	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
@@ -110,7 +110,7 @@ bool GSceneManager::GetAgentPosition(UID requestedUID, gen::CVector2 &position)
 	return false;
 }
 
-bool GSceneManager::GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desiredVector)
+bool GSceneManager::GetAgentDesiredVector(UID requestedUID, CVector2 &desiredVector)
 {
 	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
 	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
@@ -122,7 +122,7 @@ bool GSceneManager::GetAgentDesiredVector(UID requestedUID, gen::CVector2 &desir
 	return false;
 }
 
-bool GSceneManager::GetAgentDestination(UID requestedUID, gen::CVector2 & destination)
+bool GSceneManager::GetAgentDestination(UID requestedUID, CVector2 & destination)
 {
 	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
 	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
@@ -150,7 +150,7 @@ bool GSceneManager::GetIsPaused()
 	return m_Paused;
 }
 
-UID GSceneManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
+UID GSceneManager::AddAgent(CVector2 iPosition, bool iIsActive)
 {
 	UID agentUID = mManager_Entity->AddAgent(iPosition, iIsActive);	//Create the agent object
 	
@@ -161,7 +161,7 @@ UID GSceneManager::AddAgent(gen::CVector2 iPosition, bool iIsActive)
 
 UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 {
-	return this->AddAgent(gen::CVector2(iXPos, iYPos), iIsActive);
+	return this->AddAgent(CVector2(iXPos, iYPos), iIsActive);
 }
 
 std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
@@ -170,11 +170,11 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 	
 	int xSquare;
 	int ySquare;
-	gen::CVector2 position;
+	CVector2 position;
 
 	for (int i = 0; i < kNoAgents; i++)
 	{
-		position = gen::CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y));
+		position = CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y));
 		
 		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
 		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
@@ -191,7 +191,7 @@ void GSceneManager::PerformCollisionAvoidance(const std::list<UID>& localAgents)
 }
 
 
-bool GSceneManager::SetAgentPosition(UID agent, gen::CVector2 newPosition)
+bool GSceneManager::SetAgentPosition(UID agent, CVector2 newPosition)
 {
 	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
 	if (mManager_Entity->GetAgent(agent, foundAgent))	//If the agent can be found, foundAgent is populated (notNUll)
@@ -263,7 +263,7 @@ void GSceneManager::Update(float frameTime)
 	}
 }
 
-int GSceneManager::GetWhichSquare(gen::CVector2 itemPosition)
+int GSceneManager::GetWhichSquare(CVector2 itemPosition)
 {
 	//position/square width rounded down to the nearest integer = the square to add to
 	int xSquare = static_cast<int>(itemPosition.x / m_SquareSize.x);
@@ -308,7 +308,7 @@ void GSceneManager::MaintainSceneSquares()
 	}
 
 	//Assign the unassignedAgents to their new square
-	gen::CVector2 tempPos;
+	CVector2 tempPos;
 	for (int i = 0; i < unassignedAgents.size(); i++)
 	{
 		if (this->GetAgentPosition(unassignedAgents[i], tempPos))	//If agent exists
@@ -343,7 +343,7 @@ bool GSceneManager::GetSquareString(int xPos, int yPos, std::string& squareStrin
 	return false;
 }
 
-bool GSceneManager::GetSquareString(gen::CVector2 coordinate, std::string& squareString)
+bool GSceneManager::GetSquareString(CVector2 coordinate, std::string& squareString)
 {
 	squareString = m_SceneSquares[this->GetWhichSquare(coordinate)]->ToString();
 	return true;

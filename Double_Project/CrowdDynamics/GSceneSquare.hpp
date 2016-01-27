@@ -11,8 +11,8 @@ class GSceneSquare : public GObject
 //---------------------------
 
 private:
-	gen::CVector2 m_Size;		//Width * Height of the Scene Square
-	gen::CVector2 m_Origin;		//The bottom left position of the square
+	CVector2 m_Size;		//Width * Height of the Scene Square
+	CVector2 m_Origin;		//The bottom left position of the square
 	std::list<UID> m_Walls;		//TODO: Consider static wall list & dynamic wall list //Vector of UID's to wall objects that occupy/intersect this scene square : This class does not own these pointers
 	std::list<UID> m_Agents;	//TODO: have the SceneSquare care about if agent is active
 
@@ -23,9 +23,9 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GSceneSquare(gen::CVector2 iSize, gen::CVector2 iOriginPos, bool iIsActive = true);
-	GSceneSquare(gen::CVector2 iSize, float iOriginXPos, float iOriginYPos, bool iIsActive = true);
-	GSceneSquare(float iXSize, float iYSize, gen::CVector2 iOriginPos, bool iIsActive = true);
+	GSceneSquare(CVector2 iSize, CVector2 iOriginPos, bool iIsActive = true);
+	GSceneSquare(CVector2 iSize, float iOriginXPos, float iOriginYPos, bool iIsActive = true);
+	GSceneSquare(float iXSize, float iYSize, CVector2 iOriginPos, bool iIsActive = true);
 	GSceneSquare(float iXSize, float iYSize, float iOriginXPos, float iOriginYPos, bool iIsActive = true);
 
 	virtual ~GSceneSquare();
