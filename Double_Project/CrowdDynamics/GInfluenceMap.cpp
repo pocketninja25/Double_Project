@@ -84,7 +84,6 @@ float GInfluenceMap::GetSquareGradient(int xPos, int yPos, CVector2 myPos)
 	return dY / dX;
 }
 
-
 //float GInfluenceMap::GetAccumulatedCost(int xPos, int yPos, float radius)
 //{
 //	int convertedRadius = static_cast<int>(radius);
