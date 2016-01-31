@@ -1,6 +1,6 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
-#define InfluenceVisualiserEnabled
+//#define InfluenceVisualiserEnabled
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
@@ -17,7 +17,7 @@ EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
 
 const int kNoStartingAgents = 10;
-const gen::CVector2 kWorldSize = CVector2(50.0f, 50.0f);
+const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
 const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 3;
 const int kYSubDiv = 3;
@@ -223,11 +223,8 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 		{
 			influence = influenceMap->GetValue(i, j);
 
-			influenceTiles[i * kInfluenceSubDivX + j]->ResetScale();
-			if (influence > 0)
-			{
-				influenceTiles[i * kInfluenceSubDivX + j]->ScaleY(2 * influence);
-			}
+			influenceTiles[i * kInfluenceSubDivX + j]->SetY(2 * influence);
+			
 		}
 	}
 }

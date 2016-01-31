@@ -23,7 +23,7 @@ public:
 	void ResetMap();	//Sets all squares to 0 influence
 	void AddValue(int xPos, int yPos, float value);
 	//Deprecated: float GetAccumulatedCost(int xPos, int yPos, float radius);
-	float GetSquareGradient(int xPos, int yPos, CVector2 myPos);	//Determines the gradient for the provided grid reference //TODO: implement this
+	float GetSquareGradient(int xPos, int yPos);	//Determines the gradient for the provided grid reference //TODO: implement this
 
 
 	GIntPair GetGridSquareFromPosition(const CVector2 &position);

@@ -39,7 +39,7 @@ float GInfluenceMap::GetValue(int xPos, int yPos)
 	{
 		xPos = 0;
 	}
-	else if (yPos >= m_ySquares)
+	if (yPos >= m_ySquares)
 	{
 		yPos = m_ySquares - 1;
 	}
@@ -53,6 +53,10 @@ float GInfluenceMap::GetValue(int xPos, int yPos)
 
 void GInfluenceMap::AddValue(int xPos, int yPos, float value)
 {
+	if (value <= 0)
+	{
+		return;
+	}
 	if (xPos >= m_xSquares)
 	{
 		xPos = m_xSquares - 1;
@@ -61,7 +65,7 @@ void GInfluenceMap::AddValue(int xPos, int yPos, float value)
 	{
 		xPos = 0;
 	}
-	else if (yPos >= m_ySquares)
+	if (yPos >= m_ySquares)
 	{
 		yPos = m_ySquares - 1;
 	}
@@ -74,14 +78,15 @@ void GInfluenceMap::AddValue(int xPos, int yPos, float value)
 }
 
 
-float GInfluenceMap::GetSquareGradient(int xPos, int yPos, CVector2 myPos)
+float GInfluenceMap::GetSquareGradient(int xPos, int yPos)
 {
-	CVector2 itsPos = this->GetSquareCentre(xPos, yPos);
+	//CVector2 itsPos = this->GetSquareCentre(xPos, yPos);
+	//float dY = myPos.y - itsPos.y;
+	//float dX = myPos.x - itsPos.x;
+	//
+	//return dY / dX;
 
-	float dY = myPos.y - itsPos.y;
-	float dX = myPos.x - itsPos.x;
-
-	return dY / dX;
+	return this->GetValue(xPos, yPos);
 }
 
 //float GInfluenceMap::GetAccumulatedCost(int xPos, int yPos, float radius)

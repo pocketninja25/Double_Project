@@ -85,7 +85,7 @@ void GAgent::Update(float updateTime)
 	m_DesiredMovementVect *= m_Velocity;
 
 	PerformGlobalCollisionAvoidance();
-	//PerformLocalCollisionAvoidance();
+	PerformLocalCollisionAvoidance();
 
 	//Move by the movement vector (units per second) modified by update time calculating units this frame
 	matrix.Move2D(m_MovementVector);// *updateTime);
@@ -162,44 +162,64 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 	}
 
 }
-
+#include <iostream>
 void GAgent::PerformGlobalCollisionAvoidance()
 {
-	
 	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
-	
+
 	//Determine this agent's current position in world space and on the influence map
 	CVector2 myPos = GetPosition();
 	GIntPair coord = influenceMap->GetGridSquareFromPosition(myPos);
-	
-	float gradient[9];
 
-	//Calculate the gradient of the surrounding 4/8 squares(TODO: determine best option) 
+	CVector2 gridData[9]; //Use x and y as position of square, z as the gradient
+	float gridHeight[9];
+
+
+
+	//Calculate the gradient of the surrounding 4/8 squares
 	int count = 0;
-	for (int i = -1; i < 1; i++)
+	for (int i = -1; i <= 1; i++)
 	{
-		for (int j = -1; j < 1; j++)
+		for (int j = -1; j <= 1; j++)
 		{
-			if (i != 0 && j != 0)
-			{
-				gradient[count] = influenceMap->GetSquareGradient(coord.x + i, coord.y + j, myPos);
-			}
-			else
-			{
-				gradient[count] = 0;
-			}
+
+			gridData[count] = influenceMap->GetSquareCentre(coord.x + i, coord.y + j);
+			gridHeight[count] = influenceMap->GetSquareGradient(coord.x + i, coord.y + j);
+
 			count++;
 		}
 	}
 
-
-	int bestIndex = 0;
-	for (int i = 1; i < 9; i++)
+	int bestIndex = -1;
+	CVector2 toDestination = m_Destination - myPos;
+	toDestination.Normalise();
+	for (int i = 0; i < 9; i++)
 	{
-		if (gradient[i] < gradient[bestIndex])
+		//Apply Limitation logic to decide whether this square is a viable target
+		CVector2 toSquare = gridData[i] - myPos;
+		toSquare.Normalise();
+		if (toDestination.Dot(toSquare) > 0.5f)	//The target square is within 60 degrees either way of the ideal destination
 		{
-			bestIndex = i;
+			if (gridHeight[4] - gridHeight[i] < m_MaxGradientTraversal)	//TODO: IMPROVE/REMOVE THESE VALUES
+			{
+
+				//Decide if this square is better than the current best descision
+				if (bestIndex == -1)	//Set the first viable movement (cannot compare to another grid Height)
+				{
+					bestIndex = i;
+				}
+				else if (gridHeight[i] < gridHeight[bestIndex])	//Less of a 'hill' than current best
+				{
+					bestIndex = i;
+
+				}
+			}
 		}
+	}
+
+	if (bestIndex == -1)	//All potential moves are bad, stay where you are
+	{
+		bestIndex = 0;
 	}
 
 	CVector2 targetPosition;
@@ -239,51 +259,10 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	//TODO: apply limitations
 
 	m_DesiredMovementVect = targetPosition - myPos;
-
+	m_DesiredMovementVect.Normalise();
+	m_DesiredMovementVect *= m_Velocity;
 	//After determining the best option, take action upon it //TODO: Give agents a maximum turning angle per second/frame
 	
-	
-
-
-	///CVector2 movementVector = this->GetDesiredMovement();
-	///CVector3 movementVector3 = CVector3(movementVector);
-	///
-	///CVector3 rotatedMovementVector;
-	///CVector2 postMovementPosition;
-	///
-	///float rotationIncrement = 10.0f;
-	///
-	///CMatrix3x3 rotationMatrix;// = gen::Matrix3x3RotationY(gen::ToRadians(rotationIncrement));
-	///
-	///float thisCost;
-	///float lowestCost = 9999999.0f;
-	///CVector2 lowestResistanceVector;
-	///
-	///for (float i = -90.0f; i <= 90.0f; i+= rotationIncrement)
-	///{
-	///	rotationMatrix.MakeRotationY(gen::ToRadians(i));
-	///
-	///	rotatedMovementVector = rotationMatrix.Transform(movementVector3);
-	///
-	///	postMovementPosition = myPos + CVector2(rotatedMovementVector);
-	///	influenceMap->GetGridSquareFromPosition(postMovementPosition, xCoord, yCoord);
-	///	thisCost = influenceMap->GetAccumulatedCost(xCoord, yCoord, m_Radius);
-	///
-	///	if (thisCost < lowestCost)
-	///	{
-	///		lowestResistanceVector = CVector2(rotatedMovementVector);
-	///		lowestCost = thisCost;
-	///	}
-	///	//else if (fabs(thisCost - lowestCost) < 5.0f && fabs(i - 90) < fabs(angleOfLowestCost - 90))	//If within the range of 0.5 influence difference
-	///	//	//{
-	///	//	//	lowestResistanceVector = rotatedMovementVector;
-	///	//	//	lowestCost = thisCost;
-	///	//	//	
-	///	//	//}
-	///}
-	///m_DesiredMovementVect = lowestResistanceVector;
-
-
 	m_MovementVector = m_DesiredMovementVect * GSceneManager::GetInstance()->GetTimeStep();	//This will allow the two collision avoidance algorithms to work together or seperately, if the local avoidance is used this value will just be overridden, otherwise it is used for movement;
 	
 }
