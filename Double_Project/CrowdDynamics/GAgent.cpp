@@ -147,6 +147,9 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 	bottomLeft = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x - influenceRange, myPos.y - influenceRange));
 	topRight = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x + influenceRange, myPos.y + influenceRange));
 
+	CVector2 flowDirection = m_Destination - myPos;
+	flowDirection.Normalise();
+
 	CVector2 squareCentre;
 	for (int x = bottomLeft.x; x <= topRight.x; x++)
 	{
@@ -159,6 +162,7 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 			{
 				influence = sqrt(influence);
 				influenceMap->AddValue(x, y, influence);
+				influenceMap->AddFlow(x, y, flowDirection);
 			}
 		}
 	}
@@ -175,10 +179,10 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 myPos = GetPosition();
 	GIntPair coord = influenceMap->GetGridSquareFromPosition(myPos);
 
-	CVector2 gridData[Dir_Size]; //Stores Position of square
+	CVector2 gridCentre[Dir_Size]; //Stores Position of square
 	float gridHeight[Dir_Size];
-
-
+	CVector2 gridFlow[Dir_Size];
+	
 
 	//Calculate the gradient of the surrounding 4/8 squares
 	int count = 0;
@@ -187,12 +191,14 @@ void GAgent::PerformGlobalCollisionAvoidance()
 		for (int j = -1; j <= 1; j++)
 		{
 
-			gridData[count] = influenceMap->GetSquareCentre(coord.x + i, coord.y + j);
+			gridCentre[count] = influenceMap->GetSquareCentre(coord.x + i, coord.y + j);
 
 
-			//TODO: PERFORM BETTER CALCULATION FOR HEIGHT (SOME FORM OF GRADIENT - remove the unused versions)
+			//TODO: PERFORM BETTER CALCULATION FOR HEIGHT (SOME FORM OF GRADIENT - remove the unused METHODs)
+			//METHOD 1: GET THE DIRECT INFLUENCE VALUE
 			gridHeight[count] = influenceMap->GetValue(coord.x + i, coord.y + j);
 
+			//METHOD 2: CALCULATE AN average of the next x squares
 			int maxSquaresPerSecond = static_cast<int>(m_Velocity + 1);	//Consider the 'next' x squares and calculate an average
 			float accumulation = 0;
 			for (int k = 0; k < maxSquaresPerSecond; k++)
@@ -202,19 +208,36 @@ void GAgent::PerformGlobalCollisionAvoidance()
 			accumulation /= maxSquaresPerSecond;
 			gridHeight[count] = accumulation;
 
+
+			//Get Flow Data
+			gridFlow[count] = influenceMap->GetFlow(coord.x + i, coord.y + j);
+
 			count++;
 		}
 	}
 
+	CVector2 averageFlow(0.0f, 0.0f);
+	for (int i = 0; i < Dir_Size; i++)
+	{
+		averageFlow += gridFlow[i];
+	}
+	averageFlow.Normalise();
+
 	int bestIndex = Dir_Size; //Initialise to an incorrect value - test later to see if incorrect is chosen, then decide what to do accordingly
 	CVector2 toDestination = m_Destination - myPos;
 	toDestination.Normalise();
+
+	//TODO: Average the toDestination vector with the relevant flowVector in a 75% - 25% split to create a guided direction
+	CVector2 thisSquareFlow = (0.75f * toDestination)+(0.25f *  averageFlow);
+	thisSquareFlow.Normalise();
+
 	for (int i = 0; i < Dir_Size; i++)
 	{
 		//Apply Limitation logic to decide whether this square is a viable target
-		CVector2 toSquare = gridData[i] - myPos;
+		CVector2 toSquare = gridCentre[i] - myPos;
 		toSquare.Normalise();
-		if (toDestination.Dot(toSquare) > cos(m_TempMaxTurn))	//The target square is within 60 degrees either way of the ideal destination
+
+		if (thisSquareFlow.Dot(toSquare) > cos(m_TempMaxTurn))	//The target square is within 60 degrees either way of the ideal destination
 		{
 			if (gridHeight[i] < gridHeight[Dir_Centre])	//Only pick if the location has less resistance than current position
 			{
@@ -246,7 +269,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	}
 	else
 	{
-		targetPosition = gridData[bestIndex];
+		targetPosition = gridCentre[bestIndex];
 		if (m_StillTimer > 0.0f)
 		{	
 			m_StillTimer -= 2 * GSceneManager::GetInstance()->GetTimeStep();	//Decrease the timer due to being unstuck (dont reset, just reduce at double speed)

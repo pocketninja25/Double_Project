@@ -1,6 +1,6 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
-#define InfluenceVisualiserEnabled
+//#define InfluenceVisualiserEnabled
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
@@ -106,6 +106,7 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AG
 			tempModelMat[12] = tempAgentMat.e20;
 			tempModelMat[14] = tempAgentMat.e21;
 			agent.second->SetMatrix(tempModelMat);
+			
 		}
 	}
 
@@ -215,7 +216,7 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 	GInfluenceMap* influenceMap = crowdEngine->GetInfluenceMap();
 
 	float influence;
-
+	CVector2 direction;
 	for (int i = 0; i < kInfluenceSubDivX; i++)
 	{
 		for (int j = 0; j < kInfluenceSubDivY; j++)
@@ -224,6 +225,23 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 
 			influenceTiles[i * kInfluenceSubDivX + j]->SetY(2 * influence);
 			
+			if (influence != 0)	//Point the sqare in the direction of influence
+			{
+				direction = influenceMap->GetFlow(i, j);
+
+				influenceTiles[i * kInfluenceSubDivX + j]->LookAt(
+					influenceTiles[i * kInfluenceSubDivX + j]->GetX() + direction.x,
+					influenceTiles[i * kInfluenceSubDivX + j]->GetY(),
+					influenceTiles[i * kInfluenceSubDivX + j]->GetZ() + direction.y
+					);
+				influenceTiles[i * kInfluenceSubDivX + j]->ScaleX((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
+				
+				influenceTiles[i * kInfluenceSubDivX + j]->ScaleZ((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
+			}
+			else
+			{
+				influenceTiles[i * kInfluenceSubDivX + j]->ResetOrientation();
+			}
 		}
 	}
 }
@@ -255,7 +273,8 @@ void main()
 	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
 	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
 	IMesh* vectorMesh = gameEngine->LoadMesh("Vector.x");
-
+	IMesh* influenceTileMesh = gameEngine->LoadMesh("InfluenceTile.x");
+	
 	map<UID, IModel*> AGENTS;
 	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
@@ -281,7 +300,7 @@ void main()
 	{
 		for (int j = 0; j < kInfluenceSubDivY; j++)
 		{
-			InfluenceTiles[i * kInfluenceSubDivX + j] = floorTileMesh->CreateModel(static_cast<float>(i)  / kInfluenceSquaresPerUnit, 0.5f,( static_cast<float>(j) + 1) / kInfluenceSquaresPerUnit);
+			InfluenceTiles[i * kInfluenceSubDivX + j] = influenceTileMesh->CreateModel(static_cast<float>(i)  / kInfluenceSquaresPerUnit, 0.5f,( static_cast<float>(j) + 1) / kInfluenceSquaresPerUnit);
 			InfluenceTiles[i * kInfluenceSubDivX + j]->RotateX(180.0f);
 			InfluenceTiles[i * kInfluenceSubDivX + j]->ScaleX((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
 			InfluenceTiles[i * kInfluenceSubDivX + j]->ScaleZ((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
@@ -313,11 +332,11 @@ void main()
 		item.second->SetSkin("vectortex2.jpg");
 	}
 
-	//ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
-	ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x / 2.0f, 220.0f, kWorldSize.y / 2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
+	//ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x / 2.0f, 220.0f, kWorldSize.y / 2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(100.0f);
-	cam->SetRotationSpeed(180.0f);
+	cam->SetRotationSpeed(25.0f);
 
 	float frameRate;
 	stringstream frameStream;
