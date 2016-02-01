@@ -19,18 +19,18 @@ GSceneManager* GSceneManager::GetInstance(SWorldInfo* iWorldData)
 }
 
 GSceneManager::GSceneManager(SWorldInfo iWorldInfo) :
-	GSceneManager(iWorldInfo.TimeStep, iWorldInfo.WorldSize, iWorldInfo.xSubdivisions, iWorldInfo.ySubdivisions)
+	GSceneManager(iWorldInfo.TimeStep, iWorldInfo.WorldSize, iWorldInfo.xSubdivisions, iWorldInfo.ySubdivisions, iWorldInfo.influenceSquaresPerUnit)
 {
 	//Delegating Constructor
 }
 
-GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions) :
-	GSceneManager(iTimeStep, CVector2(iWorldXSize, iWorldYSize), iXSubdivisions, iYSubdivisions)
+GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions, float influenceSquaresPerUnit) :
+	GSceneManager(iTimeStep, CVector2(iWorldXSize, iWorldYSize), iXSubdivisions, iYSubdivisions, influenceSquaresPerUnit)
 {
 	//Delegating Constructor
 }
 
-GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions) :
+GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions, float influenceSquaresPerUnit) :
 	mManager_Entity(new GEntityManager()),
 	mManager_Obstacle(new GObstacleManager()),
 	m_TimeStep(iTimeStep),
@@ -55,7 +55,7 @@ GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivi
 	int tempX = static_cast<int>(m_WorldSize.x);
 	int tempY = static_cast<int>(m_WorldSize.y);
 
-	m_InfluenceMap = new GInfluenceMap(tempX, tempY, CVector2(1.0f, 1.0f));
+	m_InfluenceMap = new GInfluenceMap(tempX * influenceSquaresPerUnit, tempY * influenceSquaresPerUnit, CVector2(1/influenceSquaresPerUnit, 1/influenceSquaresPerUnit));
 }
 
 GSceneManager::~GSceneManager()

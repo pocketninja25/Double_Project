@@ -13,7 +13,8 @@ class GAgent : public GEntity
 private:
 	//Constants that define movement restrictions
 	float m_Velocity;				//The maximum velocity of the agent in units per second
-	float m_MaxTurn;				//The maximum rotation an agent can perform per second (in radians)
+	float km_MaxTurn;				//The defualt maximum rotation an agent can perform per second (in radians)
+	float m_TempMaxTurn;			//The (potentially) modified max turn to deal with agent standstills
 	float m_MaxGradientTraversal;	//THe maximum gradient increase an agent can climb
 
 	CVector2 m_Destination;	//The location in the scene the agent is attempting to reach
@@ -27,6 +28,21 @@ private:
 
 	std::vector<GAgent*> m_PotentiallyCollidingAgents;
 
+	float m_StillTimer;
+
+	enum Directions {
+		Dir_BottomLeft = 0,
+		Dir_Left = 1,
+		Dir_TopLeft = 2,
+		Dir_Bottom = 3,
+		Dir_Centre = 4,
+		Dir_Top = 5,
+		Dir_BottomRIght = 6,
+		Dir_Right = 7,
+		Dir_TopRight = 8,
+		Dir_Size = 9
+	};
+	
 //---------------------------
 // Public Functions
 //---------------------------

@@ -1,6 +1,6 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
-//#define InfluenceVisualiserEnabled
+#define InfluenceVisualiserEnabled
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
@@ -22,10 +22,9 @@ const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 3;
 const int kYSubDiv = 3;
 
-const int kInfluenceSubDivX = static_cast<int>(kWorldSize.x);
-const int kInfluenceSubDivY = static_cast<int>(kWorldSize.y);
-
-
+const float kInfluenceSquaresPerUnit = 1.0f / 2.0f;
+const int kInfluenceSubDivX = static_cast<int>(kWorldSize.x) * kInfluenceSquaresPerUnit;
+const int kInfluenceSubDivY = static_cast<int>(kWorldSize.y) * kInfluenceSquaresPerUnit;
 
 float frameTime = 0;
 
@@ -82,11 +81,11 @@ void CameraControls(I3DEngine* gameEngine, ICamera* cam)
 	}
 	if (gameEngine->KeyHeld(Key_Numpad7))
 	{
-		cam->MoveY(-80.0f * frameTime);
+		cam->MoveY(-160.0f * frameTime);
 	}
 	if (gameEngine->KeyHeld(Key_Numpad9))
 	{
-		cam->MoveY(80.0f * frameTime);
+		cam->MoveY(160.0f * frameTime);
 	}
 }
 
@@ -282,8 +281,10 @@ void main()
 	{
 		for (int j = 0; j < kInfluenceSubDivY; j++)
 		{
-			InfluenceTiles[i * kInfluenceSubDivX + j] = floorTileMesh->CreateModel(static_cast<float>(i) , 0.5f, static_cast<float>(j) );
+			InfluenceTiles[i * kInfluenceSubDivX + j] = floorTileMesh->CreateModel(static_cast<float>(i)  / kInfluenceSquaresPerUnit, 0.5f,( static_cast<float>(j) + 1) / kInfluenceSquaresPerUnit);
 			InfluenceTiles[i * kInfluenceSubDivX + j]->RotateX(180.0f);
+			InfluenceTiles[i * kInfluenceSubDivX + j]->ScaleX((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
+			InfluenceTiles[i * kInfluenceSubDivX + j]->ScaleZ((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
 		}
 	}
 #endif
@@ -296,6 +297,7 @@ void main()
 	worldData.WorldSize = kWorldSize;
 	worldData.xSubdivisions = kXSubDiv;
 	worldData.ySubdivisions = kYSubDiv;
+	worldData.influenceSquaresPerUnit = kInfluenceSquaresPerUnit;
 	GSceneManager* crowdEngine = GSceneManager::GetInstance(&worldData);
 	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents);
 	for (int i = 0; i < kNoStartingAgents; i++)

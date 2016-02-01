@@ -16,6 +16,7 @@ public:
 	CVector2 WorldSize = CVector2(0.0f, 0.0f);
 	int xSubdivisions = 0;
 	int ySubdivisions = 0;
+	float influenceSquaresPerUnit = 0;
 };
 
 //This is the primary manager, it manages the scene, as well as the other managers
@@ -30,8 +31,8 @@ public:
 private:
 	static GSceneManager* mManager_Scene;
 	GSceneManager(SWorldInfo iWorldInfo);
-	GSceneManager(float iTimeStep, CVector2 iWorldSize, int xSubdivisions, int ySubdivisions);
-	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions);
+	GSceneManager(float iTimeStep, CVector2 iWorldSize, int xSubdivisions, int ySubdivisions, float influenceSquaresPerUnit);
+	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions, float influenceSquaresPerUnit);
 
 	//Delete copy constructor and = operator
 

@@ -8,11 +8,13 @@ GAgent::GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive) :
 #endif
 	m_Destination(iDestination),
 	m_Velocity(15.0f),//TODO: find a way of calculating this better - or make it programmable
-	m_MaxTurn(gen::ToRadians(45.0f)),
+	km_MaxTurn(gen::ToRadians(60.0f)),
+	m_TempMaxTurn(km_MaxTurn),
 	m_PreviousMovementVect(CVector2(0.0f, 0.0f)),
 	m_PreviousDesiredMovementVect(CVector2(0.0f, 0.0f)),
 	m_Radius(sqrt(200.0f)/2),	//TODO: provide a reliable version of this number based on file data
-	m_MaxGradientTraversal(sqrt(pow(m_Radius+m_Velocity, 2) - (2 * pow(m_Radius, 2)) ) + 1)	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) TODO: Pick a better number
+	m_MaxGradientTraversal(sqrt(pow(m_Radius+m_Velocity, 2) - (2 * pow(m_Radius, 2)) ) + 1),	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) TODO: Pick a better number
+	m_StillTimer(0.0f)
 {
 	m_DesiredMovementVect = CVector2(GetPosition(), m_Destination);
 	m_DesiredMovementVect.Normalise();
@@ -162,7 +164,9 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 	}
 
 }
-#include <iostream>
+
+
+
 void GAgent::PerformGlobalCollisionAvoidance()
 {
 	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
@@ -171,8 +175,8 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 myPos = GetPosition();
 	GIntPair coord = influenceMap->GetGridSquareFromPosition(myPos);
 
-	CVector2 gridData[9]; //Use x and y as position of square, z as the gradient
-	float gridHeight[9];
+	CVector2 gridData[Dir_Size]; //Stores Position of square
+	float gridHeight[Dir_Size];
 
 
 
@@ -184,27 +188,38 @@ void GAgent::PerformGlobalCollisionAvoidance()
 		{
 
 			gridData[count] = influenceMap->GetSquareCentre(coord.x + i, coord.y + j);
-			gridHeight[count] = influenceMap->GetSquareGradient(coord.x + i, coord.y + j);
+
+
+			//TODO: PERFORM BETTER CALCULATION FOR HEIGHT (SOME FORM OF GRADIENT - remove the unused versions)
+			gridHeight[count] = influenceMap->GetValue(coord.x + i, coord.y + j);
+
+			int maxSquaresPerSecond = static_cast<int>(m_Velocity + 1);	//Consider the 'next' x squares and calculate an average
+			float accumulation = 0;
+			for (int k = 0; k < maxSquaresPerSecond; k++)
+			{
+				accumulation += influenceMap->GetValue(coord.x + (i * k), coord.y + (j * k));
+			}
+			accumulation /= maxSquaresPerSecond;
+			gridHeight[count] = accumulation;
 
 			count++;
 		}
 	}
 
-	int bestIndex = -1;
+	int bestIndex = Dir_Size; //Initialise to an incorrect value - test later to see if incorrect is chosen, then decide what to do accordingly
 	CVector2 toDestination = m_Destination - myPos;
 	toDestination.Normalise();
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < Dir_Size; i++)
 	{
 		//Apply Limitation logic to decide whether this square is a viable target
 		CVector2 toSquare = gridData[i] - myPos;
 		toSquare.Normalise();
-		if (toDestination.Dot(toSquare) > 0.5f)	//The target square is within 60 degrees either way of the ideal destination
+		if (toDestination.Dot(toSquare) > cos(m_TempMaxTurn))	//The target square is within 60 degrees either way of the ideal destination
 		{
-			if (gridHeight[4] - gridHeight[i] < m_MaxGradientTraversal)	//TODO: IMPROVE/REMOVE THESE VALUES
+			if (gridHeight[i] < gridHeight[Dir_Centre])	//Only pick if the location has less resistance than current position
 			{
-
 				//Decide if this square is better than the current best descision
-				if (bestIndex == -1)	//Set the first viable movement (cannot compare to another grid Height)
+				if (bestIndex == Dir_Size)	//Set the first valid movement (cannot compare to another grid Height)
 				{
 					bestIndex = i;
 				}
@@ -217,46 +232,30 @@ void GAgent::PerformGlobalCollisionAvoidance()
 		}
 	}
 
-	if (bestIndex == -1)	//All potential moves are bad, stay where you are
+	if (bestIndex == Dir_Size)	//All potential moves are bad, stay where you are
 	{
-		bestIndex = 0;
+		bestIndex = Dir_Centre;
 	}
-
 	CVector2 targetPosition;
-	switch (bestIndex)
+	if (bestIndex == Dir_Centre)
 	{
-	case 0:	//bottomleft
-		targetPosition = influenceMap->GetSquareCentre(coord.x - 1, coord.y - 1  );
-		break;																   
-	case 1:	//left															   
-		targetPosition = influenceMap->GetSquareCentre(coord.x - 1, coord.y  );
-		break;																   
-	case 2:	//topleft														   
-		targetPosition = influenceMap->GetSquareCentre(coord.x - 1, coord.y + 1  );
-		break;																   
-	case 3:	//bottom														   
-		targetPosition = influenceMap->GetSquareCentre(coord.x, coord.y - 1 );
-		break;																   
-	case 4:	//centre														   
-		targetPosition = influenceMap->GetSquareCentre(coord.x, coord.y  );
-		break;																   
-	case 5:	//top															   
-		targetPosition = influenceMap->GetSquareCentre(coord.x, coord.y + 1  );
-		break;																   
-	case 6:	//bottomright													 
-		targetPosition = influenceMap->GetSquareCentre(coord.x + 1, coord.y - 1  );
-		break;																   
-	case 7:	//right															   
-		targetPosition = influenceMap->GetSquareCentre(coord.x + 1, coord.y  );
-		break;																   
-	case 8:	//topright														   
-		targetPosition = influenceMap->GetSquareCentre(coord.x + 1, coord.y + 1  );
-		break;
-	default:
-		break;
+		targetPosition = myPos;	//Target where you stand, i.e. dont move (rather than moving to the centre of the current square, which could mean going backwards)
+		
+		m_StillTimer += GSceneManager::GetInstance()->GetTimeStep(); //Increase the timer due to being stuck
+		
 	}
+	else
+	{
+		targetPosition = gridData[bestIndex];
+		if (m_StillTimer > 0.0f)
+		{	
+			m_StillTimer -= 2 * GSceneManager::GetInstance()->GetTimeStep();	//Decrease the timer due to being unstuck (dont reset, just reduce at double speed)
+		}
+	}
+	//Add 10 degrees to maneuverability for every second stuck
+	m_TempMaxTurn = km_MaxTurn + gen::ToRadians(20.0f * m_StillTimer);
 
-	//TODO: apply limitations
+	//TODO: apply additional limitations
 
 	m_DesiredMovementVect = targetPosition - myPos;
 	m_DesiredMovementVect.Normalise();
