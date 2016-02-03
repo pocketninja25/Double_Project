@@ -62,11 +62,10 @@ public:
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // Debug code
 //vvvvvvvvvvvvvvvvvvvvvvvvvvv
-#ifdef _DEBUG
 public:
 	bool SetAgentWatched(UID agentID, bool isWatched);
 	bool GetAgentWatched(UID agentID);
-#endif
+
 
 };
 

@@ -151,7 +151,6 @@ CVector2 GEntityManager::GetRandomDestination()
 	return CVector2(RandomFloat(0, size.x), RandomFloat(0, size.y));
 }
 
-#ifdef _DEBUG
 bool GEntityManager::SetAgentWatched(UID agentID, bool isWatched)
 {
 	GAgent* theAgent;
@@ -173,4 +172,3 @@ bool GEntityManager::GetAgentWatched(UID agentID)
 
 }
 
-#endif

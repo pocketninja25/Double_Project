@@ -132,7 +132,7 @@ struct SRestrictionObject
 
 	GAgent* associatedAgent;
 };
- 
+
 void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 {
 	
@@ -140,12 +140,16 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 	GIntPair bottomLeft;
 	GIntPair topRight;
 
+	int coeffX = 1;	
+	int coeffY = 1;
+	int coeffZ = 1;
+
 	//For now use influence range as radius + velocity
 	CVector2 myPos = GetPosition();
 	float influenceRange = (m_Radius + m_Velocity);
 
-	bottomLeft = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x - influenceRange, myPos.y - influenceRange));
-	topRight = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x + influenceRange, myPos.y + influenceRange));
+	bottomLeft = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x - influenceRange, myPos.y - (influenceRange)));
+	topRight = influenceMap->GetGridSquareFromPosition(CVector2(myPos.x + influenceRange, myPos.y + (influenceRange)));
 
 	CVector2 flowDirection = m_Destination - myPos;
 	flowDirection.Normalise();
@@ -157,7 +161,8 @@ void GAgent::CalculateInfluence(GInfluenceMap* influenceMap)
 		{
 			squareCentre = influenceMap->GetSquareCentre(x, y);
 			
-			float influence = pow(influenceRange, 2) - pow(squareCentre.x - myPos.x, 2) - pow(squareCentre.y - myPos.y, 2);
+			float influence = coeffZ * (pow(influenceRange, 2) - pow(squareCentre.x - myPos.x, 2) / coeffX - pow(squareCentre.y - myPos.y, 2) / coeffY);
+
 			if (influence >= 0)	//If influence is not negative then square root and save the influence, otherwise ignore this square
 			{
 				influence = sqrt(influence);
@@ -474,7 +479,6 @@ CVector2 GAgent::MoveTheDesiredVect(std::vector<SRestrictionObject>& restriction
 //END OF LOCAL AVOIDANCE ALGORITHM
 //-------------------------------------------------------------------------------------------
 
-#ifdef _DEBUG
 
 void GAgent::SetWatched(bool isWatched)
 {
@@ -485,5 +489,3 @@ bool GAgent::GetWatched()
 {
 	return dm_BeingWatched;
 }
-
-#endif

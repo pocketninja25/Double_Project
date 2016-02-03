@@ -102,7 +102,6 @@ private:
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // Debug code
 //vvvvvvvvvvvvvvvvvvvvvvvvvvv
-#ifdef _DEBUG
 private:
 	bool dm_BeingWatched;
 
@@ -110,6 +109,5 @@ public:
 	void SetWatched(bool isWatched);
 
 	bool GetWatched();
-#endif
 };
 

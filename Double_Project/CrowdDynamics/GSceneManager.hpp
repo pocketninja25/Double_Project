@@ -4,6 +4,7 @@
 #include "GSceneSquare.hpp"
 #include "GInfluenceMap.hpp"
 
+
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
 class GObstacleManager;
@@ -129,11 +130,9 @@ private:
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // Debug code
 //vvvvvvvvvvvvvvvvvvvvvvvvvvv
-#ifdef _DEBUG
 	public:
 		bool SetAgentWatched(UID agentID, bool isWatched);
 		bool GetAgentWatched(UID agentID);
-#endif
 
 };
 

@@ -1,6 +1,7 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
 //#define InfluenceVisualiserEnabled
+//#define DirectionVisualiserEnabled
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
@@ -16,8 +17,8 @@ using namespace gen;
 EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
 
-const int kNoStartingAgents = 10;
-const gen::CVector2 kWorldSize = CVector2(200.0f, 200.0f);
+const int kNoStartingAgents = 300;
+const gen::CVector2 kWorldSize = CVector2(2000.0f, 2000.0f);
 const float kTimeStep = 1.0f / 30.0f;
 const int kXSubDiv = 3;
 const int kYSubDiv = 3;
@@ -106,10 +107,10 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AG
 			tempModelMat[12] = tempAgentMat.e20;
 			tempModelMat[14] = tempAgentMat.e21;
 			agent.second->SetMatrix(tempModelMat);
-			
 		}
 	}
 
+#ifdef DirectionVisualiserEnabled
 	gen::CVector2 tempDestination;
 	for (auto destinationVector : DestinationVectors)
 	{
@@ -146,6 +147,7 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AG
 			movementVector.second->ScaleZ(tempDestination.Length());
 		}
 	}
+#endif
 }
 
 void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*>& AGENTS, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
@@ -174,6 +176,8 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 		}
 	}
 
+#ifdef DirectionVisualiserEnabled
+	
 	gen::CVector2 tempDestination;
 	if (crowdEngine->GetAgentDestination(agentID, tempDestination))
 	{
@@ -209,6 +213,7 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 
 		thisVectorModel->ScaleZ(tempDestination.Length());
 	}
+#endif
 }
 
 void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influenceTiles)
@@ -225,7 +230,7 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 
 			influenceTiles[i * kInfluenceSubDivX + j]->SetY(2 * influence);
 			
-			if (influence != 0)	//Point the sqare in the direction of influence
+			if (true)//influence != 0)	//Point the sqare in the direction of influence
 			{
 				direction = influenceMap->GetFlow(i, j);
 
@@ -324,8 +329,11 @@ void main()
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
 		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
 		AGENTS.insert(make_pair(IDs[i], agentMesh->CreateModel()));
+#ifdef DirectionVisualiserEnabled
+
 		DestinationVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
 		MovementVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
+#endif
 	}
 	for (auto item : MovementVectors)
 	{
@@ -343,18 +351,20 @@ void main()
 
 	gen::CMatrix3x3 tempAgentMat;
 	string tempString;
-	int tempInt, tempInt2;
-	float tempModelMat[16];
 
 	//Assign the simulation matrices to the model matrices - first time
 	UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
+
+
+	
+
 
 
 	UID holding = -1;
 	crowdEngine->SetPaused(true);
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
-	{
+	{		
 		if (gameEngine->KeyHit(Key_Escape))
 		{
 			gameEngine->Stop();
@@ -403,9 +413,10 @@ void main()
 		{
 			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 			CVector2 mousePosition = CVector2(tempPos.x, tempPos.z);
-
+#ifdef _DEBUG
 			crowdEngine->GetSquareString(mousePosition, tempString);
 			cout << tempString;
+#endif
 		}
 		if (gameEngine->KeyHeld(Mouse_LButton))
 		{	
@@ -416,11 +427,13 @@ void main()
 				{
 					holding = tempHold;
 					string agentString;
+#ifdef _DEBUG
 					if (crowdEngine->GetAgentString(holding, agentString))
 					{
 						cout << "Picked up: " << endl;
 						cout << agentString << endl;
 					}
+#endif
 					try		//Find the agent 'holding' and set the holding skin
 					{
 						AGENTS.at(holding)->SetSkin("tiles3.jpg");
@@ -445,12 +458,14 @@ void main()
 		{
 			if (holding != -1)
 			{
+#ifdef _DEBUG
 				string agentString;
 				if (crowdEngine->GetAgentString(holding, agentString))
 				{
 					cout << "Dropped: " << endl;
 					cout << agentString << endl;
 				}
+#endif
 				try
 				{
 					if (crowdEngine->GetAgentWatched(holding))
@@ -511,9 +526,12 @@ void main()
 			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 			UID newID = crowdEngine->AddAgent(CVector2(tempPos.x, tempPos.z), true);
 			AGENTS.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
+#ifdef DirectionVisualiserEnabled
 			DestinationVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 10.0f, tempPos.z)));
 			MovementVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 11.0f, tempPos.z)));
 			MovementVectors.at(newID)->SetSkin("vectortex2.jpg");
+#endif
+
 		}
 	}
 

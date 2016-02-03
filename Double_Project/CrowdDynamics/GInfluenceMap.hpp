@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Common.hpp"
-#include <exception>
-using std::exception;
+#include "GObject.hpp"
 
-class GInfluenceMap
+class GInfluenceMap : GObject
 {
 private:
 	int m_xSquares;
@@ -40,8 +39,9 @@ public:
 //***************************
 // Other Functions
 //***************************
-	void ResetMap();	//Sets all squares to 0 influence
-
+	void Update(float updateTime);
+	void ResetInfluence();	//Sets all squares to 0 influence
+	void ResetFlow();
 
 	//Convert from world to grid and vice versa
 	GIntPair GetGridSquareFromPosition(const CVector2 &position);

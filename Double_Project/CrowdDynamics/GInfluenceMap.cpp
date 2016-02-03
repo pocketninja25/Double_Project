@@ -6,6 +6,7 @@ GInfluenceMap::GInfluenceMap(GIntPair noSquares, CVector2 squareSize) :
 }
 
 GInfluenceMap::GInfluenceMap(int iXSquares, int iYSquares, CVector2 squareSize):
+	GObject(true),
 	m_xSquares(iXSquares),
 	m_ySquares(iYSquares),
 	m_SquareSize(squareSize)
@@ -16,7 +17,8 @@ GInfluenceMap::GInfluenceMap(int iXSquares, int iYSquares, CVector2 squareSize):
 	m_Map = new float[m_xSquares * m_ySquares];
 	m_Flow = new CVector2[m_xSquares * m_ySquares];
 
-	ResetMap();
+	ResetInfluence();
+	ResetFlow();
 }
 
 GInfluenceMap::~GInfluenceMap()
@@ -98,11 +100,24 @@ CVector2 GInfluenceMap::GetSquareCentre(int xPos, int yPos)
 }
 
 
-void GInfluenceMap::ResetMap()
+void GInfluenceMap::Update(float updateTime)
+{
+	ResetInfluence();
+
+}
+
+void GInfluenceMap::ResetInfluence()
 {
 	for (int i = 0; i < m_xSquares * m_ySquares; i++)
 	{
 		m_Map[i] = 0.0f;
+	}
+}
+
+void GInfluenceMap::ResetFlow()
+{
+	for (int i = 0; i < m_xSquares * m_ySquares; i++)
+	{
 		m_Flow[i] = CVector2(0.0f, 0.0f);
 	}
 }

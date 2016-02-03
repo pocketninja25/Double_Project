@@ -167,9 +167,7 @@ UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 {
 	std::vector<UID> agentUIDs;
-	
-	int xSquare;
-	int ySquare;
+
 	CVector2 position;
 
 	for (int i = 0; i < kNoAgents; i++)
@@ -224,7 +222,7 @@ void GSceneManager::SetPaused(bool iPaused)
 
 void GSceneManager::PerformOneTimeStep()
 {
-	m_InfluenceMap->ResetMap();
+	m_InfluenceMap->Update(m_TimeStep);
 
 	for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
 	{
@@ -245,7 +243,7 @@ void GSceneManager::Update(float frameTime)
 
 		while (m_TimeSinceLastUpdate > m_TimeStep)		//While there are time steps left - this method allows for multiple time steps to be executed if they have built up //TODO: make this functionality independent of a function call
 		{
-			m_InfluenceMap->ResetMap();
+			m_InfluenceMap->Update(m_TimeStep);
 
 			for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
 			{
@@ -309,7 +307,7 @@ void GSceneManager::MaintainSceneSquares()
 
 	//Assign the unassignedAgents to their new square
 	CVector2 tempPos;
-	for (int i = 0; i < unassignedAgents.size(); i++)
+	for (unsigned int i = 0; i < unassignedAgents.size(); i++)
 	{
 		if (this->GetAgentPosition(unassignedAgents[i], tempPos))	//If agent exists
 		{
@@ -349,6 +347,7 @@ bool GSceneManager::GetSquareString(CVector2 coordinate, std::string& squareStri
 	return true;
 }
 
+#endif
 bool GSceneManager::SetAgentWatched(UID agentID, bool isWatched)
 {
 	return mManager_Entity->SetAgentWatched(agentID, isWatched);
@@ -358,4 +357,3 @@ bool GSceneManager::GetAgentWatched(UID agentID)
 {
 	return mManager_Entity->GetAgentWatched(agentID);
 }
-#endif
