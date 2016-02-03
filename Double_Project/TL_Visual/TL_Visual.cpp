@@ -17,11 +17,11 @@ using namespace gen;
 EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
 
-const int kNoStartingAgents = 300;
+const int kNoStartingAgents = 600;
 const gen::CVector2 kWorldSize = CVector2(2000.0f, 2000.0f);
 const float kTimeStep = 1.0f / 30.0f;
-const int kXSubDiv = 3;
-const int kYSubDiv = 3;
+const int kXSubDiv = 1;
+const int kYSubDiv = 1;
 
 const float kInfluenceSquaresPerUnit = 1.0f / 2.0f;
 const int kInfluenceSubDivX = static_cast<int>(kWorldSize.x) * kInfluenceSquaresPerUnit;
