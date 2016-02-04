@@ -7,6 +7,7 @@
 class GEntity;
 class GSceneManager;
 class GAgent;
+struct SAgentTemplate;
 
 class GEntityManager
 {
@@ -43,8 +44,9 @@ public:
 	//***************************
 	// Setters/Mutators
 	//***************************
-	UID AddAgent(CVector2 iPosition, bool iIsActive);
-	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
+	UID AddAgent(CVector2 iPosition, bool iIsActive);	//Deprecated
+	UID AddAgent(float iXPos, float iYPos, bool iIsActive);	//Deprecated
+	UID AddAgent(SAgentTemplate iTemplate);
 
 	bool SetAgentActivation(UID agent, bool isEnabled);
 

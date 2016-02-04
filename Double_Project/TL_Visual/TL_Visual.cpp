@@ -276,14 +276,19 @@ void main()
 
 
 	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
+	IMesh* agent2Mesh = gameEngine->LoadMesh("Box2.x");
 	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
 	IMesh* vectorMesh = gameEngine->LoadMesh("Vector.x");
 	IMesh* influenceTileMesh = gameEngine->LoadMesh("InfluenceTile.x");
-	
+	IMesh* SkyboxMesh = gameEngine->LoadMesh("Skybox.x");
+
 	map<UID, IModel*> AGENTS;
 	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
 	IModel** FloorTiles;
+	IModel* SkyBox = SkyboxMesh->CreateModel(1000.0f, -15.0f, 1000.0f);
+	SkyBox->ScaleX(kWorldSize.x / 300.0f);
+	SkyBox->ScaleZ(kWorldSize.y / 300.0f);
 	
 	FloorTiles = new IModel*[kXSubDiv * kYSubDiv];
 	for (int i = 0; i < kXSubDiv; i++)
@@ -323,7 +328,17 @@ void main()
 	worldData.ySubdivisions = kYSubDiv;
 	worldData.influenceSquaresPerUnit = kInfluenceSquaresPerUnit;
 	GSceneManager* crowdEngine = GSceneManager::GetInstance(&worldData);
-	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents);
+
+
+	SAgentTemplate blueprint1;
+	SAgentTemplate blueprint2;
+
+	blueprint1.defaultTurningArc = gen::ToRadians(60.0f);
+	blueprint2.defaultTurningArc = gen::ToRadians(30.0f);
+
+
+	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents / 2, AgentBlueprint1);
+
 	for (int i = 0; i < kNoStartingAgents; i++)
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z

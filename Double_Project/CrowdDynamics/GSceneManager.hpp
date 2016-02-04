@@ -8,17 +8,9 @@
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
 class GObstacleManager;
+struct SAgentTemplate;
 
-struct SWorldInfo
-{
-	//Struct of data required to create a 'world instance' - scene manager
-public:
-	float TimeStep = 0.0f;
-	CVector2 WorldSize = CVector2(0.0f, 0.0f);
-	int xSubdivisions = 0;
-	int ySubdivisions = 0;
-	float influenceSquaresPerUnit = 0;
-};
+
 
 //This is the primary manager, it manages the scene, as well as the other managers
 class GSceneManager
@@ -101,9 +93,11 @@ public:
 	//***************************
 	// Setters/Mutators
 	//***************************
-	UID AddAgent(CVector2 iPosition, bool iIsActive);
-	UID AddAgent(float iXPos, float iYPos, bool iIsActive);
-	std::vector<UID> AddXAgents(int kNoAgents, bool iAreActive = true);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
+	UID AddAgent(CVector2 iPosition, bool iIsActive);		//Deprecated
+	UID AddAgent(float iXPos, float iYPos, bool iIsActive);		//Deprecated
+	UID AddAgent(SAgentTemplate iTemplate);
+
+	std::vector<UID> AddXAgents(const int kNoAgents, SAgentTemplate blueprint);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
 	void PerformCollisionAvoidance(const std::list<UID>& localAgents);
 
 	bool SetAgentPosition(UID agent, CVector2 newPosition);
@@ -125,8 +119,7 @@ public:
 //---------------------------
 private:
 	void MaintainSceneSquares();
-
-
+	
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // Debug code
 //vvvvvvvvvvvvvvvvvvvvvvvvvvv

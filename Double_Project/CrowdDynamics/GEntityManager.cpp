@@ -31,7 +31,6 @@ bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 	try
 	{
 		returnedAgent = m_ActiveAgents.at(request);
-
 	}
 	catch (std::out_of_range err)
 	{
@@ -46,6 +45,7 @@ bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 			return false;		//Not in either list, failed
 		}
 	}
+
 	return true;	//Havent fallen into both catch blocks, one of the lists succeeded, returnedagent has been populated
 }
 
@@ -61,9 +61,32 @@ UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
 	}
 	else //inactive
 	{
-		m_ActiveAgents.emplace(newAgent->GetUID(), newAgent);
+		m_InactiveAgents.emplace(newAgent->GetUID(), newAgent);
 	}
 
+	return newAgent->GetUID();
+}
+
+UID GEntityManager::AddAgent(SAgentTemplate iTemplate)
+{
+	if (iTemplate.randomDestination)
+	{
+		iTemplate.destination = GetRandomDestination();
+	}
+	if (iTemplate.randomPosition)
+	{
+		iTemplate.position = GetRandomDestination();
+	}
+
+	GAgent* newAgent = new GAgent(iTemplate);
+	if (newAgent->IsActive())
+	{
+		m_ActiveAgents.emplace(newAgent->GetUID(), newAgent);
+	}
+	else //inactive
+	{
+		m_InactiveAgents.emplace(newAgent->GetUID(), newAgent);
+	}
 	return newAgent->GetUID();
 }
 

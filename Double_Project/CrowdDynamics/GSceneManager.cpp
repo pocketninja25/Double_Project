@@ -164,6 +164,34 @@ UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 	return this->AddAgent(CVector2(iXPos, iYPos), iIsActive);
 }
 
+UID GSceneManager::AddAgent(SAgentTemplate iTemplate)
+{
+	UID agentID = mManager_Entity->AddAgent(iTemplate);
+	GAgent* theAgent;
+	if (mManager_Entity->GetAgent(agentID, theAgent))
+	{
+		m_SceneSquares[GetWhichSquare(theAgent->GetPosition())]->AddAgent(agentID);
+	}
+	return agentID;
+}
+
+std::vector<UID> GSceneManager::AddXAgents(const int kNoAgents, SAgentTemplate blueprint)
+{
+	std::vector<UID> agentUIDs;
+
+	GAgent* theAgent;
+	for (int i = 0; i < kNoAgents; i++)
+	{
+		agentUIDs.push_back(mManager_Entity->AddAgent(blueprint));
+		if (mManager_Entity->GetAgent(agentUIDs.back(), theAgent))
+		{
+			m_SceneSquares[GetWhichSquare(theAgent->GetPosition())]->AddAgent(agentUIDs.back());
+		}
+	}
+	return agentUIDs;
+}
+
+/*	//Deprecated version
 std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 {
 	std::vector<UID> agentUIDs;
@@ -177,10 +205,32 @@ std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
 		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
 		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
 	}
+	/* //Alternate version to put half on bottom left, half on top right
+	std::vector<UID> agentUIDs;
+
+	CVector2 position;
+
+	for (int i = 0; i < 300; i++)
+	{
+		position = CVector2(RandomFloat(0.0f, m_WorldSize.x / 4), RandomFloat(0.0f, m_WorldSize.y / 4));
+
+		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
+		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
+	}
+
+	for (int i = 300; i < kNoAgents; i++)
+	{
+		position = CVector2(RandomFloat((3 * m_WorldSize.x) / 4, m_WorldSize.x), RandomFloat((3 * m_WorldSize.y) / 4, m_WorldSize.y));
+
+		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
+		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
+	}
+	*/
+/*
 
 	return agentUIDs;
 }
-
+*/
 
 void GSceneManager::PerformCollisionAvoidance(const std::list<UID>& localAgents)
 {

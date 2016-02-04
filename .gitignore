@@ -211,3 +211,7 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /Double_Project/TL_VisualDebug.exe
+*.opendb
+*.dll
+*.exe
+*.bsc

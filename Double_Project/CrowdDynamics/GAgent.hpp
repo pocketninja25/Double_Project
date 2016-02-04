@@ -50,8 +50,9 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive = true);
-	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, float iXDest = 0.0f, float iYDest = 0.0f, bool iIsActive = true);
+	GAgent(SAgentTemplate agentDetails);
+	GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive = true);	//Deprecated
+	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, float iXDest = 0.0f, float iYDest = 0.0f, bool iIsActive = true);	//Deprecated
 
 	virtual ~GAgent();
 	

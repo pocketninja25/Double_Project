@@ -1,6 +1,26 @@
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
 
+GAgent::GAgent(SAgentTemplate agentDetails) :
+	GEntity(agentDetails.position, agentDetails.startsActive),
+	m_Destination(agentDetails.destination),
+	m_Velocity(agentDetails.velocity),
+#ifdef _DEBUG
+	dm_BeingWatched(false),
+#endif
+	km_MaxTurn(agentDetails.defaultTurningArc),
+	m_TempMaxTurn(km_MaxTurn),
+	m_PreviousMovementVect(CVector2(0.0f, 0.0f)),
+	m_Radius(agentDetails.radius),
+	m_MaxGradientTraversal(agentDetails.maxGradientTraversal),
+	m_StillTimer(0.0f)
+{
+	m_DesiredMovementVect = CVector2(GetPosition(), m_Destination);
+	m_DesiredMovementVect.Normalise();
+	m_DesiredMovementVect *= m_Velocity;
+
+}
+
 GAgent::GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive) :
 	GEntity(iPosition, iIsActive),
 #ifdef _DEBUG
@@ -13,7 +33,7 @@ GAgent::GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive) :
 	m_PreviousMovementVect(CVector2(0.0f, 0.0f)),
 	m_PreviousDesiredMovementVect(CVector2(0.0f, 0.0f)),
 	m_Radius(sqrt(200.0f)/2),	//TODO: provide a reliable version of this number based on file data
-	m_MaxGradientTraversal(sqrt(pow(m_Radius+m_Velocity, 2) - (2 * pow(m_Radius, 2)) ) + 1),	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) TODO: Pick a better number
+	m_MaxGradientTraversal(1.0f),	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) TODO: Pick a better number
 	m_StillTimer(0.0f)
 {
 	m_DesiredMovementVect = CVector2(GetPosition(), m_Destination);
@@ -63,6 +83,7 @@ void GAgent::SetNewDestination(CVector2 newDestination)
 	m_DesiredMovementVect.Normalise();
 	m_DesiredMovementVect * m_Velocity;
 }
+
 void GAgent::SetPosition(CVector2 newPosition)
 {
 	CMatrix3x3 tempMatrix = GetMatrix();
