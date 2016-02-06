@@ -8,7 +8,7 @@
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
 class GObstacleManager;
-struct SAgentTemplate;
+struct SAgentBlueprint;
 
 
 
@@ -95,9 +95,9 @@ public:
 	//***************************
 	UID AddAgent(CVector2 iPosition, bool iIsActive);		//Deprecated
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);		//Deprecated
-	UID AddAgent(SAgentTemplate iTemplate);
+	UID AddAgent(std::string blueprintFile, bool overwriteStartLocation = false, CVector2 newLocation = CVector2(0.0f, 0.0f));
 
-	std::vector<UID> AddXAgents(const int kNoAgents, SAgentTemplate blueprint);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
+	std::vector<UID> AddXAgents(const int kNoAgents, std::string blueprintFile);		//Creates an amount of agents in random positions in the world and returns a vector of their UID's
 	void PerformCollisionAvoidance(const std::list<UID>& localAgents);
 
 	bool SetAgentPosition(UID agent, CVector2 newPosition);

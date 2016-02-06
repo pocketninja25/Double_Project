@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AgentBLueprint
+  turningArc="60.0"
+  maxGradient="1.0"
+  radius="7.071"
+  randomPosition="true"
+  randomDestination="true"
+  startsActive="true"
+  velocity="15.0">
+  <Destination x ="0.0" y ="0.0"/>
+  <Position x="0.0" y="0.0"/>
+</AgentBLueprint>

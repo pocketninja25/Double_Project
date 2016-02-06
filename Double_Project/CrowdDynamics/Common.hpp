@@ -9,6 +9,7 @@
 
 #include "GIntPair.hpp"
 
+
 using gen::CVector2;
 using gen::CVector3;
 using gen::CMatrix3x3;
@@ -34,7 +35,7 @@ public:
 	float influenceSquaresPerUnit = 0;
 };
 
-struct SAgentTemplate {
+struct SAgentBlueprint {
 public:
 	float radius;
 	bool randomPosition;

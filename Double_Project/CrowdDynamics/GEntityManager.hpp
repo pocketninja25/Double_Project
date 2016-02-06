@@ -2,12 +2,13 @@
 
 #include "Common.hpp"
 #include <map>
+#include "GAgentImporter.h"
 
 //Forward declare these classes, include the files for the cpp only (where needed)
 class GEntity;
 class GSceneManager;
 class GAgent;
-struct SAgentTemplate;
+struct SAgentBlueprint;
 
 class GEntityManager
 {
@@ -22,6 +23,8 @@ private:
 private:
 	std::map<UID, GAgent*> m_ActiveAgents;
 	std::map<UID, GAgent*> m_InactiveAgents;
+
+	GAgentImporter m_AgentTemplateLoader;
 
 //---------------------------
 // Public Functions
@@ -46,7 +49,7 @@ public:
 	//***************************
 	UID AddAgent(CVector2 iPosition, bool iIsActive);	//Deprecated
 	UID AddAgent(float iXPos, float iYPos, bool iIsActive);	//Deprecated
-	UID AddAgent(SAgentTemplate iTemplate);
+	UID AddAgent(std::string blueprintFile, bool overwriteStartPosition = false, CVector2 newStartPosition = CVector2(0.0f, 0.0f));
 
 	bool SetAgentActivation(UID agent, bool isEnabled);
 

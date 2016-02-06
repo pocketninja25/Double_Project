@@ -7,11 +7,11 @@
 
 GEntityManager::GEntityManager()
 {
+
 }
 
 GEntityManager::~GEntityManager()
 {
-
 	//Deallocate entity information
 	for (auto &agent : m_ActiveAgents)
 	{
@@ -67,18 +67,31 @@ UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
 	return newAgent->GetUID();
 }
 
-UID GEntityManager::AddAgent(SAgentTemplate iTemplate)
+UID GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 {
-	if (iTemplate.randomDestination)
+	//Delegate implementation to other version of the function - preventing duplication errors
+	return this->AddAgent(CVector2(iXPos, iYPos), iIsActive);
+}
+
+UID GEntityManager::AddAgent(std::string blueprintFile, bool overwriteStartLocation, CVector2 newStartLocation)
+{
+	SAgentBlueprint blueprint = m_AgentTemplateLoader.LoadBlueprint(blueprintFile);
+
+	//TODO: Fix this up
+	if (blueprint.randomDestination)
 	{
-		iTemplate.destination = GetRandomDestination();
+		blueprint.destination = GetRandomDestination();
 	}
-	if (iTemplate.randomPosition)
+	if (blueprint.randomPosition)
 	{
-		iTemplate.position = GetRandomDestination();
+		blueprint.position = GetRandomDestination();
+	}
+	if(overwriteStartLocation)
+	{
+		blueprint.position = newStartLocation;
 	}
 
-	GAgent* newAgent = new GAgent(iTemplate);
+	GAgent* newAgent = new GAgent(blueprint);
 	if (newAgent->IsActive())
 	{
 		m_ActiveAgents.emplace(newAgent->GetUID(), newAgent);
@@ -88,12 +101,6 @@ UID GEntityManager::AddAgent(SAgentTemplate iTemplate)
 		m_InactiveAgents.emplace(newAgent->GetUID(), newAgent);
 	}
 	return newAgent->GetUID();
-}
-
-UID GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
-{
-	//Delegate implementation to other version of the function - preventing duplication errors
-	return this->AddAgent(CVector2(iXPos, iYPos), iIsActive);
 }
 
 bool GEntityManager::SetAgentActivation(UID agent, bool isEnabled)

@@ -164,9 +164,9 @@ UID GSceneManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 	return this->AddAgent(CVector2(iXPos, iYPos), iIsActive);
 }
 
-UID GSceneManager::AddAgent(SAgentTemplate iTemplate)
+UID GSceneManager::AddAgent(std::string blueprintFile, bool overwriteStartLocation, CVector2 newStart)
 {
-	UID agentID = mManager_Entity->AddAgent(iTemplate);
+	UID agentID = mManager_Entity->AddAgent(blueprintFile, overwriteStartLocation, newStart);
 	GAgent* theAgent;
 	if (mManager_Entity->GetAgent(agentID, theAgent))
 	{
@@ -175,14 +175,14 @@ UID GSceneManager::AddAgent(SAgentTemplate iTemplate)
 	return agentID;
 }
 
-std::vector<UID> GSceneManager::AddXAgents(const int kNoAgents, SAgentTemplate blueprint)
+std::vector<UID> GSceneManager::AddXAgents(const int kNoAgents, std::string blueprintFile)
 {
 	std::vector<UID> agentUIDs;
 
 	GAgent* theAgent;
 	for (int i = 0; i < kNoAgents; i++)
 	{
-		agentUIDs.push_back(mManager_Entity->AddAgent(blueprint));
+		agentUIDs.push_back(mManager_Entity->AddAgent(blueprintFile));
 		if (mManager_Entity->GetAgent(agentUIDs.back(), theAgent))
 		{
 			m_SceneSquares[GetWhichSquare(theAgent->GetPosition())]->AddAgent(agentUIDs.back());

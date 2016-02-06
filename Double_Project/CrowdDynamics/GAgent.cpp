@@ -1,7 +1,7 @@
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
 
-GAgent::GAgent(SAgentTemplate agentDetails) :
+GAgent::GAgent(SAgentBlueprint &agentDetails) :
 	GEntity(agentDetails.position, agentDetails.startsActive),
 	m_Destination(agentDetails.destination),
 	m_Velocity(agentDetails.velocity),

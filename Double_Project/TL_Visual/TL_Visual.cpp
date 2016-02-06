@@ -329,15 +329,11 @@ void main()
 	worldData.influenceSquaresPerUnit = kInfluenceSquaresPerUnit;
 	GSceneManager* crowdEngine = GSceneManager::GetInstance(&worldData);
 
+	string blueprints[2];
+	blueprints[0] = "AgentBlueprint1.xml";
+	blueprints[1] = "AgentBlueprint2.xml";
 
-	SAgentTemplate blueprint1;
-	SAgentTemplate blueprint2;
-
-	blueprint1.defaultTurningArc = gen::ToRadians(60.0f);
-	blueprint2.defaultTurningArc = gen::ToRadians(30.0f);
-
-
-	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents / 2, AgentBlueprint1);
+	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents, blueprints[1]);
 
 	for (int i = 0; i < kNoStartingAgents; i++)
 	{
@@ -539,7 +535,7 @@ void main()
 		if (gameEngine->KeyHit(Key_Space))
 		{
 			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
-			UID newID = crowdEngine->AddAgent(CVector2(tempPos.x, tempPos.z), true);
+			UID newID = crowdEngine->AddAgent(blueprints[0], true, CVector2(tempPos.x, tempPos.z));
 			AGENTS.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
 #ifdef DirectionVisualiserEnabled
 			DestinationVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 10.0f, tempPos.z)));
