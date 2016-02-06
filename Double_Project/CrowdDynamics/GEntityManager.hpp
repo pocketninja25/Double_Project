@@ -1,14 +1,13 @@
 #pragma once
 
 #include "Common.hpp"
-#include <map>
-#include "GAgentImporter.h"
 
 //Forward declare these classes, include the files for the cpp only (where needed)
 class GEntity;
 class GSceneManager;
 class GAgent;
 struct SAgentBlueprint;
+class GAgentImporter;
 
 class GEntityManager
 {
@@ -24,7 +23,7 @@ private:
 	std::map<UID, GAgent*> m_ActiveAgents;
 	std::map<UID, GAgent*> m_InactiveAgents;
 
-	GAgentImporter m_AgentTemplateLoader;
+	GAgentImporter* m_AgentBlueprintLoader;
 
 //---------------------------
 // Public Functions
@@ -41,8 +40,8 @@ public:
 	//***************************
 	// Getters/Accessors
 	//***************************
-
 	bool GetAgent(UID request, GAgent* &returnedAgent);
+	std::vector<UID> GetAgentUIDs();
 
 	//***************************
 	// Setters/Mutators

@@ -8,9 +8,7 @@
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
 class GObstacleManager;
-struct SAgentBlueprint;
-
-
+class GWorldImporter;
 
 //This is the primary manager, it manages the scene, as well as the other managers
 class GSceneManager
@@ -19,13 +17,15 @@ class GSceneManager
 	// Singleton Data
 	//---------------------------
 public:
-	static GSceneManager* GetInstance(SWorldInfo* iWorldData = 0);	//Accepts struct pointer of world data - this allows the Scene manager to have a complex setup through getinstance but not require any data to get the instance subsequent times
+	static GSceneManager* GetInstance(std::string worldBlueprintFile = "");	//Accepts struct pointer of world data - this allows the Scene manager to have a complex setup through getinstance but not require any data to get the instance subsequent times
 																	//All objects created by this class will also reference it this way, they do not need to worry about the instance not existing because they cannot exist without this
 private:
 	static GSceneManager* mManager_Scene;
-	GSceneManager(SWorldInfo iWorldInfo);
-	GSceneManager(float iTimeStep, CVector2 iWorldSize, int xSubdivisions, int ySubdivisions, float influenceSquaresPerUnit);
-	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions, float influenceSquaresPerUnit);
+	GSceneManager(std::string fileName);
+	GSceneManager(SWorldBlueprint iWorldInfo);	//Deprecated
+	GSceneManager(float iTimeStep, CVector2 iWorldSize, int xSubdivisions, int ySubdivisions, float influenceSquaresPerUnit);	//Deprecated
+	GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSize, int iXSubdivisions, int iYSubdivisions, float influenceSquaresPerUnit);	//Deprecated
+
 
 	//Delete copy constructor and = operator
 
@@ -45,15 +45,16 @@ private:
 	// Private Data Members
 	//---------------------------
 private:
+	GWorldImporter* m_WorldBlueprintLoader;
+	SWorldBlueprint m_WorldBlueprint;
+
 	float m_TimeStep;				//The amount of time updated each frame TODO: make this work concurrently with the client program, updating without a call to the update function (will need to set the program to 'Enabled'/'Disabled'
 	float m_TimeSinceLastUpdate;	//The amount of time elapsed since the last update
 
-	CVector2 m_WorldSize;		//The total size of the world space /*Can be calculated, but less expensive to just store*/
-	CVector2 m_SquareSize;		//The size of a single grid square /*Can be calculated, but less expensive to just store*/
+	CVector2 m_WorldSize;			//The total size of the world space /*Can be calculated, but less expensive to just store*/
+	CVector2 m_SquareSize;			//The size of a single grid square /*Can be calculated, but less expensive to just store*/
 	GSceneSquare** m_SceneSquares;	//Pointer to the 0th element in a dynamically allocated array sized m_NoOfSquaresX * m_NoOfSquaresY, access/positioning of elements defined by m_SceneSquares[x][y]
-	int m_NoOfSquaresX;				//Number of squares in the X (horizontal) direction
-	int m_NoOfSquaresY;				//Number of squares in the Y (vertical) direction
-
+	GIntPair m_NoSquares;			//The number of squares in the x and y directions
 
 	bool m_Paused;
 
@@ -73,6 +74,10 @@ public:
 	// Getters/Accessors
 	//***************************
 	CVector2 GetWorldSize();
+	SWorldBlueprint GetWorldBlueprint();
+
+	std::vector<UID> GetAgentUIDs();
+
 	bool GetAgentMatrix(UID requestedUID, CMatrix3x3 &matrix);
 	bool GetAgentPosition(UID requestedUID, CVector2 &position);
 	bool GetAgentDesiredVector(UID requestedUID, CVector2 &desiredVector);
@@ -128,4 +133,3 @@ private:
 		bool GetAgentWatched(UID agentID);
 
 };
-

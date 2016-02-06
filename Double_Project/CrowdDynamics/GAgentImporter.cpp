@@ -17,15 +17,6 @@ GAgentImporter::~GAgentImporter()
 	}
 }
 
-bool stobool(std::string theString)
-{
-	if (theString == "true")
-	{
-		return true;
-	}
-	return false;
-}
-
 SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
 {
 	fileName = "..//CrowdDynamics//" + fileName;
@@ -44,10 +35,10 @@ SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
 		SAgentBlueprint* blueprintBuilder = new SAgentBlueprint();
 		TiXmlElement* blueprintElement = doc.RootElement();
 
-		blueprintBuilder->defaultTurningArc = gen::ToRadians(atof(blueprintElement->Attribute("turningArc")));	//Accept degrees, convert to radians
-		blueprintBuilder->maxGradientTraversal = atof(blueprintElement->Attribute("maxGradient"));
-		blueprintBuilder->radius = atof(blueprintElement->Attribute("radius"));
-		blueprintBuilder->velocity = atof(blueprintElement->Attribute("velocity"));
+		blueprintBuilder->defaultTurningArc = gen::ToRadians(static_cast<float>(atof(blueprintElement->Attribute("turningArc"))));	//Accept degrees, convert to radians
+		blueprintBuilder->maxGradientTraversal = static_cast<float>(atof(blueprintElement->Attribute("maxGradient")));
+		blueprintBuilder->radius = static_cast<float>(atof(blueprintElement->Attribute("radius")));
+		blueprintBuilder->velocity = static_cast<float>(atof(blueprintElement->Attribute("velocity")));
 		blueprintBuilder->randomPosition = stobool(blueprintElement->Attribute("randomPosition"));
 		blueprintBuilder->randomDestination = stobool(blueprintElement->Attribute("randomDestination"));
 		blueprintBuilder->startsActive = stobool(blueprintElement->Attribute("startsActive"));
@@ -59,8 +50,8 @@ SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
 		else
 		{
 			TiXmlElement* dest = blueprintElement->FirstChildElement("Destination");
-			blueprintBuilder->destination.x = atof(dest->Attribute("x"));
-			blueprintBuilder->destination.y = atof(dest->Attribute("y"));
+			blueprintBuilder->destination.x = static_cast<float>(atof(dest->Attribute("x")));
+			blueprintBuilder->destination.y = static_cast<float>(atof(dest->Attribute("y")));
 		}
 		if (blueprintBuilder->randomPosition)
 		{
@@ -69,12 +60,12 @@ SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
 		else
 		{
 			TiXmlElement* pos = blueprintElement->FirstChildElement("Position");
-			blueprintBuilder->destination.x = atof(pos->Attribute("x"));
-			blueprintBuilder->destination.y = atof(pos->Attribute("y"));
+			blueprintBuilder->destination.x = static_cast<float>(atof(pos->Attribute("x")));
+			blueprintBuilder->destination.y = static_cast<float>(atof(pos->Attribute("y")));
 		}
-		m_LoadedBlueprints.emplace(std::make_pair( fileName, blueprintBuilder));
+		m_LoadedBlueprints.emplace(make_pair(fileName, blueprintBuilder));
 		return SAgentBlueprint(*blueprintBuilder);	//Return a copy of the blueprint
 	}
 
-	return SAgentBlueprint();
+	return SAgentBlueprint();	//Fail, return a blank blueprint
 }

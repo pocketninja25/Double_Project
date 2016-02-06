@@ -3,11 +3,11 @@
 #include "GEntity.hpp"
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
-
+#include "GAgentImporter.h"
 
 GEntityManager::GEntityManager()
 {
-
+	m_AgentBlueprintLoader = new GAgentImporter();
 }
 
 GEntityManager::~GEntityManager()
@@ -21,6 +21,7 @@ GEntityManager::~GEntityManager()
 	{
 		delete agent.second;
 	}
+	delete m_AgentBlueprintLoader;
 }
 
 bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
@@ -49,6 +50,16 @@ bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 	return true;	//Havent fallen into both catch blocks, one of the lists succeeded, returnedagent has been populated
 }
 
+std::vector<UID> GEntityManager::GetAgentUIDs()
+{
+	std::vector<UID> list;
+
+	list.insert(list.end(), m_ActiveAgents.begin(), m_ActiveAgents.end());
+	list.insert(list.end(), m_InactiveAgents.begin(), m_InactiveAgents.end());
+
+	return list;
+}
+
 UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
 {
 	//Construct a new agent
@@ -75,9 +86,8 @@ UID GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 
 UID GEntityManager::AddAgent(std::string blueprintFile, bool overwriteStartLocation, CVector2 newStartLocation)
 {
-	SAgentBlueprint blueprint = m_AgentTemplateLoader.LoadBlueprint(blueprintFile);
+	SAgentBlueprint blueprint = m_AgentBlueprintLoader->LoadBlueprint(blueprintFile);
 
-	//TODO: Fix this up
 	if (blueprint.randomDestination)
 	{
 		blueprint.destination = GetRandomDestination();

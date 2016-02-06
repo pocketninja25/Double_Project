@@ -3,23 +3,58 @@
 #include "GEntityManager.hpp"
 #include "GObstacleManager.hpp"
 #include "GAgent.hpp"
+#include "GWorldImporter.h"
 
 GSceneManager* GSceneManager::mManager_Scene = 0;
 
-GSceneManager* GSceneManager::GetInstance(SWorldInfo* iWorldData)
+GSceneManager* GSceneManager::GetInstance(std::string worldBlueprintFile)
 {
-	if (!mManager_Scene && iWorldData)	//If there is no manager instance but there is a set of world data create an instance
+	if (!mManager_Scene && worldBlueprintFile != "")	//If there is no manager instance but there is a set of world data create an instance
 	{
 		//Construct the manager
-
-		mManager_Scene = new GSceneManager(*iWorldData);
+		mManager_Scene = new GSceneManager(worldBlueprintFile);
 	}
 
 	return mManager_Scene;
 }
 
-GSceneManager::GSceneManager(SWorldInfo iWorldInfo) :
-	GSceneManager(iWorldInfo.TimeStep, iWorldInfo.WorldSize, iWorldInfo.xSubdivisions, iWorldInfo.ySubdivisions, iWorldInfo.influenceSquaresPerUnit)
+GSceneManager::GSceneManager(std::string fileName) :
+	mManager_Entity(new GEntityManager()),
+	mManager_Obstacle(new GObstacleManager()),
+	m_TimeSinceLastUpdate(0.0f),
+	m_Paused(false)
+{
+	m_WorldBlueprintLoader = new GWorldImporter();
+	SWorldBlueprint blueprint = m_WorldBlueprintLoader->LoadBlueprint(fileName);
+
+	m_TimeStep = blueprint.TimeStep;
+	m_WorldSize = blueprint.WorldSize;
+	m_NoSquares = blueprint.subdivisions;
+	m_SquareSize = CVector2(m_WorldSize.x / m_NoSquares.x, m_WorldSize.y / m_NoSquares.y);
+	m_SceneSquares = new GSceneSquare*[m_NoSquares.x * m_NoSquares.y];
+
+	for (int i = 0; i < m_NoSquares.x; i++)
+	{
+		for (int j = 0; j < m_NoSquares.y; j++)
+		{
+			m_SceneSquares[i * m_NoSquares.x + j] = new GSceneSquare(m_SquareSize, CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
+		}
+	}
+
+	m_InfluenceMap = new GInfluenceMap(
+		m_WorldBlueprint.influenceSubdivisions.x, 
+		m_WorldBlueprint.influenceSubdivisions.y,
+			CVector2(1 / blueprint.influenceSquaresPerUnit, 1 / blueprint.influenceSquaresPerUnit));
+
+	for (auto iter : m_WorldBlueprint.agentDetails)
+	{
+		this->AddXAgents(iter.second, iter.first);
+	}
+
+}
+
+GSceneManager::GSceneManager(SWorldBlueprint iWorldInfo) :
+	GSceneManager(iWorldInfo.TimeStep, iWorldInfo.WorldSize, iWorldInfo.subdivisions.x, iWorldInfo.subdivisions.y, iWorldInfo.influenceSquaresPerUnit)
 {
 	//Delegating Constructor
 }
@@ -33,21 +68,21 @@ GSceneManager::GSceneManager(float iTimeStep, float iWorldXSize, float iWorldYSi
 GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivisions, int iYSubdivisions, float influenceSquaresPerUnit) :
 	mManager_Entity(new GEntityManager()),
 	mManager_Obstacle(new GObstacleManager()),
-	m_TimeStep(iTimeStep),
 	m_TimeSinceLastUpdate(0.0f),
+	m_Paused(false),
+	m_TimeStep(iTimeStep),
 	m_WorldSize(iWorldSize),
-	m_NoOfSquaresX(iXSubdivisions),
-	m_NoOfSquaresY(iYSubdivisions),
-	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions]),
 	m_SquareSize(CVector2(iWorldSize.x / iXSubdivisions, iWorldSize.y / iYSubdivisions)),
-	m_Paused(false)
+	m_SceneSquares(new GSceneSquare*[iXSubdivisions * iYSubdivisions])
 {
+	m_NoSquares = GIntPair(iXSubdivisions, iYSubdivisions);
+
 	//Construct the scenesquare objects
-	for (int i = 0; i < m_NoOfSquaresX; i++)
+	for (int i = 0; i < m_NoSquares.x; i++)
 	{
-		for (int j = 0; j < m_NoOfSquaresY; j++)
+		for (int j = 0; j < m_NoSquares.y; j++)
 		{
-			m_SceneSquares[i * m_NoOfSquaresX + j] = new GSceneSquare(m_SquareSize, CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
+			m_SceneSquares[i * m_NoSquares.x + j] = new GSceneSquare(m_SquareSize, CVector2(i * m_SquareSize.x, j * m_SquareSize.y));
 		}
 	}
 
@@ -60,7 +95,7 @@ GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivi
 
 GSceneManager::~GSceneManager()
 {
-	int noSquares = m_NoOfSquaresX * m_NoOfSquaresY;
+	int noSquares = m_NoSquares.x * m_NoSquares.y;
 
 	//Deallocate each scene square
 	for (int i = 0; i < noSquares; i++)
@@ -77,6 +112,8 @@ GSceneManager::~GSceneManager()
 	delete mManager_Entity;
 	delete mManager_Obstacle;
 
+	delete m_WorldBlueprintLoader;
+
 	//Reset the instance pointer, there is no longer an instance
 	mManager_Scene = 0;
 }
@@ -84,6 +121,16 @@ GSceneManager::~GSceneManager()
 CVector2 GSceneManager::GetWorldSize()
 {
 	return m_WorldSize;
+}
+
+SWorldBlueprint GSceneManager::GetWorldBlueprint()
+{
+	return m_WorldBlueprint;
+}
+
+std::vector<UID> GSceneManager::GetAgentUIDs()
+{
+	return mManager_Entity->GetAgentUIDs();
 }
 
 bool GSceneManager::GetAgentMatrix(UID requestedUID, CMatrix3x3 &matrix)
@@ -191,50 +238,8 @@ std::vector<UID> GSceneManager::AddXAgents(const int kNoAgents, std::string blue
 	return agentUIDs;
 }
 
-/*	//Deprecated version
-std::vector<UID> GSceneManager::AddXAgents(int kNoAgents, bool iAreActive)
-{
-	std::vector<UID> agentUIDs;
-
-	CVector2 position;
-
-	for (int i = 0; i < kNoAgents; i++)
-	{
-		position = CVector2(RandomFloat(0.0f, m_WorldSize.x), RandomFloat(0.0f, m_WorldSize.y));
-		
-		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
-		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
-	}
-	/* //Alternate version to put half on bottom left, half on top right
-	std::vector<UID> agentUIDs;
-
-	CVector2 position;
-
-	for (int i = 0; i < 300; i++)
-	{
-		position = CVector2(RandomFloat(0.0f, m_WorldSize.x / 4), RandomFloat(0.0f, m_WorldSize.y / 4));
-
-		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
-		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
-	}
-
-	for (int i = 300; i < kNoAgents; i++)
-	{
-		position = CVector2(RandomFloat((3 * m_WorldSize.x) / 4, m_WorldSize.x), RandomFloat((3 * m_WorldSize.y) / 4, m_WorldSize.y));
-
-		agentUIDs.push_back(mManager_Entity->AddAgent(position, iAreActive));
-		m_SceneSquares[GetWhichSquare(position)]->AddAgent(agentUIDs.back());
-	}
-	*/
-/*
-
-	return agentUIDs;
-}
-*/
-
 void GSceneManager::PerformCollisionAvoidance(const std::list<UID>& localAgents)
 {
-
 	mManager_Entity->PerformCollisionAvoidance(localAgents);
 }
 
@@ -274,7 +279,7 @@ void GSceneManager::PerformOneTimeStep()
 {
 	m_InfluenceMap->Update(m_TimeStep);
 
-	for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
+	for (int i = 0; i < (m_NoSquares.x * m_NoSquares.y); i++)
 	{
 		m_SceneSquares[i]->Update(m_TimeStep);
 	}
@@ -295,7 +300,7 @@ void GSceneManager::Update(float frameTime)
 		{
 			m_InfluenceMap->Update(m_TimeStep);
 
-			for (int i = 0; i < (m_NoOfSquaresX * m_NoOfSquaresY); i++)
+			for (int i = 0; i < (m_NoSquares.x * m_NoSquares.y); i++)
 			{
 				m_SceneSquares[i]->Update(m_TimeStep);
 			}
@@ -318,24 +323,24 @@ int GSceneManager::GetWhichSquare(CVector2 itemPosition)
 	int ySquare = static_cast<int>(itemPosition.y / m_SquareSize.y);
 
 	//Do the clamp
-	if (xSquare >= m_NoOfSquaresX)
+	if (xSquare >= m_NoSquares.x)
 	{
-		xSquare = m_NoOfSquaresX - 1;
+		xSquare = m_NoSquares.x - 1;
 	}
 	else if (xSquare < 0)
 	{
 		xSquare = 0;
 	}
-	if (ySquare >= m_NoOfSquaresY)
+	if (ySquare >= m_NoSquares.y)
 	{
-		ySquare = m_NoOfSquaresY - 1;
+		ySquare = m_NoSquares.y - 1;
 	}
 	else if (ySquare < 0)
 	{
 		ySquare = 0;
 	}
 
-	return xSquare * m_NoOfSquaresX + ySquare;
+	return xSquare * m_NoSquares.x + ySquare;
 }
 
 void GSceneManager::MaintainSceneSquares()
@@ -343,7 +348,7 @@ void GSceneManager::MaintainSceneSquares()
 	std::vector<UID> tempAgents;
 	std::vector<UID> unassignedAgents;	
 	
-	for (int i = 0; i < m_NoOfSquaresX * m_NoOfSquaresY; i++)
+	for (int i = 0; i < m_NoSquares.x * m_NoSquares.y; i++)
 	{
 		//Get list of agents transferring from this scenesquare
 		tempAgents = m_SceneSquares[i]->TransferAgents();
@@ -382,9 +387,9 @@ bool GSceneManager::GetAgentString(UID requestedUID, std::string &agentString)
 
 bool GSceneManager::GetSquareString(int xPos, int yPos, std::string& squareString)
 {
-	if (xPos >= 0 && xPos < m_NoOfSquaresX && yPos >= 0 && yPos < m_NoOfSquaresY)	//If the square is a valid square
+	if (xPos >= 0 && xPos < m_NoSquares.x && yPos >= 0 && yPos < m_NoSquares.y)	//If the square is a valid square
 	{
-		squareString = m_SceneSquares[xPos * m_NoOfSquaresX + yPos]->ToString();
+		squareString = m_SceneSquares[xPos * m_NoSquares.x + yPos]->ToString();
 		return true;
 	}
 	//No helpful data format for failed attempt, just return uninitialised memory garbage

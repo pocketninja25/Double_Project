@@ -11,22 +11,12 @@ using namespace tle;
 using std::stringstream;
 using std::map;
 #include "Picking.h"
-
 #include "CrowdDynamics.hpp"
 using namespace gen;
 EKeyCode quitKey = Key_Escape;
 EKeyCode pauseKey = Key_P;
 
-const int kNoStartingAgents = 600;
-const gen::CVector2 kWorldSize = CVector2(2000.0f, 2000.0f);
-const float kTimeStep = 1.0f / 30.0f;
-const int kXSubDiv = 1;
-const int kYSubDiv = 1;
-
-const float kInfluenceSquaresPerUnit = 1.0f / 2.0f;
-const int kInfluenceSubDivX = static_cast<int>(kWorldSize.x) * kInfluenceSquaresPerUnit;
-const int kInfluenceSubDivY = static_cast<int>(kWorldSize.y) * kInfluenceSquaresPerUnit;
-
+SWorldBlueprint worldBlueprint;
 float frameTime = 0;
 
 bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
@@ -222,30 +212,30 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 
 	float influence;
 	CVector2 direction;
-	for (int i = 0; i < kInfluenceSubDivX; i++)
+	for (int i = 0; i < worldBlueprint.influenceSubdivisions.x; i++)
 	{
-		for (int j = 0; j < kInfluenceSubDivY; j++)
+		for (int j = 0; j < worldBlueprint.influenceSubdivisions.y; j++)
 		{
 			influence = influenceMap->GetValue(i, j);
 
-			influenceTiles[i * kInfluenceSubDivX + j]->SetY(2 * influence);
+			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->SetY(2 * influence);
 			
 			if (true)//influence != 0)	//Point the sqare in the direction of influence
 			{
 				direction = influenceMap->GetFlow(i, j);
 
-				influenceTiles[i * kInfluenceSubDivX + j]->LookAt(
-					influenceTiles[i * kInfluenceSubDivX + j]->GetX() + direction.x,
-					influenceTiles[i * kInfluenceSubDivX + j]->GetY(),
-					influenceTiles[i * kInfluenceSubDivX + j]->GetZ() + direction.y
+				influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->LookAt(
+					influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->GetX() + direction.x,
+					influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->GetY(),
+					influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->GetZ() + direction.y
 					);
-				influenceTiles[i * kInfluenceSubDivX + j]->ScaleX((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
+				influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ScaleX((1.0f / worldBlueprint.influenceSubdivisions.x) * 0.75f);
 				
-				influenceTiles[i * kInfluenceSubDivX + j]->ScaleZ((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
+				influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ScaleZ((1.0f / worldBlueprint.influenceSquaresPerUnit) * 0.75f);
 			}
 			else
 			{
-				influenceTiles[i * kInfluenceSubDivX + j]->ResetOrientation();
+				influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ResetOrientation();
 			}
 		}
 	}
@@ -265,6 +255,12 @@ void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, s
 
 void main()
 {
+	//--------------------------
+	// CrowdDynamics Setup
+	//--------------------------
+	GSceneManager* crowdEngine = GSceneManager::GetInstance("WorldBlueprint1.xml");
+	worldBlueprint = crowdEngine->GetWorldBlueprint();
+
 	// Create a 3D engine (using TLX engine here) and open a window for it
 	I3DEngine* gameEngine = New3DEngine(kTLX);
 	gameEngine->StartWindowed();
@@ -273,8 +269,7 @@ void main()
 	gameEngine->AddMediaFolder( ".\\Media" );
 
 	IFont* mousePosFont = gameEngine->LoadFont("Font1.bmp");
-
-
+	
 	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
 	IMesh* agent2Mesh = gameEngine->LoadMesh("Box2.x");
 	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
@@ -282,68 +277,54 @@ void main()
 	IMesh* influenceTileMesh = gameEngine->LoadMesh("InfluenceTile.x");
 	IMesh* SkyboxMesh = gameEngine->LoadMesh("Skybox.x");
 
-	map<UID, IModel*> AGENTS;
+	map<UID, IModel*> Agents;
 	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
 	IModel** FloorTiles;
-	IModel* SkyBox = SkyboxMesh->CreateModel(1000.0f, -15.0f, 1000.0f);
-	SkyBox->ScaleX(kWorldSize.x / 300.0f);
-	SkyBox->ScaleZ(kWorldSize.y / 300.0f);
+	IModel* SkyBox = SkyboxMesh->CreateModel(worldBlueprint.WorldSize.x / 2.0f, -15.0f, worldBlueprint.WorldSize.y);
+	SkyBox->ScaleX(worldBlueprint.WorldSize.x / 300.0f);
+	SkyBox->ScaleZ(worldBlueprint.WorldSize.y / 300.0f);
 	
-	FloorTiles = new IModel*[kXSubDiv * kYSubDiv];
-	for (int i = 0; i < kXSubDiv; i++)
+	FloorTiles = new IModel*[worldBlueprint.subdivisions.x * worldBlueprint.subdivisions.y];
+	for (int i = 0; i < worldBlueprint.subdivisions.x; i++)
 	{
-		for (int j = 0; j < kYSubDiv; j++)
+		for (int j = 0; j < worldBlueprint.subdivisions.y; j++)
 		{
-			FloorTiles[i * kXSubDiv + j] = floorTileMesh->CreateModel(i * (kWorldSize.x / kXSubDiv), 0.0f, j * (kWorldSize.y / kYSubDiv));
-			FloorTiles[i * kXSubDiv + j]->ScaleX(kWorldSize.x / kXSubDiv);
-			FloorTiles[i * kXSubDiv + j]->ScaleZ(kWorldSize.y / kYSubDiv);
-			FloorTiles[i*kXSubDiv + j]->Scale(1.0f);
+			FloorTiles[i * worldBlueprint.subdivisions.x + j] = floorTileMesh->CreateModel(i * (worldBlueprint.WorldSize.x / worldBlueprint.subdivisions.x), 0.0f, j * (worldBlueprint.WorldSize.y / worldBlueprint.subdivisions.y));
+			FloorTiles[i * worldBlueprint.subdivisions.x + j]->ScaleX(worldBlueprint.WorldSize.x / worldBlueprint.subdivisions.x);
+			FloorTiles[i * worldBlueprint.subdivisions.x + j]->ScaleZ(worldBlueprint.WorldSize.y / worldBlueprint.subdivisions.y);
+			FloorTiles[i * worldBlueprint.subdivisions.x + j]->Scale(1.0f);
 		}
 	}
 
 #ifdef InfluenceVisualiserEnabled
 	IModel** InfluenceTiles;
 	
-	InfluenceTiles = new IModel*[kInfluenceSubDivX * kInfluenceSubDivY];
-	for (int i = 0; i < kInfluenceSubDivX; i++)
+	InfluenceTiles = new IModel*[worldBlueprint.influenceSubdivisions.x * worldBlueprint.influenceSubdivisions.y];
+	for (int i = 0; i < worldBlueprint.influenceSubdivisions.x; i++)
 	{
-		for (int j = 0; j < kInfluenceSubDivY; j++)
+		for (int j = 0; j < worldBlueprint.influenceSubdivisions.y; j++)
 		{
-			InfluenceTiles[i * kInfluenceSubDivX + j] = influenceTileMesh->CreateModel(static_cast<float>(i)  / kInfluenceSquaresPerUnit, 0.5f,( static_cast<float>(j) + 1) / kInfluenceSquaresPerUnit);
-			InfluenceTiles[i * kInfluenceSubDivX + j]->RotateX(180.0f);
-			InfluenceTiles[i * kInfluenceSubDivX + j]->ScaleX((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
-			InfluenceTiles[i * kInfluenceSubDivX + j]->ScaleZ((1.0f / kInfluenceSquaresPerUnit) * 0.75f);
+			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j] = influenceTileMesh->CreateModel(static_cast<float>(i)  / worldBlueprint.influenceSquaresPerUnit, 0.5f,( static_cast<float>(j) + 1) / worldBlueprint.influenceSquaresPerUnit);
+			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateX(180.0f);
+			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ScaleX((1.0f / worldBlueprint.influenceSquaresPerUnit) * 0.75f);
+			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ScaleZ((1.0f / worldBlueprint.influenceSquaresPerUnit) * 0.75f);
 		}
 	}
 #endif
 
-	//--------------------------
-	// CrowdDynamics Setup
-	//--------------------------
-	SWorldInfo worldData;
-	worldData.TimeStep = kTimeStep;
-	worldData.WorldSize = kWorldSize;
-	worldData.xSubdivisions = kXSubDiv;
-	worldData.ySubdivisions = kYSubDiv;
-	worldData.influenceSquaresPerUnit = kInfluenceSquaresPerUnit;
-	GSceneManager* crowdEngine = GSceneManager::GetInstance(&worldData);
+	
 
-	string blueprints[2];
-	blueprints[0] = "AgentBlueprint1.xml";
-	blueprints[1] = "AgentBlueprint2.xml";
+	vector<UID> AgentIDs = crowdEngine->GetAgentUIDs();
 
-	vector<UID> IDs = crowdEngine->AddXAgents(kNoStartingAgents, blueprints[1]);
-
-	for (int i = 0; i < kNoStartingAgents; i++)
+	for (auto agent : AgentIDs)
 	{
 		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
 		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
-		AGENTS.insert(make_pair(IDs[i], agentMesh->CreateModel()));
+		Agents.insert(make_pair(agent, agentMesh->CreateModel()));
 #ifdef DirectionVisualiserEnabled
-
-		DestinationVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
-		MovementVectors.insert(make_pair(IDs[i], vectorMesh->CreateModel()));
+		DestinationVectors.insert(make_pair(agent, vectorMesh->CreateModel()));
+		MovementVectors.insert(make_pair(agent, vectorMesh->CreateModel()));
 #endif
 	}
 	for (auto item : MovementVectors)
@@ -351,8 +332,8 @@ void main()
 		item.second->SetSkin("vectortex2.jpg");
 	}
 
-	ICamera* cam = gameEngine->CreateCamera(kFPS, kWorldSize.x/2.0f, 220.0f, kWorldSize.y/2.0f);
-	//ICamera* cam = gameEngine->CreateCamera(kManual, kWorldSize.x / 2.0f, 220.0f, kWorldSize.y / 2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x/2.0f, 220.0f, worldBlueprint.WorldSize.y/2.0f);
+	//ICamera* cam = gameEngine->CreateCamera(kManual, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(100.0f);
 	cam->SetRotationSpeed(25.0f);
@@ -364,12 +345,7 @@ void main()
 	string tempString;
 
 	//Assign the simulation matrices to the model matrices - first time
-	UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
-
-
-	
-
-
+	UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
 
 	UID holding = -1;
 	crowdEngine->SetPaused(true);
@@ -405,7 +381,7 @@ void main()
 #endif
 
 		//Assign the simulation matrices to the model matrices
-		UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
+		UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
 
 
 		if (gameEngine->KeyHit(pauseKey))
@@ -417,7 +393,7 @@ void main()
 			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
 
 			//Assign the simulation matrices to the model matrices
-			UpdateAgentsFromCrowdData(crowdEngine, AGENTS, DestinationVectors, MovementVectors);
+			UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
 
 		}
 		if (gameEngine->KeyHit(Key_N))
@@ -434,7 +410,7 @@ void main()
 			if (holding == -1)	//If not holding anything, pick the nearest item up
 			{
 				UID tempHold;
-				if (FindNearestAgent(AGENTS, crowdEngine, tempHold, gameEngine, cam))
+				if (FindNearestAgent(Agents, crowdEngine, tempHold, gameEngine, cam))
 				{
 					holding = tempHold;
 					string agentString;
@@ -447,7 +423,7 @@ void main()
 #endif
 					try		//Find the agent 'holding' and set the holding skin
 					{
-						AGENTS.at(holding)->SetSkin("tiles3.jpg");
+						Agents.at(holding)->SetSkin("tiles3.jpg");
 
 					}
 					catch (std::out_of_range err)
@@ -461,7 +437,7 @@ void main()
 				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 				crowdEngine->SetAgentPosition(holding, CVector2(tempPos.x, tempPos.z));
 
-				UpdateAgentFromCrowdData(holding, crowdEngine, AGENTS, DestinationVectors, MovementVectors);
+				UpdateAgentFromCrowdData(holding, crowdEngine, Agents, DestinationVectors, MovementVectors);
 
 			}
 		}
@@ -481,11 +457,11 @@ void main()
 				{
 					if (crowdEngine->GetAgentWatched(holding))
 					{
-						AGENTS.at(holding)->SetSkin("tiles2.jpg");
+						Agents.at(holding)->SetSkin("tiles2.jpg");
 					}
 					else
 					{
-						AGENTS.at(holding)->SetSkin("tiles1.jpg");
+						Agents.at(holding)->SetSkin("tiles1.jpg");
 					}
 				}
 				catch (std::out_of_range err)
@@ -499,7 +475,7 @@ void main()
 		if (gameEngine->KeyHit(Mouse_RButton))
 		{
 			UID foundNearest;
-			if (FindNearestAgent(AGENTS, crowdEngine, foundNearest, gameEngine, cam))
+			if (FindNearestAgent(Agents, crowdEngine, foundNearest, gameEngine, cam))
 			{
 				bool isWatched = crowdEngine->GetAgentWatched(foundNearest);
 				if (crowdEngine->SetAgentWatched(foundNearest, !crowdEngine->GetAgentWatched(foundNearest)))
@@ -509,7 +485,7 @@ void main()
 					{
 						try
 						{
-							AGENTS.at(foundNearest)->SetSkin("tiles1.jpg");
+							Agents.at(foundNearest)->SetSkin("tiles1.jpg");
 						}
 						catch (std::out_of_range err)
 						{
@@ -521,7 +497,7 @@ void main()
 					{
 						try
 						{
-							AGENTS.at(foundNearest)->SetSkin("tiles2.jpg");
+							Agents.at(foundNearest)->SetSkin("tiles2.jpg");
 						}
 						catch (std::out_of_range err)
 						{
@@ -535,8 +511,8 @@ void main()
 		if (gameEngine->KeyHit(Key_Space))
 		{
 			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
-			UID newID = crowdEngine->AddAgent(blueprints[0], true, CVector2(tempPos.x, tempPos.z));
-			AGENTS.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
+			UID newID = crowdEngine->AddAgent("AgentBlueprint1.xml", true, CVector2(tempPos.x, tempPos.z));
+			Agents.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
 #ifdef DirectionVisualiserEnabled
 			DestinationVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 10.0f, tempPos.z)));
 			MovementVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 11.0f, tempPos.z)));

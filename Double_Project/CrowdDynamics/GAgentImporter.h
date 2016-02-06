@@ -1,6 +1,6 @@
 #pragma once
+#include "Common.hpp"
 #include "GAgent.hpp"
-#include <map>
 
 class GAgentImporter
 {

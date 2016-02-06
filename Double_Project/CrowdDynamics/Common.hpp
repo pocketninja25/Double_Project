@@ -6,9 +6,9 @@
 
 #include <list>
 #include <vector>
+#include <map>
 
 #include "GIntPair.hpp"
-
 
 using gen::CVector2;
 using gen::CVector3;
@@ -24,15 +24,25 @@ inline float RandomFloat(float min, float max)	//Returns a random float between 
 	return (random * range) + min;
 }
 
-struct SWorldInfo
+inline bool stobool(std::string theString)
+{
+	if (theString == "true")
+	{
+		return true;
+	}
+	return false;
+}
+
+struct SWorldBlueprint
 {
 	//Struct of data required to create a 'world instance' - scene manager
 public:
 	float TimeStep = 0.0f;
 	CVector2 WorldSize = CVector2(0.0f, 0.0f);
-	int xSubdivisions = 0;
-	int ySubdivisions = 0;
+	GIntPair subdivisions = GIntPair(0, 0);
 	float influenceSquaresPerUnit = 0;
+	GIntPair influenceSubdivisions = GIntPair(0, 0);
+	std::map<std::string, int> agentDetails;	//Store blueprint file name & how many of that agent blueprint
 };
 
 struct SAgentBlueprint {
