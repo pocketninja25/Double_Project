@@ -54,8 +54,6 @@ std::vector<UID> GEntityManager::GetAgentUIDs()
 {
 	std::vector<UID> agentList;
 
-	agentList.resize(m_ActiveAgents.size() + m_InactiveAgents.size());
-
 	for (auto agent : m_ActiveAgents)
 	{
 		agentList.push_back(agent.first);

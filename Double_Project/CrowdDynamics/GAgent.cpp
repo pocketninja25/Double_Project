@@ -210,7 +210,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 gridFlow[Dir_Size];
 	bool gridIsBlocked[Dir_Size];
 
-	//Calculate the gradient of the surrounding 4/8 squares
+	//Calculate the gradient of the surrounding squares
 	int count = 0;
 	for (int i = -1; i <= 1; i++)
 	{
@@ -233,6 +233,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 			}
 			accumulation /= maxSquaresPerSecond;
 			gridHeight[count] = accumulation;
+
 
 			//Get Flow Data
 			gridFlow[count] = influenceMap->GetFlow(coord.x + i, coord.y + j);
@@ -259,9 +260,10 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 thisSquareFlow = (0.75f * toDestination) + (0.25f *  averageFlow);
 	thisSquareFlow.Normalise();
 
+
 	for (int i = 0; i < Dir_Size; i++)
 	{
-		if (!gridIsBlocked[i])	//No point testing other conditions if the grid square is blocked
+		if (gridIsBlocked[i])	//No point testing other conditions if the grid square is blocked	//TODO: Fix this condition
 		{
 			//Apply Limitation logic to decide whether this square is a viable target
 			CVector2 toSquare = gridCentre[i] - myPos;
