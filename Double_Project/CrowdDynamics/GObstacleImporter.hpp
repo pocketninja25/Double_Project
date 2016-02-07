@@ -11,7 +11,7 @@ public:
 	GObstacleImporter();
 	~GObstacleImporter();
 
-	GObstacleTemplate LoadBlueprint(std::string fileName);	//Loads the blueprint (if not already loaded), then returns a copy of the blueprint (caching a copy for speedy loading later)
+	GObstacleTemplate* LoadBlueprint(std::string fileName);	//Loads the blueprint (if not already loaded), then returns a copy of the blueprint (caching a copy for speedy loading later)
 
 };
 

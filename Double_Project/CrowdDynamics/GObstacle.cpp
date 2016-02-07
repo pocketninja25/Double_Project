@@ -1,25 +1,17 @@
 #include "GObstacle.hpp"
 
 #include "GObstacleTemplate.hpp"
-#include "GWall.hpp"
+#include "GSceneManager.hpp"
 
 GObstacle::GObstacle(GObstacleTemplate* iTemplate, CVector2 iPosition, bool iIsActive) :
 	GObject(iIsActive),
 	m_Template(iTemplate),
 	m_Matrix(iPosition)
 {
-	//TODO: Do something to figure out what the walls are - need to construct the walls probably
-	//TODO: Should i error check the template, if so how to deal with error
 }
 
 GObstacle::~GObstacle()
 {
-	for (auto &wall : m_Walls)	//Delete the dynamically allocated walls in m_Walls
-	{
-		delete wall;
-	}
-
-	//Vector m_Walls deallocates itself
 	//Dont need to deallocate template as dont own it
 }
 
@@ -35,7 +27,43 @@ CVector2 GObstacle::GetFacingVector()
 
 void GObstacle::Update(float updateTime)
 {
-	//TODO: complete this function
+	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
+
+	CVector2 modifiedBottomLeft = m_Template->GetBottomLeft() + this->GetPosition();
+	CVector2 modifiedTopRight = m_Template->GetTopRight() + this->GetPosition();
+
+	GIntPair iBottomLeft = influenceMap->GetGridSquareFromPosition(modifiedBottomLeft);
+	GIntPair iTopRight = influenceMap->GetGridSquareFromPosition(modifiedTopRight);
+
+	const std::vector<SWall> wallList = m_Template->GetVertexPairs();
+
+
+	//For each influence square
+	for (int i = iBottomLeft.x; i < iTopRight.x; i++)
+	{
+		for (int j = iBottomLeft.y; i < iTopRight.y; i++)
+		{
+			bool isInside = true;		//Assume the square is inside until evidence is found otherwise
+			for (auto wall : wallList)
+			{
+				GIntPair thisWallIndices = wall.vertexIndices;
+				CVector2 thisWallPosition = m_Template->GetVertex(wall.vertexIndices.x); //Approximated by using the x vector
+				CVector2 squareToWall = thisWallPosition - influenceMap->GetSquareCentre(i, j);
+				squareToWall.Normalise();
+				if (squareToWall.Dot(wall.facingVector) > 0)	//Angle between is <= 90degrees (this square is in front of the wall, therefore it is outside the object)
+				{
+					isInside = false;
+					break;	//Break out of the walllist loop
+				}
+
+			}
+			if (isInside)	//If the influence square is confirmed to be inside the obstacle
+			{
+				//Set this influence square to be impassable
+				influenceMap->SetImpassable(i, j, true);
+			}
+		}
+	}
 }
 
 

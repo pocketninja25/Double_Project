@@ -98,7 +98,7 @@ void GDynamicObstacle::RotateLocalYRad(float dAlpha)
 
 void GDynamicObstacle::Update(float updateTime)
 {
-	//TODO: implement
+	GObstacle::Update(updateTime);
 }
 
 #ifdef _DEBUG

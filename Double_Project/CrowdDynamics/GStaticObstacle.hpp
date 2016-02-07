@@ -15,7 +15,6 @@ private:
 // Public Functions
 //---------------------------
 public:
-
 	//***************************
 	// Constructors/Destructors
 	//***************************

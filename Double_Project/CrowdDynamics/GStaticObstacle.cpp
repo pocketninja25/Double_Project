@@ -11,6 +11,8 @@ GStaticObstacle::~GStaticObstacle()
 
 void GStaticObstacle::Update(float updateTime)
 {
+	GObstacle::Update(updateTime);
+
 	//TODO: implement this function
 }
 

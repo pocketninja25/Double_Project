@@ -315,6 +315,7 @@ void GSceneManager::Update(float frameTime)
 			}
 			
 			//Begin the update tree
+			mManager_Obstacle->Update(m_TimeStep);
 			mManager_Entity->Update(m_TimeStep);
 			
 			this->MaintainSceneSquares();

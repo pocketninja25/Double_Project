@@ -14,6 +14,7 @@ private:
 
 	float* m_Map;
 	CVector2* m_Flow;
+	bool* m_Impassable;
 
 public:
 //***************************
@@ -29,19 +30,23 @@ public:
 //***************************
 	float GetValue(int xPos, int yPos);
 	CVector2 GetFlow(int xPos, int yPos);	//Get unit vector representing the combined direction of traffic by influencers on that square
+	bool GetIsImpassable(int xPos, int yPos);
 
 //***************************
 // Setters/Mutators
 //***************************
 	void AddValue(int xPos, int yPos, float value);
 	void AddFlow(int xPos, int yPos, CVector2 value);	//Provide unit vector representing direction of flow
+	void SetImpassable(int xPos, int yPos, bool state);
 
+	void ResetInfluence();	//Sets all squares to 0 influence
+	void ResetFlow();
+	void ResetImpassable();
 //***************************
 // Other Functions
 //***************************
 	void Update(float updateTime);
-	void ResetInfluence();	//Sets all squares to 0 influence
-	void ResetFlow();
+	
 
 	//Convert from world to grid and vice versa
 	GIntPair GetGridSquareFromPosition(const CVector2 &position);

@@ -27,13 +27,13 @@ GAgent::GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive) :
 	dm_BeingWatched(false),
 #endif
 	m_Destination(iDestination),
-	m_Velocity(15.0f),//TODO: find a way of calculating this better - or make it programmable
+	m_Velocity(15.0f),
 	km_MaxTurn(gen::ToRadians(60.0f)),
 	m_TempMaxTurn(km_MaxTurn),
 	m_PreviousMovementVect(CVector2(0.0f, 0.0f)),
 	m_PreviousDesiredMovementVect(CVector2(0.0f, 0.0f)),
-	m_Radius(sqrt(200.0f)/2),	//TODO: provide a reliable version of this number based on file data
-	m_MaxGradientTraversal(1.0f),	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) TODO: Pick a better number
+	m_Radius(sqrt(200.0f)/2),	
+	m_MaxGradientTraversal(1.0f),	//(r + v)^2 - r^2 - r^2 = h^2 (h == the height(influence) at radius length away from the centre) 
 	m_StillTimer(0.0f)
 {
 	m_DesiredMovementVect = CVector2(GetPosition(), m_Destination);
@@ -208,7 +208,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 gridCentre[Dir_Size]; //Stores Position of square
 	float gridHeight[Dir_Size];
 	CVector2 gridFlow[Dir_Size];
-	
+	bool gridIsImpassable[Dir_Size];
 
 	//Calculate the gradient of the surrounding 4/8 squares
 	int count = 0;
@@ -234,9 +234,11 @@ void GAgent::PerformGlobalCollisionAvoidance()
 			accumulation /= maxSquaresPerSecond;
 			gridHeight[count] = accumulation;
 
-
 			//Get Flow Data
 			gridFlow[count] = influenceMap->GetFlow(coord.x + i, coord.y + j);
+
+			//Get passibility data
+			gridIsImpassable[count] = influenceMap->GetIsImpassable(coord.x + i, coord.y + j);
 
 			count++;
 		}
@@ -254,28 +256,31 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	toDestination.Normalise();
 
 	//TODO: Average the toDestination vector with the relevant flowVector in a 75% - 25% split to create a guided direction
-	CVector2 thisSquareFlow = (0.75f * toDestination)+(0.25f *  averageFlow);
+	CVector2 thisSquareFlow = (0.75f * toDestination) + (0.25f *  averageFlow);
 	thisSquareFlow.Normalise();
 
 	for (int i = 0; i < Dir_Size; i++)
 	{
-		//Apply Limitation logic to decide whether this square is a viable target
-		CVector2 toSquare = gridCentre[i] - myPos;
-		toSquare.Normalise();
-
-		if (thisSquareFlow.Dot(toSquare) > cos(m_TempMaxTurn))	//The target square is within 60 degrees either way of the ideal destination
+		if (!gridIsImpassable[i])	//No point testing other conditions if the grid square is impassible
 		{
-			if (gridHeight[i] < gridHeight[Dir_Centre])	//Only pick if the location has less resistance than current position
-			{
-				//Decide if this square is better than the current best descision
-				if (bestIndex == Dir_Size)	//Set the first valid movement (cannot compare to another grid Height)
-				{
-					bestIndex = i;
-				}
-				else if (gridHeight[i] < gridHeight[bestIndex])	//Less of a 'hill' than current best
-				{
-					bestIndex = i;
+			//Apply Limitation logic to decide whether this square is a viable target
+			CVector2 toSquare = gridCentre[i] - myPos;
+			toSquare.Normalise();
 
+			if (thisSquareFlow.Dot(toSquare) > cos(m_TempMaxTurn))	//The target square is within 60 degrees either way of the ideal destination
+			{
+				if (gridHeight[i] < gridHeight[Dir_Centre])	//Only pick if the location has less resistance than current position
+				{
+					//Decide if this square is better than the current best descision
+					if (bestIndex == Dir_Size)	//Set the first valid movement (cannot compare to another grid Height)
+					{
+						bestIndex = i;
+					}
+					else if (gridHeight[i] < gridHeight[bestIndex])	//Less of a 'hill' than current best
+					{
+						bestIndex = i;
+
+					}
 				}
 			}
 		}

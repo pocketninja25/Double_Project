@@ -17,12 +17,12 @@ GObstacleImporter::~GObstacleImporter()
 	}
 }
 
-GObstacleTemplate GObstacleImporter::LoadBlueprint(std::string fileName)
+GObstacleTemplate* GObstacleImporter::LoadBlueprint(std::string fileName)
 {
 	fileName = "..//CrowdDynamics//" + fileName;
 	if (m_LoadedBlueprints.count(fileName))
 	{
-		return GObstacleTemplate(*m_LoadedBlueprints.at(fileName));	//Return a copy of the blueprint
+		return m_LoadedBlueprints.at(fileName);	//Return a pointer to the blueprint
 	}
 
 	//Blueprint not already loaded, load it
@@ -69,8 +69,8 @@ GObstacleTemplate GObstacleImporter::LoadBlueprint(std::string fileName)
 
 		m_LoadedBlueprints.emplace(std::make_pair(fileName, blueprintBuilder));
 
-		return GObstacleTemplate(*blueprintBuilder);	//Return a copy of the blueprint
+		return blueprintBuilder;	//Return a pointer to the blueprint
 	}
 
-	return GObstacleTemplate();	//Fail, return a blank blueprint
+	return nullptr;	//Fail, return null pointer
 }

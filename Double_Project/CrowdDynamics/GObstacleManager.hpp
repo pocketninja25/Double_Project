@@ -5,18 +5,15 @@ class GStaticObstacle;
 class GDynamicObstacle;
 class GObstacleTemplate;
 class GSceneManager;
-class GObjectImporter;
+class GObstacleImporter;
 
 class GObstacleManager
 {
-
 //---------------------------
 // Private Data Members
 //---------------------------
 private:
-	GObjectImporter* m_ObstacleBlueprintLoader;
-	
-	std::vector<GObstacleTemplate*> m_ObstacleTemplates;
+	GObstacleImporter* m_ObstacleBlueprintLoader;
 
 	//Sorted into two categories for update tree management - hopefully wont need to update static obstacles each timestep
 	std::vector<GStaticObstacle*> m_StaticObstacles;
@@ -48,5 +45,7 @@ public:
 	//***************************
 	// Other Functions
 	//***************************
+	void Update(float updateTime);
+
 };
 

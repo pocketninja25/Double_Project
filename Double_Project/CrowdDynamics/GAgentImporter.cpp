@@ -17,6 +17,7 @@ GAgentImporter::~GAgentImporter()
 	}
 }
 
+
 SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
 {
 	fileName = "..//CrowdDynamics//" + fileName;
