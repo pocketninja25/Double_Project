@@ -48,6 +48,9 @@ SWorldBlueprint GWorldImporter::LoadBlueprint(std::string fileName)
 		
 		traversalElt = rootElement->FirstChildElement("influencePerUnit");
 		blueprintBuilder->influenceSquaresPerUnit = static_cast<float>(atof(traversalElt->Attribute("value")));
+		//Have the influence map represent 1 square = 1 unit, any incomplete integer in world size is clamped into the nearest square (e.g. world size x = 3.2 so have 3 squares for x, item at position 3.1 clamps to square 3)
+		blueprintBuilder->influenceSubdivisions.x = static_cast<int>(blueprintBuilder->WorldSize.x * blueprintBuilder->influenceSquaresPerUnit);
+		blueprintBuilder->influenceSubdivisions.y = static_cast<int>(blueprintBuilder->WorldSize.y * blueprintBuilder->influenceSquaresPerUnit);
 
 		traversalElt = rootElement->FirstChildElement("Agents");
 		while (traversalElt)
@@ -62,9 +65,26 @@ SWorldBlueprint GWorldImporter::LoadBlueprint(std::string fileName)
 			traversalElt = traversalElt->NextSiblingElement("Agents");
 		}
 		
-		//Have the influence map represent 1 square = 1 unit, any incomplete integer in world size is clamped into the nearest square (e.g. world size x = 3.2 so have 3 squares for x, item at position 3.1 clamps to square 3)
-		blueprintBuilder->influenceSubdivisions.x = static_cast<int>(blueprintBuilder->WorldSize.x * blueprintBuilder->influenceSquaresPerUnit);
-		blueprintBuilder->influenceSubdivisions.y = static_cast<int>(blueprintBuilder->WorldSize.y * blueprintBuilder->influenceSquaresPerUnit);
+		traversalElt = rootElement->FirstChildElement("Obstacles");
+		while (traversalElt)
+		{
+			std::string obstacleFile = traversalElt->Attribute("blueprint");
+			blueprintBuilder->obstacleDetails.emplace(make_pair(obstacleFile, std::vector<CVector2>()));
+
+			TiXmlElement* obstacleTraversalElt = traversalElt->FirstChildElement("Obstacle");
+			while (obstacleTraversalElt)
+			{
+				CVector2 position;
+				position.x = static_cast<float>(atof(obstacleTraversalElt->Attribute("x")));
+				position.y = static_cast<float>(atof(obstacleTraversalElt->Attribute("y")));
+				
+				blueprintBuilder->obstacleDetails[obstacleFile].push_back(position);
+
+				obstacleTraversalElt = obstacleTraversalElt->NextSiblingElement("Obstacle");
+			}
+			
+			traversalElt = traversalElt->NextSiblingElement("Obstacles");
+		}
 
 
 		m_LoadedBlueprints.emplace(std::make_pair(fileName, blueprintBuilder));

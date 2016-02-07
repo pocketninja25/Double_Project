@@ -2,10 +2,10 @@
 
 <ObstacleBlueprint>
   <VertexList>
-    <Vertex id="1" x="0.0f" y="0.0f"/>
-    <Vertex id="2" x="5.0f" y="0.0f"/>
-    <Vertex id="3" x="0.0f" y="5.0f"/>
-    <Vertex id="4" x="5.0f" y="5.0f"/>
+    <Vertex id="1" x="0.0" y="0.0"/>
+    <Vertex id="2" x="1000.0" y="0.0"/>
+    <Vertex id="3" x="0.0" y="1000.0"/>
+    <Vertex id="4" x="1000.0" y="1000.0"/>
   </VertexList>
   <VertexPairs>
     <Pair x="1" y="2"/>

@@ -52,6 +52,13 @@ GSceneManager::GSceneManager(std::string fileName) :
 	{
 		this->AddXAgents(iter.second, iter.first);
 	}
+	for (auto objBlueprint : m_WorldBlueprint.obstacleDetails)
+	{
+		for (auto obstacle : objBlueprint.second)
+		{
+			mManager_Obstacle->AddStaticObstacle(objBlueprint.first, obstacle);
+		}
+	}
 
 }
 
@@ -202,7 +209,6 @@ bool GSceneManager::GetIsPaused()
 }
 
 
-
 UID GSceneManager::AddAgent(CVector2 iPosition, bool iIsActive)
 {
 	UID agentUID = mManager_Entity->AddAgent(iPosition, iIsActive);	//Create the agent object
@@ -293,6 +299,7 @@ void GSceneManager::PerformOneTimeStep()
 		m_SceneSquares[i]->Update(m_TimeStep);
 	}
 	
+	mManager_Obstacle->Update(m_TimeStep);
 	mManager_Entity->Update(m_TimeStep);
 	
 	this->MaintainSceneSquares();

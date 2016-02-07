@@ -43,6 +43,7 @@ public:
 	float influenceSquaresPerUnit = 0;
 	GIntPair influenceSubdivisions = GIntPair(0, 0);
 	std::map<std::string, int> agentDetails;	//Store blueprint file name & how many of that agent blueprint
+	std::map<std::string, std::vector<CVector2>> obstacleDetails;
 };
 
 struct SAgentBlueprint {

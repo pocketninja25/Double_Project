@@ -5,7 +5,7 @@
 
 GObstacleImporter::GObstacleImporter()
 {
-
+	m_LoadedBlueprints.count("Foo");
 }
 
 

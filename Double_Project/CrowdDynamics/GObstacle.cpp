@@ -36,8 +36,7 @@ void GObstacle::Update(float updateTime)
 	GIntPair iTopRight = influenceMap->GetGridSquareFromPosition(modifiedTopRight);
 
 	const std::vector<SWall> wallList = m_Template->GetVertexPairs();
-
-
+	long int count = 0;
 	//For each influence square
 	for (int i = iBottomLeft.x; i < iTopRight.x; i++)
 	{
@@ -59,22 +58,21 @@ void GObstacle::Update(float updateTime)
 			}
 			if (isInside)	//If the influence square is confirmed to be inside the obstacle
 			{
-				//Set this influence square to be impassable
-				influenceMap->SetImpassable(i, j, true);
+				count++;
+				//Set this influence square to be blocked
+				influenceMap->SetBlocked(i, j, true);
 			}
 		}
 	}
 }
-
 
 #ifdef _DEBUG
 std::string GObstacle::ToString()
 {
 	std::stringstream builder;
 	
-	builder << GObject::ToString() << "Position: X: " << m_Matrix.GetPosition2D().x << " Y: " << m_Matrix.GetPosition2D().y << "/n" 
-		<< "Template UID: " << m_Template->GetUID() << "/n"
-		<< "NoOfWalls: " << m_Walls.size() << "/n";
+	builder << GObject::ToString() << "Position: X: " << m_Matrix.GetPosition2D().x << " Y: " << m_Matrix.GetPosition2D().y << "/n"
+		<< "Template UID: " << m_Template->GetUID() << "/n";
 
 	return builder.str();
 }

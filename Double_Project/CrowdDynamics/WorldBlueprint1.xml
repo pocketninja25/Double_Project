@@ -7,4 +7,8 @@
   <influencePerUnit value="0.5"/>
   <Agents number="400" blueprint="AgentBlueprint1.xml"/>
   <Agents number="300" blueprint="AgentBlueprint2.xml"/>
+  <Obstacles blueprint ="ObstacleBlueprint1.xml" >
+    <Obstacle x="0.0" y="0.0"/>
+    <Obstacle x="1000.0" y="1000.0"/>
+  </Obstacles>
 </WorldBluePrint>

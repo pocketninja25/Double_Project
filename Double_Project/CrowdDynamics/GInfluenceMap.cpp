@@ -16,18 +16,18 @@ GInfluenceMap::GInfluenceMap(int iXSquares, int iYSquares, CVector2 squareSize):
 
 	m_Map = new float[m_xSquares * m_ySquares];
 	m_Flow = new CVector2[m_xSquares * m_ySquares];
-	m_Impassable = new bool[m_xSquares * m_ySquares];
+	m_Blocked = new bool[m_xSquares * m_ySquares];
 
 	ResetInfluence();
 	ResetFlow();
-	ResetImpassable();
+	ResetBlocked();
 }
 
 GInfluenceMap::~GInfluenceMap()
 {
 	delete[] m_Map;
 	delete[] m_Flow;
-	delete[] m_Impassable;
+	delete[] m_Blocked;
 }
 
 float GInfluenceMap::GetValue(int xPos, int yPos)
@@ -47,11 +47,11 @@ CVector2 GInfluenceMap::GetFlow(int xPos, int yPos)
 	return tempFlow;
 }
 
-bool GInfluenceMap::GetIsImpassable(int xPos, int yPos)
+bool GInfluenceMap::GetIsBlocked(int xPos, int yPos)
 {
 	ClampGridCoords(xPos, yPos);
 
-	return m_Impassable[xPos * m_xSquares + yPos];
+	return m_Blocked[xPos * m_xSquares + yPos];
 }
 
 void GInfluenceMap::AddValue(int xPos, int yPos, float value)
@@ -72,10 +72,10 @@ void GInfluenceMap::AddFlow(int xPos, int yPos, CVector2 value)
 	m_Flow[xPos * m_xSquares + yPos] += value;
 }
 
-void GInfluenceMap::SetImpassable(int xPos, int yPos, bool state)
+void GInfluenceMap::SetBlocked(int xPos, int yPos, bool isBlocked)
 {
 	ClampGridCoords(xPos, yPos);	
-	m_Impassable[xPos * m_xSquares + yPos] = state;
+	m_Blocked[xPos * m_xSquares + yPos] = isBlocked;
 }
 
 GIntPair GInfluenceMap::GetGridSquareFromPosition(const CVector2& position)
@@ -136,11 +136,11 @@ void GInfluenceMap::ResetFlow()
 	}
 }
 
-void GInfluenceMap::ResetImpassable()
+void GInfluenceMap::ResetBlocked()
 {
 	for (int i = 0; i < m_xSquares * m_ySquares; i++)
 	{
-		m_Impassable[i] = false;
+		m_Blocked[i] = false;
 	}
 }
 

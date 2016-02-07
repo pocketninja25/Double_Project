@@ -208,7 +208,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 gridCentre[Dir_Size]; //Stores Position of square
 	float gridHeight[Dir_Size];
 	CVector2 gridFlow[Dir_Size];
-	bool gridIsImpassable[Dir_Size];
+	bool gridIsBlocked[Dir_Size];
 
 	//Calculate the gradient of the surrounding 4/8 squares
 	int count = 0;
@@ -237,8 +237,8 @@ void GAgent::PerformGlobalCollisionAvoidance()
 			//Get Flow Data
 			gridFlow[count] = influenceMap->GetFlow(coord.x + i, coord.y + j);
 
-			//Get passibility data
-			gridIsImpassable[count] = influenceMap->GetIsImpassable(coord.x + i, coord.y + j);
+			//Get blocking data
+			gridIsBlocked[count] = influenceMap->GetIsBlocked(coord.x + i, coord.y + j);
 
 			count++;
 		}
@@ -261,7 +261,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 
 	for (int i = 0; i < Dir_Size; i++)
 	{
-		if (!gridIsImpassable[i])	//No point testing other conditions if the grid square is impassible
+		if (!gridIsBlocked[i])	//No point testing other conditions if the grid square is blocked
 		{
 			//Apply Limitation logic to decide whether this square is a viable target
 			CVector2 toSquare = gridCentre[i] - myPos;

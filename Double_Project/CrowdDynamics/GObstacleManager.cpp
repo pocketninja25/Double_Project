@@ -8,6 +8,7 @@
 
 GObstacleManager::GObstacleManager()
 {
+	m_ObstacleBlueprintLoader = new GObstacleImporter();
 }
 
 GObstacleManager::~GObstacleManager()
@@ -21,6 +22,7 @@ GObstacleManager::~GObstacleManager()
 	{
 		delete obstacle;
 	}
+	delete m_ObstacleBlueprintLoader;
 }
 
 UID GObstacleManager::AddStaticObstacle(std::string obstacleBlueprintFile, CVector2 position)
@@ -28,6 +30,7 @@ UID GObstacleManager::AddStaticObstacle(std::string obstacleBlueprintFile, CVect
 	GObstacleTemplate* blueprint = m_ObstacleBlueprintLoader->LoadBlueprint(obstacleBlueprintFile);
 
 	m_StaticObstacles.push_back(new GStaticObstacle(blueprint, position, true));
+	return m_StaticObstacles.back()->GetUID();
 }
 
 void GObstacleManager::Update(float updateTime)
