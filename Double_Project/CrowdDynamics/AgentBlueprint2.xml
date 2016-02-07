@@ -3,7 +3,7 @@
   turningArc="30.0"
   maxGradient="1.0"
   radius="7.071"
-  randomPosition="false"
+  randomPosition="true"
   randomDestination="true"
   startsActive="true"
   velocity="30.0">

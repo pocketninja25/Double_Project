@@ -52,12 +52,20 @@ bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 
 std::vector<UID> GEntityManager::GetAgentUIDs()
 {
-	std::vector<UID> list;
+	std::vector<UID> agentList;
 
-	list.insert(list.end(), m_ActiveAgents.begin(), m_ActiveAgents.end());
-	list.insert(list.end(), m_InactiveAgents.begin(), m_InactiveAgents.end());
+	agentList.resize(m_ActiveAgents.size() + m_InactiveAgents.size());
 
-	return list;
+	for (auto agent : m_ActiveAgents)
+	{
+		agentList.push_back(agent.first);
+	}
+	for (auto agent : m_InactiveAgents)
+	{
+		agentList.push_back(agent.first);
+	}
+
+	return agentList;
 }
 
 UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
@@ -68,11 +76,11 @@ UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
 	//Push the agent onto the relevant entitylist
 	if (iIsActive)
 	{
-		m_ActiveAgents.emplace(newAgent->GetUID(), newAgent);
+		m_ActiveAgents.emplace(std::make_pair(newAgent->GetUID(), newAgent));
 	}
 	else //inactive
 	{
-		m_InactiveAgents.emplace(newAgent->GetUID(), newAgent);
+		m_InactiveAgents.emplace(std::make_pair(newAgent->GetUID(), newAgent));
 	}
 
 	return newAgent->GetUID();

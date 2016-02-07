@@ -55,8 +55,8 @@ SWorldBlueprint GWorldImporter::LoadBlueprint(std::string fileName)
 			int noAgents;
 			std::string agentBlueprintFile;
 
-			noAgents = atoi(traversalElt->Attribute("Number"));
-			agentBlueprintFile = traversalElt->Attribute("Blueprint");
+			noAgents = atoi(traversalElt->Attribute("number"));
+			agentBlueprintFile = traversalElt->Attribute("blueprint");
 			
 			blueprintBuilder->agentDetails.emplace(std::make_pair(agentBlueprintFile, noAgents));
 			//TODO: Test this function

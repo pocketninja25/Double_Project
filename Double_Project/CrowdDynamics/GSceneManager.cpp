@@ -12,7 +12,7 @@ GSceneManager* GSceneManager::GetInstance(std::string worldBlueprintFile)
 	if (!mManager_Scene && worldBlueprintFile != "")	//If there is no manager instance but there is a set of world data create an instance
 	{
 		//Construct the manager
-		mManager_Scene = new GSceneManager(worldBlueprintFile);
+		mManager_Scene = new GSceneManager(worldBlueprintFile);	//Assign here, also assigned at the start of the constructor so it can be used within the constructor
 	}
 
 	return mManager_Scene;
@@ -24,12 +24,14 @@ GSceneManager::GSceneManager(std::string fileName) :
 	m_TimeSinceLastUpdate(0.0f),
 	m_Paused(false)
 {
-	m_WorldBlueprintLoader = new GWorldImporter();
-	SWorldBlueprint blueprint = m_WorldBlueprintLoader->LoadBlueprint(fileName);
+	mManager_Scene = this;
 
-	m_TimeStep = blueprint.TimeStep;
-	m_WorldSize = blueprint.WorldSize;
-	m_NoSquares = blueprint.subdivisions;
+	m_WorldBlueprintLoader = new GWorldImporter();
+	m_WorldBlueprint = m_WorldBlueprintLoader->LoadBlueprint(fileName);
+
+	m_TimeStep = m_WorldBlueprint.TimeStep;
+	m_WorldSize = m_WorldBlueprint.WorldSize;
+	m_NoSquares = m_WorldBlueprint.subdivisions;
 	m_SquareSize = CVector2(m_WorldSize.x / m_NoSquares.x, m_WorldSize.y / m_NoSquares.y);
 	m_SceneSquares = new GSceneSquare*[m_NoSquares.x * m_NoSquares.y];
 
@@ -44,7 +46,7 @@ GSceneManager::GSceneManager(std::string fileName) :
 	m_InfluenceMap = new GInfluenceMap(
 		m_WorldBlueprint.influenceSubdivisions.x, 
 		m_WorldBlueprint.influenceSubdivisions.y,
-			CVector2(1 / blueprint.influenceSquaresPerUnit, 1 / blueprint.influenceSquaresPerUnit));
+			CVector2(1 / m_WorldBlueprint.influenceSquaresPerUnit, 1 / m_WorldBlueprint.influenceSquaresPerUnit));
 
 	for (auto iter : m_WorldBlueprint.agentDetails)
 	{
@@ -90,7 +92,9 @@ GSceneManager::GSceneManager(float iTimeStep, CVector2 iWorldSize, int iXSubdivi
 	int tempX = static_cast<int>(m_WorldSize.x);
 	int tempY = static_cast<int>(m_WorldSize.y);
 
-	m_InfluenceMap = new GInfluenceMap(tempX * influenceSquaresPerUnit, tempY * influenceSquaresPerUnit, CVector2(1/influenceSquaresPerUnit, 1/influenceSquaresPerUnit));
+	m_InfluenceMap = new GInfluenceMap(static_cast<int>(m_WorldSize.x * influenceSquaresPerUnit), 
+		static_cast<int>(m_WorldSize.y * influenceSquaresPerUnit),
+		CVector2(1/influenceSquaresPerUnit, 1/influenceSquaresPerUnit));
 }
 
 GSceneManager::~GSceneManager()

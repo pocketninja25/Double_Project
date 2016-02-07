@@ -245,11 +245,11 @@ void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, s
 {
 	CVector3 mousePos = WorldPosFromPixel(gameEngine, cam);
 	sstream << "X: " << std::setprecision(4) << mousePos.x;
-	theFont->Draw(sstream.str(), 0.0f, 0.0f, kBlack);
+	theFont->Draw(sstream.str(), 0, 0, kBlack);
 	int height = theFont->MeasureTextHeight(sstream.str());
 	sstream.str("");
 	sstream << "Z: " << std::setprecision(4) << mousePos.z;
-	theFont->Draw(sstream.str(), 0.0f, height, kBlack);
+	theFont->Draw(sstream.str(), 0, height, kBlack);
 	sstream.str("");
 }
 

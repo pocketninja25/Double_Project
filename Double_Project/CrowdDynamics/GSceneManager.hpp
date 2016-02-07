@@ -4,7 +4,6 @@
 #include "GSceneSquare.hpp"
 #include "GInfluenceMap.hpp"
 
-
 //Forward declarations of other manager classes, dont want to include until cpp where possible to avoid circular dependency
 class GEntityManager;
 class GObstacleManager;
