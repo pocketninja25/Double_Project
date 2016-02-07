@@ -3,7 +3,7 @@
 #include "GEntityManager.hpp"
 #include "GObstacleManager.hpp"
 #include "GAgent.hpp"
-#include "GWorldImporter.h"
+#include "GWorldImporter.hpp"
 
 GSceneManager* GSceneManager::mManager_Scene = 0;
 
@@ -201,6 +201,8 @@ bool GSceneManager::GetIsPaused()
 	return m_Paused;
 }
 
+
+
 UID GSceneManager::AddAgent(CVector2 iPosition, bool iIsActive)
 {
 	UID agentUID = mManager_Entity->AddAgent(iPosition, iIsActive);	//Create the agent object
@@ -272,12 +274,15 @@ bool GSceneManager::SetAgentActivation(UID agent, bool isEnabled)
 	return mManager_Entity->SetAgentActivation(agent, isEnabled);
 }
 
+UID GSceneManager::AddStaticObstacle(std::string blueprintFile, CVector2 position)
+{
+	return mManager_Obstacle->AddStaticObstacle(blueprintFile, position);
+}
 
 void GSceneManager::SetPaused(bool iPaused)
 {
 	m_Paused = iPaused;
 }
-
 
 void GSceneManager::PerformOneTimeStep()
 {

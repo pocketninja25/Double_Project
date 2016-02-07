@@ -1,4 +1,4 @@
-#include "GWorldImporter.h"
+#include "GWorldImporter.hpp"
 
 #include "tinyxml.h"
 #include "tinystr.h"
@@ -59,7 +59,6 @@ SWorldBlueprint GWorldImporter::LoadBlueprint(std::string fileName)
 			agentBlueprintFile = traversalElt->Attribute("blueprint");
 			
 			blueprintBuilder->agentDetails.emplace(std::make_pair(agentBlueprintFile, noAgents));
-			//TODO: Test this function
 			traversalElt = traversalElt->NextSiblingElement("Agents");
 		}
 		

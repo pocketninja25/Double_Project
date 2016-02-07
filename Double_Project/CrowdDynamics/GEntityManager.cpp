@@ -3,7 +3,7 @@
 #include "GEntity.hpp"
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
-#include "GAgentImporter.h"
+#include "GAgentImporter.hpp"
 
 GEntityManager::GEntityManager()
 {

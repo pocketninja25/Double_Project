@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Common.hpp"
 
 //Forward declarations of obstacle classes
@@ -7,6 +5,7 @@ class GStaticObstacle;
 class GDynamicObstacle;
 class GObstacleTemplate;
 class GSceneManager;
+class GObjectImporter;
 
 class GObstacleManager
 {
@@ -15,6 +14,8 @@ class GObstacleManager
 // Private Data Members
 //---------------------------
 private:
+	GObjectImporter* m_ObstacleBlueprintLoader;
+	
 	std::vector<GObstacleTemplate*> m_ObstacleTemplates;
 
 	//Sorted into two categories for update tree management - hopefully wont need to update static obstacles each timestep
@@ -28,7 +29,6 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-
 	GObstacleManager();
 
 	virtual ~GObstacleManager();
@@ -42,8 +42,8 @@ public:
 	//***************************
 
 	// TODO: Might be worth having these two functions private and use an AddObstacle function that accepts an enum (static/dynamic) - depends on what these constructions look like
-	void AddStaticObstacle(/*SomeObstacleDetails*/);
-	void AddDynamicObstacle(/*SomeObstacleDetails*/);
+	UID AddStaticObstacle(std::string obstacleBlueprintFile, CVector2 position );
+	//void AddDynamicObstacle(/*SomeObstacleDetails*/);
 
 	//***************************
 	// Other Functions

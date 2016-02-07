@@ -107,6 +107,7 @@ public:
 	bool SetAgentPosition(UID agent, CVector2 newPosition);
 	bool SetAgentActivation(UID agent, bool isEnabled);
 
+	UID AddStaticObstacle(std::string blueprintFile, CVector2 position);
 
 	void SetPaused(bool iPaused);
 

@@ -14,3 +14,17 @@ GObstacleTemplate::~GObstacleTemplate()
 	}
 	//m_ObstacleMesh is automatically deallocated
 }
+
+void GObstacleTemplate::AddVertex(int index, CVector2 vertex)
+{
+	m_Vertices.emplace(std::make_pair(index, vertex));
+}
+
+void GObstacleTemplate::AddVertexPair(GIntPair vertexPair)
+{
+	m_VertexPairs.push_back(vertexPair);
+}
+
+void GObstacleTemplate::Update(float updateTime)
+{
+}

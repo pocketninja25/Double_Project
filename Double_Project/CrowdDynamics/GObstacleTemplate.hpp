@@ -10,7 +10,8 @@ class GObstacleTemplate : public GObject
 // Private Data Members
 //---------------------------
 private:
-	std::vector<CVector2*> m_ObstacleMesh;			// TODO: This is tricky, dont know how wall storage is best done when some walls are updated and others arent
+	std::map<int, CVector2> m_Vertices;
+	std::vector<GIntPair> m_VertexPairs;
 
 //---------------------------
 // Public Functions
@@ -31,9 +32,12 @@ public:
 	//***************************
 	// Setters/Mutators
 	//***************************
+	void AddVertex(int index, CVector2 vertex);
+	void AddVertexPair(GIntPair vertexPair);
 
 	//***************************
 	// Other Functions
 	//***************************
+	virtual void Update(float updateTime);
 
 };

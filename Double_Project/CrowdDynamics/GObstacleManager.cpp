@@ -2,6 +2,8 @@
 #include "GStaticObstacle.hpp"
 #include "GDynamicObstacle.hpp"
 #include "GObstacleTemplate.hpp"
+#include "GObstacleImporter.hpp"
+
 
 GObstacleManager::GObstacleManager()
 {
@@ -24,3 +26,10 @@ GObstacleManager::~GObstacleManager()
 		delete obsTemplate;
 	}
 }
+
+UID GObstacleManager::AddStaticObstacle(std::string obstacleBlueprintFile, CVector2 position)
+{
+	m_ObstacleBlueprintLoader->Load
+}
+
+
