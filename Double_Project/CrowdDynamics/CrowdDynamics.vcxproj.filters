@@ -22,16 +22,28 @@
     <Filter Include="Managers\Source">
       <UniqueIdentifier>{c7e161f5-7462-4501-bde4-f9e1c5086fd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TinyXML">
+      <UniqueIdentifier>{204943ec-0d45-4552-a39a-6e4be35df2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Importers">
+      <UniqueIdentifier>{1d8093b6-8949-49f5-a189-23c671be1c7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Importers\Headers">
+      <UniqueIdentifier>{50c13c59-86b1-4630-be06-a65db698c0bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Importers\Source">
+      <UniqueIdentifier>{8b5a6417-f7bc-4fc1-86bc-bb8063fb4257}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Obstacle">
+      <UniqueIdentifier>{bea71db2-62fd-46ff-a3ad-34c4a8ba8de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Obstacle">
+      <UniqueIdentifier>{6e60af1e-5ba3-4e41-9500-025829b4cb55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CrowdDynamics.hpp" />
-    <ClInclude Include="Common.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GAgent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GDynamicObstacle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GEntity.hpp">
@@ -40,19 +52,7 @@
     <ClInclude Include="GObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GObstacle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GObstacleTemplate.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GSceneSquare.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GStaticObstacle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GWall.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GEntityManager.hpp">
@@ -69,6 +69,37 @@
     </ClInclude>
     <ClInclude Include="GIntPair.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="tinystr.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.hpp" />
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GAgentImporter.hpp">
+      <Filter>Importers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GObstacleImporter.hpp">
+      <Filter>Importers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GWorldImporter.hpp">
+      <Filter>Importers\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GObstacle.hpp">
+      <Filter>Header Files\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="GObstacleTemplate.hpp">
+      <Filter>Header Files\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="GStaticObstacle.hpp">
+      <Filter>Header Files\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="GDynamicObstacle.hpp">
+      <Filter>Header Files\Obstacle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -90,22 +121,7 @@
     <ClCompile Include="GAgent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GObstacle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GSceneSquare.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GWall.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GObstacleTemplate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GDynamicObstacle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GStaticObstacle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GInfluenceMap.cpp">
@@ -114,5 +130,52 @@
     <ClCompile Include="GIntPair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tinystr.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlerror.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlparser.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="GAgentImporter.cpp">
+      <Filter>Importers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GObstacleImporter.cpp">
+      <Filter>Importers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GWorldImporter.cpp">
+      <Filter>Importers\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GDynamicObstacle.cpp">
+      <Filter>Source Files\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="GObstacle.cpp">
+      <Filter>Source Files\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="GStaticObstacle.cpp">
+      <Filter>Source Files\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="GObstacleTemplate.cpp">
+      <Filter>Source Files\Obstacle</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="AgentBlueprint1.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+    <Xml Include="AgentBlueprint2.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+    <Xml Include="WorldBlueprint1.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+    <Xml Include="ObstacleBlueprint1.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

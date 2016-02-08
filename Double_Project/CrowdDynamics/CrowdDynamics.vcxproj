@@ -22,6 +22,7 @@
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="CrowdDynamics.hpp" />
     <ClInclude Include="GAgent.hpp" />
+    <ClInclude Include="GAgentImporter.hpp" />
     <ClInclude Include="GDynamicObstacle.hpp" />
     <ClInclude Include="GEntity.hpp" />
     <ClInclude Include="GEntityManager.hpp" />
@@ -29,15 +30,20 @@
     <ClInclude Include="GIntPair.hpp" />
     <ClInclude Include="GObject.hpp" />
     <ClInclude Include="GObstacle.hpp" />
+    <ClInclude Include="GObstacleImporter.hpp" />
     <ClInclude Include="GObstacleManager.hpp" />
     <ClInclude Include="GObstacleTemplate.hpp" />
     <ClInclude Include="GSceneManager.hpp" />
     <ClInclude Include="GSceneSquare.hpp" />
     <ClInclude Include="GStaticObstacle.hpp" />
-    <ClInclude Include="GWall.hpp" />
+    <ClInclude Include="GWorldImporter.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="tinystr.h" />
+    <ClInclude Include="tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GAgent.cpp" />
+    <ClCompile Include="GAgentImporter.cpp" />
     <ClCompile Include="GDynamicObstacle.cpp" />
     <ClCompile Include="GEntity.cpp" />
     <ClCompile Include="GEntityManager.cpp" />
@@ -45,17 +51,28 @@
     <ClCompile Include="GIntPair.cpp" />
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GObstacle.cpp" />
+    <ClCompile Include="GObstacleImporter.cpp" />
     <ClCompile Include="GObstacleManager.cpp" />
     <ClCompile Include="GObstacleTemplate.cpp" />
     <ClCompile Include="GSceneManager.cpp" />
     <ClCompile Include="GSceneSquare.cpp" />
     <ClCompile Include="GStaticObstacle.cpp" />
-    <ClCompile Include="GWall.cpp" />
+    <ClCompile Include="GWorldImporter.cpp" />
+    <ClCompile Include="tinystr.cpp" />
+    <ClCompile Include="tinyxml.cpp" />
+    <ClCompile Include="tinyxmlerror.cpp" />
+    <ClCompile Include="tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MathsLib\MathsLib.vcxproj">
       <Project>{613fff4e-3f98-4a1e-a9b5-adca4123b8d1}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="AgentBlueprint1.xml" />
+    <Xml Include="AgentBlueprint2.xml" />
+    <Xml Include="ObstacleBlueprint1.xml" />
+    <Xml Include="WorldBlueprint1.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}</ProjectGuid>
@@ -128,7 +145,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\MathsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir(\MathsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -171,7 +188,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Users\Daniel\Documents\University\CO3808 - Double Project\Repository\Double_Project\MathsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir(\MathsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
