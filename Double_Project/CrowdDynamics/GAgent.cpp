@@ -263,7 +263,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 
 	for (int i = 0; i < Dir_Size; i++)
 	{
-		if (gridIsBlocked[i])	//No point testing other conditions if the grid square is blocked	//TODO: Fix this condition
+		if (!gridIsBlocked[i])	//No point testing other conditions if the grid square is blocked
 		{
 			//Apply Limitation logic to decide whether this square is a viable target
 			CVector2 toSquare = gridCentre[i] - myPos;

@@ -5,8 +5,8 @@
   <WorldSize x="2000.0" y="2000.0"/>
   <Subdivisions x="1" y="1"/>
   <influencePerUnit value="0.5"/>
-  <Agents number="4" blueprint="AgentBlueprint1.xml"/>
-  <Agents number="3" blueprint="AgentBlueprint2.xml"/>
+  <Agents number="400" blueprint="AgentBlueprint1.xml"/>
+  <Agents number="300" blueprint="AgentBlueprint2.xml"/>
   <Obstacles blueprint ="ObstacleBlueprint1.xml" >
     <Obstacle x="0.0" y="0.0"/>
     <Obstacle x="1000.0" y="1000.0"/>

@@ -40,6 +40,15 @@
     <Filter Include="Source Files\Obstacle">
       <UniqueIdentifier>{6e60af1e-5ba3-4e41-9500-025829b4cb55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\AgentBlueprints">
+      <UniqueIdentifier>{562ea857-e8b1-4816-a394-ce06b7665b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\ObstacleBlueprints">
+      <UniqueIdentifier>{7c7b65f5-cd88-4e45-b480-9634ae5438a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\WorldBlueprints">
+      <UniqueIdentifier>{b959b7b0-9561-4b71-926c-2aa2a8659ddf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CrowdDynamics.hpp" />
@@ -166,16 +175,22 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AgentBlueprint1.xml">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\AgentBlueprints</Filter>
     </Xml>
     <Xml Include="AgentBlueprint2.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="WorldBlueprint1.xml">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\AgentBlueprints</Filter>
     </Xml>
     <Xml Include="ObstacleBlueprint1.xml">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\ObstacleBlueprints</Filter>
+    </Xml>
+    <Xml Include="WorldBlueprint1.xml">
+      <Filter>Resource Files\WorldBlueprints</Filter>
+    </Xml>
+    <Xml Include="WorldBlueprint2.xml">
+      <Filter>Resource Files\WorldBlueprints</Filter>
+    </Xml>
+    <Xml Include="ObstacleBlueprint2.xml">
+      <Filter>Resource Files\ObstacleBlueprints</Filter>
     </Xml>
   </ItemGroup>
 </Project>

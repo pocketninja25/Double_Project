@@ -1,7 +1,7 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
-//#define InfluenceVisualiserEnabled
-//#define DirectionVisualiserEnabled
+#define InfluenceVisualiserEnabled
+#define DirectionVisualiserEnabled
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;
@@ -212,6 +212,7 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 
 	float influence;
 	CVector2 direction;
+	bool isBlocked;
 	for (int i = 0; i < worldBlueprint.influenceSubdivisions.x; i++)
 	{
 		for (int j = 0; j < worldBlueprint.influenceSubdivisions.y; j++)
@@ -220,6 +221,11 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 
 			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->SetY(2 * influence);
 			
+			isBlocked = influenceMap->GetIsBlocked(i, j);
+			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateX(90.0f);
+			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateY(90.0f);
+			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateZ(90.0f);
+
 			if (true)//influence != 0)	//Point the sqare in the direction of influence
 			{
 				direction = influenceMap->GetFlow(i, j);
@@ -253,12 +259,16 @@ void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, s
 	sstream.str("");
 }
 
-void main()
+enum EQuitState {Quit_Completely = 0, Quit_LoadNewMap = 1};
+
+int EngineMain(string worldFile)
 {
+	int returnValue = Quit_Completely;
+
 	//--------------------------
 	// CrowdDynamics Setup
 	//--------------------------
-	GSceneManager* crowdEngine = GSceneManager::GetInstance("WorldBlueprint1.xml");
+	GSceneManager* crowdEngine = GSceneManager::GetInstance(worldFile);
 	worldBlueprint = crowdEngine->GetWorldBlueprint();
 
 	// Create a 3D engine (using TLX engine here) and open a window for it
@@ -266,10 +276,10 @@ void main()
 	gameEngine->StartWindowed();
 
 	// Add default folder for meshes and other media
-	gameEngine->AddMediaFolder( ".\\Media" );
+	gameEngine->AddMediaFolder(".\\Media");
 
 	IFont* mousePosFont = gameEngine->LoadFont("Font1.bmp");
-	
+
 	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
 	IMesh* agent2Mesh = gameEngine->LoadMesh("Box2.x");
 	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
@@ -281,10 +291,10 @@ void main()
 	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
 	IModel** FloorTiles;
-	IModel* SkyBox = SkyboxMesh->CreateModel(worldBlueprint.WorldSize.x / 2.0f, -15.0f, worldBlueprint.WorldSize.y);
+	IModel* SkyBox = SkyboxMesh->CreateModel(worldBlueprint.WorldSize.x / 2.0f, -1000.0f, worldBlueprint.WorldSize.y);
 	SkyBox->ScaleX(worldBlueprint.WorldSize.x / 300.0f);
 	SkyBox->ScaleZ(worldBlueprint.WorldSize.y / 300.0f);
-	
+
 	FloorTiles = new IModel*[worldBlueprint.subdivisions.x * worldBlueprint.subdivisions.y];
 	for (int i = 0; i < worldBlueprint.subdivisions.x; i++)
 	{
@@ -299,13 +309,13 @@ void main()
 
 #ifdef InfluenceVisualiserEnabled
 	IModel** InfluenceTiles;
-	
+
 	InfluenceTiles = new IModel*[worldBlueprint.influenceSubdivisions.x * worldBlueprint.influenceSubdivisions.y];
 	for (int i = 0; i < worldBlueprint.influenceSubdivisions.x; i++)
 	{
 		for (int j = 0; j < worldBlueprint.influenceSubdivisions.y; j++)
 		{
-			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j] = influenceTileMesh->CreateModel(static_cast<float>(i)  / worldBlueprint.influenceSquaresPerUnit, 0.5f,( static_cast<float>(j) + 1) / worldBlueprint.influenceSquaresPerUnit);
+			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j] = influenceTileMesh->CreateModel(static_cast<float>(i) / worldBlueprint.influenceSquaresPerUnit, 0.5f, (static_cast<float>(j) + 1) / worldBlueprint.influenceSquaresPerUnit);
 			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateX(180.0f);
 			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ScaleX((1.0f / worldBlueprint.influenceSquaresPerUnit) * 0.75f);
 			InfluenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->ScaleZ((1.0f / worldBlueprint.influenceSquaresPerUnit) * 0.75f);
@@ -313,7 +323,7 @@ void main()
 	}
 #endif
 
-	
+
 
 	vector<UID> AgentIDs = crowdEngine->GetAgentUIDs();
 
@@ -332,7 +342,7 @@ void main()
 		item.second->SetSkin("vectortex2.jpg");
 	}
 
-	ICamera* cam = gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x/2.0f, 220.0f, worldBlueprint.WorldSize.y/2.0f);
+	ICamera* cam = gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
 	//ICamera* cam = gameEngine->CreateCamera(kManual, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
 	cam->RotateX(90.0f);
 	cam->SetMovementSpeed(100.0f);
@@ -351,18 +361,24 @@ void main()
 	crowdEngine->SetPaused(true);
 	// The main game loop, repeat until engine is stopped
 	while (gameEngine->IsRunning())
-	{		
+	{
 		if (gameEngine->KeyHit(Key_Escape))
 		{
+			returnValue = Quit_Completely;
 			gameEngine->Stop();
 		}
-		
+		if (gameEngine->KeyHit(Key_Delete))
+		{
+			returnValue = Quit_LoadNewMap;
+			gameEngine->Stop();
+		}
+
 		frameTime = gameEngine->Timer();
 		// Draw the scene
 		gameEngine->DrawScene();
-		
+
 		DrawPointingPosition(gameEngine, cam, mousePosFont, frameStream);
-		
+
 		frameRate = 1 / frameTime;
 		frameStream << setprecision(4) << (frameRate);
 		gameEngine->SetWindowCaption(frameStream.str());
@@ -375,7 +391,7 @@ void main()
 		/**** Update your scene each frame here ****/
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
 
-		//Update the influence representation from the crowd engine
+										//Update the influence representation from the crowd engine
 #ifdef InfluenceVisualiserEnabled
 		UpdateInfluenceFromCrowdData(crowdEngine, InfluenceTiles);
 #endif
@@ -392,7 +408,7 @@ void main()
 		{
 			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
 
-			//Assign the simulation matrices to the model matrices
+												//Assign the simulation matrices to the model matrices
 			UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
 
 		}
@@ -406,7 +422,7 @@ void main()
 #endif
 		}
 		if (gameEngine->KeyHeld(Mouse_LButton))
-		{	
+		{
 			if (holding == -1)	//If not holding anything, pick the nearest item up
 			{
 				UID tempHold;
@@ -468,7 +484,7 @@ void main()
 				{
 					cout << err.what();
 				}
-				
+
 				holding = -1;
 			}
 		}
@@ -529,4 +545,27 @@ void main()
 	delete[] InfluenceTiles;
 #endif
 	delete crowdEngine;
+
+	return returnValue;
+}
+
+void main()
+{
+	string worldBlueprintToLoad;
+	do
+	{
+		cout << "Load Default World?" << endl;
+		char input = 'y';
+		cin >> input;
+		if (input == 'n' || input == 'N')
+		{
+			cout << "Enter alternate file name" << endl;
+			cin >> worldBlueprintToLoad;
+		}
+		else
+		{
+			worldBlueprintToLoad = "WorldBlueprint1.xml";
+		}
+	} while (EngineMain(worldBlueprintToLoad) != Quit_Completely);	//Keep going while the user wants to load another blueprint
+	
 }
