@@ -15,7 +15,6 @@ private:
 	float* m_Map;
 	CVector2* m_Flow;
 	bool* m_Blocked;
-
 public:
 //***************************
 // Constructors/Destructors

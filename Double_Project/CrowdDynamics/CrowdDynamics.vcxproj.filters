@@ -186,11 +186,11 @@
     <Xml Include="WorldBlueprint1.xml">
       <Filter>Resource Files\WorldBlueprints</Filter>
     </Xml>
-    <Xml Include="WorldBlueprint2.xml">
-      <Filter>Resource Files\WorldBlueprints</Filter>
-    </Xml>
     <Xml Include="ObstacleBlueprint2.xml">
       <Filter>Resource Files\ObstacleBlueprints</Filter>
+    </Xml>
+    <Xml Include="test.xml">
+      <Filter>Resource Files\WorldBlueprints</Filter>
     </Xml>
   </ItemGroup>
 </Project>

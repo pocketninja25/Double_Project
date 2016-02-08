@@ -74,7 +74,7 @@
     <Xml Include="ObstacleBlueprint1.xml" />
     <Xml Include="ObstacleBlueprint2.xml" />
     <Xml Include="WorldBlueprint1.xml" />
-    <Xml Include="WorldBlueprint2.xml" />
+    <Xml Include="test.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}</ProjectGuid>
