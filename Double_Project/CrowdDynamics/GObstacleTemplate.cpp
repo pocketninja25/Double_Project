@@ -56,6 +56,11 @@ void GObstacleTemplate::AddVertexPair(GIntPair vertexPair)
 	m_VertexPairs.push_back(newWall);
 }
 
+void GObstacleTemplate::SetMeshFile(std::string iMeshFile)
+{
+	m_MeshFile = iMeshFile;
+}
+
 void GObstacleTemplate::Update(float updateTime)
 {
 }

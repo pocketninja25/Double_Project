@@ -66,6 +66,9 @@ GObstacleTemplate* GObstacleImporter::LoadBlueprint(std::string fileName)
 			blueprintBuilder->AddVertexPair(vertexPair);
 			traversalElt = traversalElt->NextSiblingElement("Pair");
 		}
+		
+		traversalElt = rootElement->FirstChildElement("Mesh");
+		blueprintBuilder->SetMeshFile(traversalElt->Attribute("file"));
 
 		m_LoadedBlueprints.emplace(std::make_pair(fileName, blueprintBuilder));
 

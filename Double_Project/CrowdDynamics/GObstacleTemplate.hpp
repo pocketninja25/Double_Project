@@ -22,6 +22,8 @@ private:
 	CVector2 m_BottomLeft;	//The point at the lowest left point of the "bounding box" around the obstacle
 	CVector2 m_TopRight;	//The point at the upper right point of the "bounding box" around the obstacle
 
+	std::string m_MeshFile;	//The mesh for the crowdengine user to load
+
 //---------------------------
 // Public Functions
 //---------------------------
@@ -53,11 +55,18 @@ public:
 		return m_TopRight;
 	}
 
+	std::string GetMeshFile()
+	{
+		return m_MeshFile;
+	}
+
 	//***************************
 	// Setters/Mutators
 	//***************************
 	void AddVertex(int index, CVector2 vertex);
 	void AddVertexPair(GIntPair vertexPair);
+
+	void SetMeshFile(std::string iMeshFile);
 
 	//***************************
 	// Other Functions

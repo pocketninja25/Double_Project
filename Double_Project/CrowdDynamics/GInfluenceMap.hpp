@@ -15,6 +15,7 @@ private:
 	float* m_Map;
 	CVector2* m_Flow;
 	bool* m_Blocked;
+
 public:
 //***************************
 // Constructors/Destructors
@@ -28,9 +29,11 @@ public:
 // Getters/Accessors
 //***************************
 	float GetValue(int xPos, int yPos);
+	float GetValue(GIntPair pos);
 	CVector2 GetFlow(int xPos, int yPos);	//Get unit vector representing the combined direction of traffic by influencers on that square
+	CVector2 GetFlow(GIntPair pos);
 	bool GetIsBlocked(int xPos, int yPos);
-
+	bool GetIsBlocked(GIntPair pos);
 //***************************
 // Setters/Mutators
 //***************************

@@ -40,7 +40,7 @@ void GObstacle::Update(float updateTime)
 	//For each influence square
 	for (int i = iBottomLeft.x; i < iTopRight.x; i++)
 	{
-		for (int j = iBottomLeft.y; i < iTopRight.y; i++)
+		for (int j = iBottomLeft.y; j < iTopRight.y; j++)
 		{
 			bool isInside = true;		//Assume the square is inside until evidence is found otherwise
 			for (auto wall : wallList)

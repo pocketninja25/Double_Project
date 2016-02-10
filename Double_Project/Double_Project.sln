@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrowdDynamics", "CrowdDynamics\CrowdDynamics.vcxproj", "{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}"
 EndProject
@@ -27,8 +27,8 @@ Global
 		{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}.Release|x86.Build.0 = Release|Win32
 		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Debug|x64.ActiveCfg = Debug|x64
 		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Debug|x64.Build.0 = Debug|x64
-		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Debug|x86.ActiveCfg = Debug|Win32
-		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Debug|x86.Build.0 = Debug|Win32
+		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Debug|x86.ActiveCfg = Release|Win32
+		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Debug|x86.Build.0 = Release|Win32
 		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Release|x64.ActiveCfg = Release|x64
 		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Release|x64.Build.0 = Release|x64
 		{613FFF4E-3F98-4A1E-A9B5-ADCA4123B8D1}.Release|x86.ActiveCfg = Release|Win32

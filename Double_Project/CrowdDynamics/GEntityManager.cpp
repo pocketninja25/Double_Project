@@ -107,6 +107,12 @@ UID GEntityManager::AddAgent(std::string blueprintFile, bool overwriteStartLocat
 		blueprint.position = newStartLocation;
 	}
 
+	do
+	{
+		GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
+		influenceMap->GetGridSquareFromPosition()
+	} while ();
+
 	GAgent* newAgent = new GAgent(blueprint);
 	if (newAgent->IsActive())
 	{

@@ -48,16 +48,16 @@ GSceneManager::GSceneManager(std::string fileName) :
 		m_WorldBlueprint.influenceSubdivisions.y,
 			CVector2(1 / m_WorldBlueprint.influenceSquaresPerUnit, 1 / m_WorldBlueprint.influenceSquaresPerUnit));
 
-	for (auto iter : m_WorldBlueprint.agentDetails)
-	{
-		this->AddXAgents(iter.second, iter.first);
-	}
 	for (auto objBlueprint : m_WorldBlueprint.obstacleDetails)
 	{
 		for (auto obstacle : objBlueprint.second)
 		{
 			mManager_Obstacle->AddStaticObstacle(objBlueprint.first, obstacle);
 		}
+	}
+	for (auto iter : m_WorldBlueprint.agentDetails)
+	{
+		this->AddXAgents(iter.second, iter.first);
 	}
 
 }

@@ -76,7 +76,6 @@ void GInfluenceMap::SetBlocked(int xPos, int yPos, bool isBlocked)
 {
 	ClampGridCoords(xPos, yPos);	
 	m_Blocked[xPos * m_xSquares + yPos] = isBlocked;
-
 }
 
 GIntPair GInfluenceMap::GetGridSquareFromPosition(const CVector2& position)
