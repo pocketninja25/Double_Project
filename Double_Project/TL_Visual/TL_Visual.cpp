@@ -1,7 +1,7 @@
 // TL_Visual.cpp: A program using the TL-Engine
 
-#define InfluenceVisualiserEnabled
-#define DirectionVisualiserEnabled
+//#define InfluenceVisualiserEnabled
+//#define DirectionVisualiserEnabled
 
 #include <TL-Engine.h>	// TL-Engine include file and namespace
 using namespace tle;

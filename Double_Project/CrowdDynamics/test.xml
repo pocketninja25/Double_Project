@@ -3,7 +3,7 @@
 <WorldBluePrint>
   <TimeStep ticks="30"/> <!--Use ticks here so that most accurate value can be calculated in c++-->
   <WorldSize x="200.0" y="200.0"/>
-  <Subdivisions x="0.5" y="0.5"/>
+  <Subdivisions x="1" y="1"/>
   <influencePerUnit value="1"/>
   <Agents number="5" blueprint="AgentBlueprint1.xml"/>
   <Agents number="5" blueprint="AgentBlueprint2.xml"/>
@@ -11,3 +11,4 @@
     <Obstacle x="0.0" y="0.0"/>
   </Obstacles>
 </WorldBluePrint>
+
