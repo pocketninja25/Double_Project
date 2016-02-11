@@ -37,6 +37,11 @@ float GInfluenceMap::GetValue(int xPos, int yPos)
 	return m_Map[xPos * m_xSquares + yPos];
 }
 
+float GInfluenceMap::GetValue(GIntPair pos)
+{
+	return GetValue(pos.x, pos.y);
+}
+
 CVector2 GInfluenceMap::GetFlow(int xPos, int yPos)
 {
 	ClampGridCoords(xPos, yPos);
@@ -47,11 +52,21 @@ CVector2 GInfluenceMap::GetFlow(int xPos, int yPos)
 	return tempFlow;
 }
 
+CVector2 GInfluenceMap::GetFlow(GIntPair pos)
+{
+	return GetFlow(pos.x, pos.y);
+}
+
 bool GInfluenceMap::GetIsBlocked(int xPos, int yPos)
 {
 	ClampGridCoords(xPos, yPos);
 
 	return m_Blocked[xPos * m_xSquares + yPos];
+}
+
+bool GInfluenceMap::GetIsBlocked(GIntPair pos)
+{
+	return GetIsBlocked(pos.x, pos.y);
 }
 
 void GInfluenceMap::AddValue(int xPos, int yPos, float value)
@@ -112,6 +127,11 @@ CVector2 GInfluenceMap::GetSquareCentre(int xPos, int yPos)
 	position.y = (yPos * m_SquareSize.y) + (m_SquareSize.y / 2);
 
 	return position;
+}
+
+CVector2 GInfluenceMap::GetSquareCentre(GIntPair pos)
+{
+	return GetSquareCentre(pos.x, pos.y);
 }
 
 

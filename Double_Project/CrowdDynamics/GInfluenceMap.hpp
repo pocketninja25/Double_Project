@@ -34,6 +34,7 @@ public:
 	CVector2 GetFlow(GIntPair pos);
 	bool GetIsBlocked(int xPos, int yPos);
 	bool GetIsBlocked(GIntPair pos);
+
 //***************************
 // Setters/Mutators
 //***************************
@@ -53,6 +54,7 @@ public:
 	//Convert from world to grid and vice versa
 	GIntPair GetGridSquareFromPosition(const CVector2 &position);
 	CVector2 GetSquareCentre(int xPos, int yPos);
+	CVector2 GetSquareCentre(GIntPair pos);
 
 private:
 	void ClampGridCoords(int& xPos, int& yPos);

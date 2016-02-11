@@ -84,6 +84,8 @@ public:
 
 	GInfluenceMap* GetInfluenceMap();
 
+	bool GetPositionBlockedByObstacle(CVector2 position);
+
 	float GetTimeStep();
 
 	bool GetIsPaused();

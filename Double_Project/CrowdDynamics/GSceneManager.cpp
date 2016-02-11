@@ -197,6 +197,11 @@ GInfluenceMap * GSceneManager::GetInfluenceMap()
 	return m_InfluenceMap;
 }
 
+bool GSceneManager::GetPositionBlockedByObstacle(CVector2 position)
+{
+	return mManager_Obstacle->PositionBlocked(position);
+}
+
 
 float GSceneManager::GetTimeStep()
 {

@@ -95,7 +95,6 @@ void GDynamicObstacle::RotateLocalYRad(float dAlpha)
 	m_Matrix.RotateLocalY(dAlpha);
 }
 
-
 void GDynamicObstacle::Update(float updateTime)
 {
 	GObstacle::Update(updateTime);

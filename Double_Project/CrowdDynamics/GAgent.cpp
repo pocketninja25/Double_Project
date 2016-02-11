@@ -206,6 +206,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	CVector2 myPos = GetPosition();
 	GIntPair coord = influenceMap->GetGridSquareFromPosition(myPos);
 
+	GIntPair gridCoord[Dir_Size];
 	CVector2 gridCentre[Dir_Size]; //Stores Position of square
 	float gridHeight[Dir_Size];
 	CVector2 gridFlow[Dir_Size];
@@ -217,13 +218,23 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	{
 		for (int j = -1; j <= 1; j++)
 		{
+			gridCoord[count] = GIntPair(coord.x + i, coord.y + j);
+			gridCentre[count] = influenceMap->GetSquareCentre(gridCoord[count]);
 
-			gridCentre[count] = influenceMap->GetSquareCentre(coord.x + i, coord.y + j);
+			//Get blocking data
+			gridIsBlocked[count] = influenceMap->GetIsBlocked(gridCoord[count]);	//Set based on influence data
 
+			if (!gridIsBlocked[count])	//If influence data says the grid is not blocked - consult the obstacle data instead
+			{
+				gridIsBlocked[count] = GSceneManager::GetInstance()->GetPositionBlockedByObstacle(gridCentre[count]);
+			}
 
+			//Get Flow Data
+			gridFlow[count] = influenceMap->GetFlow(gridCoord[count]);
+			
 			//TODO: PERFORM BETTER CALCULATION FOR HEIGHT (SOME FORM OF GRADIENT - remove the unused METHODs)
 			//METHOD 1: GET THE DIRECT INFLUENCE VALUE
-			gridHeight[count] = influenceMap->GetValue(coord.x + i, coord.y + j);
+			gridHeight[count] = influenceMap->GetValue(gridCoord[count]);
 
 			//METHOD 2: CALCULATE AN average of the next x squares
 			int maxSquaresPerSecond = static_cast<int>(m_Velocity + 1);	//Consider the 'next' x squares and calculate an average
@@ -234,13 +245,6 @@ void GAgent::PerformGlobalCollisionAvoidance()
 			}
 			accumulation /= maxSquaresPerSecond;
 			gridHeight[count] = accumulation;
-
-
-			//Get Flow Data
-			gridFlow[count] = influenceMap->GetFlow(coord.x + i, coord.y + j);
-
-			//Get blocking data
-			gridIsBlocked[count] = influenceMap->GetIsBlocked(coord.x + i, coord.y + j);
 
 			count++;
 		}
@@ -266,6 +270,7 @@ void GAgent::PerformGlobalCollisionAvoidance()
 	{
 		if (!gridIsBlocked[i])	//No point testing other conditions if the grid square is blocked
 		{
+
 			//Apply Limitation logic to decide whether this square is a viable target
 			CVector2 toSquare = gridCentre[i] - myPos;
 			toSquare.Normalise();

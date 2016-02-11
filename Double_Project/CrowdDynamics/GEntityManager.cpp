@@ -107,12 +107,15 @@ UID GEntityManager::AddAgent(std::string blueprintFile, bool overwriteStartLocat
 		blueprint.position = newStartLocation;
 	}
 
-	//TODO: finish this
-	//do
-	//{
-	//	GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
-	//	influenceMap->GetGridSquareFromPosition()
-	//} while ();
+	//If the position or destination are blocked, randomise a new value
+	while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(blueprint.position))
+	{
+		blueprint.position = GetRandomDestination();
+	}
+	while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(blueprint.destination))
+	{
+		blueprint.destination = GetRandomDestination();
+	}
 
 	GAgent* newAgent = new GAgent(blueprint);
 	if (newAgent->IsActive())
@@ -171,7 +174,11 @@ void GEntityManager::Update(float updateTime)
 		//Check if reached dest then give new random dest if true
 		if (agent.second->HasReachedDestination())
 		{
-			agent.second->SetNewDestination(this->GetRandomDestination());
+			do
+			{
+				agent.second->SetNewDestination(this->GetRandomDestination());
+
+			} while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(agent.second->GetDestination()));
 		}
 	}
 }

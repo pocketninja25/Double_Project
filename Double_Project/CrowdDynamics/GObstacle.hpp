@@ -40,6 +40,8 @@ public:
 	CVector2 GetPosition();
 	CVector2 GetFacingVector();
 
+	bool ContainsPosition(CVector2 position);
+
 	//***************************
 	// Setters/Mutators
 	//***************************
@@ -48,6 +50,7 @@ public:
 	// Other Functions
 	//***************************
 	virtual void Update(float updateTime);
+
 
 #ifdef _DEBUG
 	virtual std::string ToString();

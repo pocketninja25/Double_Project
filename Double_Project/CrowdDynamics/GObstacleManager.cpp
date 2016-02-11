@@ -33,6 +33,25 @@ UID GObstacleManager::AddStaticObstacle(std::string obstacleBlueprintFile, CVect
 	return m_StaticObstacles.back()->GetUID();
 }
 
+bool GObstacleManager::PositionBlocked(CVector2 position)
+{
+	for (auto obstacle : m_StaticObstacles)
+	{
+		if (obstacle->ContainsPosition(position))
+		{
+			return true;
+		}
+	}
+	for (auto obstacle : m_DynamicObstacles)
+	{
+		if (obstacle->ContainsPosition(position))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void GObstacleManager::Update(float updateTime)
 {
 	for (auto obstacle : m_StaticObstacles)

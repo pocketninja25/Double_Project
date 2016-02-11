@@ -42,6 +42,8 @@ public:
 	UID AddStaticObstacle(std::string obstacleBlueprintFile, CVector2 position );
 	//void AddDynamicObstacle(/*SomeObstacleDetails*/);
 
+	bool PositionBlocked(CVector2 position);
+
 	//***************************
 	// Other Functions
 	//***************************
