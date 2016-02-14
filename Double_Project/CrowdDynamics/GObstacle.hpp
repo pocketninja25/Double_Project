@@ -39,8 +39,11 @@ public:
 	//***************************
 	CVector2 GetPosition();
 	CVector2 GetFacingVector();
+	CMatrix3x3 GetMatrix();
 
 	bool ContainsPosition(CVector2 position);
+
+	GObstacleTemplate* GetTemplate();
 
 	//***************************
 	// Setters/Mutators

@@ -1,9 +1,11 @@
 #include "GSceneManager.hpp"
+#include "GSceneManager.hpp"
 
 #include "GEntityManager.hpp"
 #include "GObstacleManager.hpp"
 #include "GAgent.hpp"
 #include "GWorldImporter.hpp"
+#include "GObstacle.hpp"
 
 GSceneManager* GSceneManager::mManager_Scene = 0;
 
@@ -197,9 +199,30 @@ GInfluenceMap * GSceneManager::GetInfluenceMap()
 	return m_InfluenceMap;
 }
 
+std::vector<UID> GSceneManager::GetObstacleUIDs()
+{
+	return mManager_Obstacle->GetObstacleUIDs();
+}
+
+std::vector<std::string> GSceneManager::GetObstacleMeshes()
+{
+	return mManager_Obstacle->GetObstacleMeshes();
+}
+
+bool GSceneManager::GetObstacleMesh(UID requestedUID, std::string & mesh)
+{
+	return mManager_Obstacle->GetObstacleMesh(requestedUID, mesh);	//If the obstacle can be found, mesh is populated - true/false is then returned for success
+
+}
+
 bool GSceneManager::GetPositionBlockedByObstacle(CVector2 position)
 {
 	return mManager_Obstacle->PositionBlocked(position);
+}
+
+bool GSceneManager::GetObstacleMatrix(UID requestedUID, CMatrix3x3 & matrix)
+{
+	return mManager_Obstacle->GetObstacleMatrix(requestedUID, matrix);
 }
 
 

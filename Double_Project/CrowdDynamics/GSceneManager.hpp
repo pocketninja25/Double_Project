@@ -84,7 +84,12 @@ public:
 
 	GInfluenceMap* GetInfluenceMap();
 
+	std::vector<UID> GetObstacleUIDs();
+	std::vector<std::string> GetObstacleMeshes();
+	bool GetObstacleMesh(UID requestedUID, std::string &mesh);
 	bool GetPositionBlockedByObstacle(CVector2 position);
+
+	bool GetObstacleMatrix(UID requestedUID, CMatrix3x3 &matrix);
 
 	float GetTimeStep();
 

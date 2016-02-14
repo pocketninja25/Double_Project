@@ -33,6 +33,12 @@ public:
 	//***************************
 	// Getters/Accessors
 	//***************************
+	bool GetObstacleMesh(UID requestedID, std::string& meshFile);
+	bool GetObstacleMatrix(UID requestedID, CMatrix3x3& matrix);
+
+	std::vector<std::string> GetObstacleMeshes();
+
+	std::vector<UID> GetObstacleUIDs();
 
 	//***************************
 	// Setters/Mutators

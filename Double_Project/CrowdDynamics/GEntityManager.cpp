@@ -185,22 +185,23 @@ void GEntityManager::Update(float updateTime)
 
 void GEntityManager::PerformCollisionAvoidance(const std::list<UID>& localAgents)
 {
-	//Check that each UID in the localAgents list is an existing agent
-	std::vector<GAgent*> potentiallyCollidingAgents;
-	GAgent* theAgent;
-	for (auto agentID : localAgents)
-	{
-		if (GetAgent(agentID, theAgent))	//Agent with this UID exists - add the theAgent pointer to the list of potentially colliding agents
-		{
-			potentiallyCollidingAgents.push_back(theAgent);
-		}
-	}
-
-	//One by one perform collision avoidance algorithms on the list of agents
-	for (auto agent : potentiallyCollidingAgents)
-	{
-		agent->GiveLocalAgentsList(potentiallyCollidingAgents);
-	}
+	//TODO: Evaluate the benefits of this collision method - for now disabled to increase speed
+	////Check that each UID in the localAgents list is an existing agent
+	//std::vector<GAgent*> potentiallyCollidingAgents;
+	//GAgent* theAgent;
+	//for (auto agentID : localAgents)
+	//{
+	//	if (GetAgent(agentID, theAgent))	//Agent with this UID exists - add the theAgent pointer to the list of potentially colliding agents
+	//	{
+	//		potentiallyCollidingAgents.push_back(theAgent);
+	//	}
+	//}
+	//
+	////One by one perform collision avoidance algorithms on the list of agents
+	//for (auto agent : potentiallyCollidingAgents)
+	//{
+	//	agent->GiveLocalAgentsList(potentiallyCollidingAgents);
+	//}
 	
 }
 

@@ -11,6 +11,8 @@ class GEntity :	public GObject
 private:
 	CMatrix3x3 m_Matrix;
 
+	float scale;
+
 //---------------------------
 // Public Functions
 //---------------------------

@@ -25,6 +25,11 @@ CVector2 GObstacle::GetFacingVector()
 	return CVector2(m_Matrix.GetRow(1));	//Get the 2nd 'Facing' row of the matrix
 }
 
+CMatrix3x3 GObstacle::GetMatrix()
+{
+	return m_Matrix;
+}
+
 void GObstacle::Update(float updateTime)
 {
 	//GInfluenceMap* influenceMap = GSceneManager::GetInstance()->GetInfluenceMap();
@@ -86,6 +91,11 @@ bool GObstacle::ContainsPosition(CVector2 position)
 
 	}
 	return true;	//Proven not outside therefore obstacle is inside
+}
+
+GObstacleTemplate * GObstacle::GetTemplate()
+{
+	return m_Template;
 }
 
 #ifdef _DEBUG

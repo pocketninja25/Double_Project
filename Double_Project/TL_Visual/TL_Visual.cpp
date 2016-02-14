@@ -206,6 +206,28 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 #endif
 }
 
+void UpdateObstaclesFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& Obstacles)
+{
+	gen::CMatrix3x3 tempObstacleMatrix;
+	float tempModelMat[16];
+
+	for (auto obstacle : Obstacles)
+	{
+		if (crowdEngine->GetObstacleMatrix(obstacle.first, tempObstacleMatrix))
+		{
+			obstacle.second->GetMatrix(tempModelMat);
+			tempModelMat[0] = tempObstacleMatrix.e00;
+			tempModelMat[2] = tempObstacleMatrix.e01;
+			tempModelMat[8] = tempObstacleMatrix.e10;
+			tempModelMat[10] = tempObstacleMatrix.e11;
+			tempModelMat[12] = tempObstacleMatrix.e20;
+			tempModelMat[14] = tempObstacleMatrix.e21;
+			obstacle.second->SetMatrix(tempModelMat);
+		}
+	}
+
+}
+
 void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influenceTiles)
 {
 	GInfluenceMap* influenceMap = crowdEngine->GetInfluenceMap();
@@ -287,6 +309,29 @@ int EngineMain(string worldFile)
 	IMesh* influenceTileMesh = gameEngine->LoadMesh("InfluenceTile.x");
 	IMesh* SkyboxMesh = gameEngine->LoadMesh("Skybox.x");
 
+	std::map<string, IMesh*> obstacleMeshes;
+
+	std::vector<string> meshList = crowdEngine->GetObstacleMeshes();
+
+	for (auto meshString : meshList)
+	{
+		obstacleMeshes.emplace(make_pair(meshString, gameEngine->LoadMesh(meshString)));
+	}
+
+	vector<UID> obstacleUIDs = crowdEngine->GetObstacleUIDs();
+	map<UID, IModel*> obstacles;
+
+	for (auto id : obstacleUIDs)
+	{
+		string thisMeshName;
+		
+		if (crowdEngine->GetObstacleMesh(id, thisMeshName))
+		{
+			obstacles.emplace(id, obstacleMeshes[thisMeshName]->CreateModel());
+		}
+	}
+
+
 	map<UID, IModel*> Agents;
 	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
@@ -356,6 +401,8 @@ int EngineMain(string worldFile)
 
 	//Assign the simulation matrices to the model matrices - first time
 	UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
+	UpdateObstaclesFromCrowdData(crowdEngine, obstacles);
+
 
 	UID holding = -1;
 	crowdEngine->SetPaused(true);
@@ -398,6 +445,7 @@ int EngineMain(string worldFile)
 
 		//Assign the simulation matrices to the model matrices
 		UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
+		UpdateObstaclesFromCrowdData(crowdEngine, obstacles);
 
 
 		if (gameEngine->KeyHit(pauseKey))
@@ -410,6 +458,7 @@ int EngineMain(string worldFile)
 
 												//Assign the simulation matrices to the model matrices
 			UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
+			UpdateObstaclesFromCrowdData(crowdEngine, obstacles);
 
 		}
 		if (gameEngine->KeyHit(Key_N))

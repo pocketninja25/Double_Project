@@ -113,6 +113,8 @@ void GAgent::Update(float updateTime)
 
 	//Move by the movement vector (units per second) modified by update time calculating units this frame
 	matrix.Move2D(m_MovementVector);// *updateTime);
+
+	matrix.Orthogonalise2x2();
 	SetMatrix(matrix);
 
 }
