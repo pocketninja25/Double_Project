@@ -19,6 +19,18 @@ EKeyCode pauseKey = Key_P;
 SWorldBlueprint worldBlueprint;
 float frameTime = 0;
 
+string FindStringFromMesh(IMesh* theMesh, map<string, IMesh*> meshList)
+{
+	for (auto pair : meshList)
+	{
+		if (pair.second == theMesh)
+		{
+			return pair.first;
+		}
+	}
+	return "";	//Not found, return blank string
+}
+
 bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nearestID, I3DEngine* gameEngine, ICamera* cam)
 {
 	CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
@@ -91,7 +103,8 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& ag
 	{
 		if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
 		{
-			float thisScale = /*?*/;
+			float thisScale = meshScales[FindStringFromMesh(agent.second->GetMesh(), meshList)];
+
 			agent.second->GetMatrix(tempModelMat);
 			tempModelMat[0] = tempAgentMat.e00 * thisScale;
 			
@@ -151,6 +164,7 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& ag
 #endif
 }
 
+
 void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*>& agentModels, map<string, float> meshScales, map<string, IMesh*> meshList, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
 	gen::CMatrix3x3 tempAgentMat;
@@ -163,7 +177,7 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 			IModel* thisAgentModel;
 			thisAgentModel = agentModels.at(agentID);
 
-			float thisScale = /*?*/;
+			float thisScale = meshScales[FindStringFromMesh(thisAgentModel->GetMesh(), meshList)];  
 
 			thisAgentModel->GetMatrix(tempModelMat);
 			tempModelMat[0] = tempAgentMat.e00 * thisScale;
@@ -228,8 +242,8 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 #endif
 }
 
-void UpdateObstaclesFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& Obstacles)
-{
+void UpdateObstaclesFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& Obstacles /*, std::map<string, float> meshScales, std::map<string, IMesh*> meshList*/)
+{																						   
 	gen::CMatrix3x3 tempObstacleMatrix;
 	float tempModelMat[16];
 
@@ -237,7 +251,8 @@ void UpdateObstaclesFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>&
 	{
 		if (crowdEngine->GetObstacleMatrix(obstacle.first, tempObstacleMatrix))
 		{
-			float thisScale = /*?*/;
+			/*float thisScale = meshScales[FindStringFromMesh(obstacle.second->GetMesh(), meshList)];*/
+			float thisScale = 1.0f;
 
 			obstacle.second->GetMatrix(tempModelMat);
 			
@@ -281,7 +296,7 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateY(90.0f);
 			influenceTiles[i * worldBlueprint.influenceSubdivisions.x + j]->RotateZ(90.0f);
 
-			if (true)//influence != 0)	//Point the sqare in the direction of influence
+			if (true)//influence != 0)	//Point the square in the direction of influence
 			{
 				direction = influenceMap->GetFlow(i, j);
 
@@ -389,6 +404,7 @@ int EngineMain(string worldFile)
 		if (crowdEngine->GetAgentMeshFile(id, thisMeshName))
 		{
 			Agents.emplace(make_pair(id, agentTLMeshes[thisMeshName]->CreateModel()));
+			Agents[id]->ScaleY(agentMeshScales[thisMeshName]);
 
 #ifdef DirectionVisualiserEnabled
 			DestinationVectors.insert(make_pair(id, vectorMesh->CreateModel()));
