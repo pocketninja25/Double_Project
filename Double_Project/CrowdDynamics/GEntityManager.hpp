@@ -40,8 +40,11 @@ public:
 	//***************************
 	// Getters/Accessors
 	//***************************
+	std::map<std::string, float> GetAgentMeshes();
 	bool GetAgent(UID request, GAgent* &returnedAgent);
 	std::vector<UID> GetAgentUIDs();
+
+	bool GetAgentMeshScale(std::string requestedMesh, float &scale);
 
 	//***************************
 	// Setters/Mutators

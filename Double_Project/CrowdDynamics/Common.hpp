@@ -57,5 +57,6 @@ public:
 	float velocity;
 	float defaultTurningArc;	//In radians
 	float maxGradientTraversal; //Not currently in use
-
+	std::string mesh;
+	float meshScale;
 };

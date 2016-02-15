@@ -11,6 +11,8 @@ class GAgent : public GEntity
 // Private Data Members
 //---------------------------
 private:
+	SAgentBlueprint* m_Blueprint;	//The blueprint used to construct this agent
+
 	//Constants that define movement restrictions
 	float m_Velocity;				//The maximum velocity of the agent in units per second
 	float km_MaxTurn;				//The defualt maximum rotation an agent can perform per second (in radians)
@@ -50,7 +52,7 @@ public:
 	//***************************
 	// Constructors/Destructors
 	//***************************
-	GAgent(SAgentBlueprint &agentDetails);
+	GAgent(SAgentBlueprint* agentDetails);
 	GAgent(CVector2 iPosition, CVector2 iDestination, bool iIsActive = true);	//Deprecated
 	GAgent(float iXPos = 0.0f, float iYPos = 0.0f, float iXDest = 0.0f, float iYDest = 0.0f, bool iIsActive = true);	//Deprecated
 
@@ -64,6 +66,9 @@ public:
 	CVector2 GetDesiredMovement();
 
 	CVector2 GetDestination();
+
+	std::string GetMeshFile();
+	float GetMeshScale();
 
 	//***************************
 	// Setters/Mutators

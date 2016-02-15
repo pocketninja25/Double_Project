@@ -36,7 +36,7 @@ public:
 	bool GetObstacleMesh(UID requestedID, std::string& meshFile);
 	bool GetObstacleMatrix(UID requestedID, CMatrix3x3& matrix);
 
-	std::vector<std::string> GetObstacleMeshes();
+	std::map<std::string, float> GetObstacleMeshes();
 
 	std::vector<UID> GetObstacleUIDs();
 

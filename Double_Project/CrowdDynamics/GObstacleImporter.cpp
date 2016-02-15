@@ -69,6 +69,7 @@ GObstacleTemplate* GObstacleImporter::LoadBlueprint(std::string fileName)
 		
 		traversalElt = rootElement->FirstChildElement("Mesh");
 		blueprintBuilder->SetMeshFile(traversalElt->Attribute("file"));
+		blueprintBuilder->SetMeshScale(static_cast<float>(atof(traversalElt->Attribute("scale"))));
 
 		m_LoadedBlueprints.emplace(std::make_pair(fileName, blueprintBuilder));
 

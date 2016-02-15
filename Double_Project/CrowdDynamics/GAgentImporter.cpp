@@ -18,12 +18,12 @@ GAgentImporter::~GAgentImporter()
 }
 
 
-SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
+SAgentBlueprint* GAgentImporter::LoadBlueprint(std::string fileName)
 {
 	fileName = "..//CrowdDynamics//" + fileName;
 	if (m_LoadedBlueprints.count(fileName))
 	{
-		return SAgentBlueprint(*m_LoadedBlueprints.at(fileName));	//Return a copy of the blueprint
+		return m_LoadedBlueprints.at(fileName);	//Return a copy of the blueprint pointer
 	}
 	
 	//Blueprint not already loaded, load it
@@ -64,9 +64,15 @@ SAgentBlueprint GAgentImporter::LoadBlueprint(std::string fileName)
 			blueprintBuilder->destination.x = static_cast<float>(atof(pos->Attribute("x")));
 			blueprintBuilder->destination.y = static_cast<float>(atof(pos->Attribute("y")));
 		}
+
+		TiXmlElement* meshElement = blueprintElement->FirstChildElement("Mesh");
+		blueprintBuilder->mesh = meshElement->Attribute("file");
+		blueprintBuilder->meshScale = atoi(meshElement->Attribute("scale"));
+			
+
 		m_LoadedBlueprints.emplace(make_pair(fileName, blueprintBuilder));
-		return SAgentBlueprint(*blueprintBuilder);	//Return a copy of the blueprint
+		return blueprintBuilder;	//Return a copy of the blueprint pointer
 	}
 
-	return SAgentBlueprint();	//Fail, return a blank blueprint
+	return nullptr;	//Fail, return null pointer
 }

@@ -75,17 +75,21 @@ public:
 	CVector2 GetWorldSize();
 	SWorldBlueprint GetWorldBlueprint();
 
+	std::map<std::string, float> GetAgentMeshes();
+
 	std::vector<UID> GetAgentUIDs();
 
 	bool GetAgentMatrix(UID requestedUID, CMatrix3x3 &matrix);
 	bool GetAgentPosition(UID requestedUID, CVector2 &position);
 	bool GetAgentDesiredVector(UID requestedUID, CVector2 &desiredVector);
 	bool GetAgentDestination(UID requestedUID, CVector2 &destination);
+	bool GetAgentMeshFile(UID requestedUID, std::string &meshFile);
+	bool GetAgentMeshScale(std::string requestedMesh, float &scale);
 
 	GInfluenceMap* GetInfluenceMap();
 
 	std::vector<UID> GetObstacleUIDs();
-	std::vector<std::string> GetObstacleMeshes();
+	std::map<std::string, float> GetObstacleMeshes();
 	bool GetObstacleMesh(UID requestedUID, std::string &mesh);
 	bool GetPositionBlockedByObstacle(CVector2 position);
 

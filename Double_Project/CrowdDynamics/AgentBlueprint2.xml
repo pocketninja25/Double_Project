@@ -9,4 +9,5 @@
   velocity="30.0">
   <Destination x ="0.0" y ="0.0"/>
   <Position x="0.0" y="0.0"/>
+  <Mesh file="Box2.x" scale="1.0"/>
 </AgentBLueprint>

@@ -24,6 +24,23 @@ GEntityManager::~GEntityManager()
 	delete m_AgentBlueprintLoader;
 }
 
+std::map<std::string, float> GEntityManager::GetAgentMeshes()
+{
+	std::map<std::string, float> strings;
+	for (auto agent : m_ActiveAgents)
+	{
+		std::string thisMesh = agent.second->GetMeshFile();
+		strings[thisMesh] = agent.second->GetMeshScale();	//[] notation inserts if the value is not found
+		
+	}
+	for (auto agent : m_InactiveAgents)
+	{
+		std::string thisMesh = agent.second->GetMeshFile();
+		strings[thisMesh] = agent.second->GetMeshScale();	//[] notation inserts if the value is not found
+	}
+	return strings;
+}
+
 bool GEntityManager::GetAgent(UID request, GAgent* &returnedAgent)
 {
 
@@ -66,6 +83,15 @@ std::vector<UID> GEntityManager::GetAgentUIDs()
 	return agentList;
 }
 
+bool GEntityManager::GetAgentMeshScale(std::string requestedMesh, float & scale)
+{
+	SAgentBlueprint* theBlueprint = m_AgentBlueprintLoader->LoadBlueprint(requestedMesh);
+
+	scale = theBlueprint->meshScale;
+
+	return true;
+}
+
 UID GEntityManager::AddAgent(CVector2 iPosition, bool iIsActive)
 {
 	//Construct a new agent
@@ -92,29 +118,29 @@ UID GEntityManager::AddAgent(float iXPos, float iYPos, bool iIsActive)
 
 UID GEntityManager::AddAgent(std::string blueprintFile, bool overwriteStartLocation, CVector2 newStartLocation)
 {
-	SAgentBlueprint blueprint = m_AgentBlueprintLoader->LoadBlueprint(blueprintFile);
+	SAgentBlueprint* blueprint = m_AgentBlueprintLoader->LoadBlueprint(blueprintFile);
 
-	if (blueprint.randomDestination)
+	if (blueprint->randomDestination)
 	{
-		blueprint.destination = GetRandomDestination();
+		blueprint->destination = GetRandomDestination();
 	}
-	if (blueprint.randomPosition)
+	if (blueprint->randomPosition)
 	{
-		blueprint.position = GetRandomDestination();
+		blueprint->position = GetRandomDestination();
 	}
 	if(overwriteStartLocation)
 	{
-		blueprint.position = newStartLocation;
+		blueprint->position = newStartLocation;
 	}
 
 	//If the position or destination are blocked, randomise a new value
-	while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(blueprint.position))
+	while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(blueprint->position))
 	{
-		blueprint.position = GetRandomDestination();
+		blueprint->position = GetRandomDestination();
 	}
-	while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(blueprint.destination))
+	while (GSceneManager::GetInstance()->GetPositionBlockedByObstacle(blueprint->destination))
 	{
-		blueprint.destination = GetRandomDestination();
+		blueprint->destination = GetRandomDestination();
 	}
 
 	GAgent* newAgent = new GAgent(blueprint);

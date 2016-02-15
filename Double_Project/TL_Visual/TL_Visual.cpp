@@ -80,20 +80,31 @@ void CameraControls(I3DEngine* gameEngine, ICamera* cam)
 	}
 }
 
-void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AGENTS, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
+void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& agentModels, map<string, float> meshScales, map<string, IMesh*> meshList, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
+	//TODO: Find correct value for thisScale 
+
 	gen::CMatrix3x3 tempAgentMat;
 	float tempModelMat[16];
 
-	for (auto agent : AGENTS)
+	for (auto agent : agentModels)
 	{
 		if (crowdEngine->GetAgentMatrix(agent.first, tempAgentMat))
 		{
+			float thisScale = /*?*/;
 			agent.second->GetMatrix(tempModelMat);
-			tempModelMat[0] = tempAgentMat.e00;
-			tempModelMat[2] = tempAgentMat.e01;
-			tempModelMat[8] = tempAgentMat.e10;
-			tempModelMat[10] = tempAgentMat.e11;
+			tempModelMat[0] = tempAgentMat.e00 * thisScale;
+			
+			tempModelMat[2] = tempAgentMat.e01 * thisScale;
+
+			
+
+
+
+			tempModelMat[8] = tempAgentMat.e10 * thisScale;
+			
+			tempModelMat[10] = tempAgentMat.e11 * thisScale;
+
 			tempModelMat[12] = tempAgentMat.e20;
 			tempModelMat[14] = tempAgentMat.e21;
 			agent.second->SetMatrix(tempModelMat);
@@ -106,11 +117,11 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AG
 	{
 		if (crowdEngine->GetAgentDestination(destinationVector.first, tempDestination))
 		{
-			IModel* thisAgentModel = AGENTS.at(destinationVector.first);
+			IModel* thisAgentModel = agentModels.at(destinationVector.first);
 
-			//Set the vector model to the agent model's position
+			//Set the vector model to the id model's position
 			destinationVector.second->SetPosition(thisAgentModel->GetX(),
-				thisAgentModel->GetY() + 10.0f,		//+10 to have to vector model rest atop the agent model
+				thisAgentModel->GetY() + 10.0f,		//+10 to have to vector model rest atop the id model
 				thisAgentModel->GetZ());
 
 			destinationVector.second->LookAt(tempDestination.x, 10.0f, tempDestination.y);
@@ -125,11 +136,11 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AG
 		//Will only fetch the results of global collision avoidance
 		if (crowdEngine->GetAgentDesiredVector(movementVector.first, tempDestination))
 		{
-			IModel* thisAgentModel = AGENTS.at(movementVector.first);
+			IModel* thisAgentModel = agentModels.at(movementVector.first);
 
-			//Set the vector model to the agent model's position
+			//Set the vector model to the id model's position
 			movementVector.second->SetPosition(thisAgentModel->GetX(),
-				thisAgentModel->GetY() + 11.0f,		//+11 to have to vector model rest atop the agent model
+				thisAgentModel->GetY() + 11.0f,		//+11 to have to vector model rest atop the id model
 				thisAgentModel->GetZ());
 
 			movementVector.second->LookAt(tempDestination.x + thisAgentModel->GetX(), 10.0f, tempDestination.y + thisAgentModel->GetZ());
@@ -140,22 +151,33 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& AG
 #endif
 }
 
-void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*>& AGENTS, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
+void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*>& agentModels, map<string, float> meshScales, map<string, IMesh*> meshList, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
 	gen::CMatrix3x3 tempAgentMat;
 
 	if (crowdEngine->GetAgentMatrix(agentID, tempAgentMat))
 	{
-		try		//Find the agent 'holding' and set the holding skin
+		try		//Find the id 'holding' and set the holding skin
 		{
 			float tempModelMat[16];
 			IModel* thisAgentModel;
-			thisAgentModel = AGENTS.at(agentID);
+			thisAgentModel = agentModels.at(agentID);
+
+			float thisScale = /*?*/;
+
 			thisAgentModel->GetMatrix(tempModelMat);
-			tempModelMat[0] = tempAgentMat.e00;
-			tempModelMat[2] = tempAgentMat.e01;
-			tempModelMat[8] = tempAgentMat.e10;
-			tempModelMat[10] = tempAgentMat.e11;
+			tempModelMat[0] = tempAgentMat.e00 * thisScale;
+
+			tempModelMat[2] = tempAgentMat.e01 * thisScale;
+
+
+
+
+
+			tempModelMat[8] = tempAgentMat.e10 * thisScale;
+
+			tempModelMat[10] = tempAgentMat.e11 * thisScale;
+
 			tempModelMat[12] = tempAgentMat.e20;
 			tempModelMat[14] = tempAgentMat.e21;
 			thisAgentModel->SetMatrix(tempModelMat);
@@ -173,10 +195,10 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 	{
 		IModel* thisVectorModel;
 		IModel* thisAgentModel;
-		thisAgentModel = AGENTS.at(agentID);
+		thisAgentModel = agentModels.at(agentID);
 		thisVectorModel = DestinationVectors.at(agentID);
 		
-		//Set the vector model to the agent model's position
+		//Set the vector model to the id model's position
 		thisVectorModel->SetPosition(thisAgentModel->GetX(),
 		thisAgentModel->GetY() + 10.0f,
 		thisAgentModel->GetZ());
@@ -191,10 +213,10 @@ void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, 
 	{
 		IModel* thisVectorModel;
 		IModel* thisAgentModel;
-		thisAgentModel = AGENTS.at(agentID);
+		thisAgentModel = agentModels.at(agentID);
 		thisVectorModel = MovementVectors.at(agentID);
 
-		//Set the vector model to the agent model's position
+		//Set the vector model to the id model's position
 		thisVectorModel->SetPosition(thisAgentModel->GetX(),
 			thisAgentModel->GetY() + 10.0f,
 			thisAgentModel->GetZ());
@@ -215,11 +237,22 @@ void UpdateObstaclesFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>&
 	{
 		if (crowdEngine->GetObstacleMatrix(obstacle.first, tempObstacleMatrix))
 		{
+			float thisScale = /*?*/;
+
 			obstacle.second->GetMatrix(tempModelMat);
-			tempModelMat[0] = tempObstacleMatrix.e00;
-			tempModelMat[2] = tempObstacleMatrix.e01;
-			tempModelMat[8] = tempObstacleMatrix.e10;
-			tempModelMat[10] = tempObstacleMatrix.e11;
+			
+			tempModelMat[0] = tempObstacleMatrix.e00 * thisScale;
+			
+			tempModelMat[2] = tempObstacleMatrix.e01 * thisScale;
+
+			
+
+
+
+			tempModelMat[8] = tempObstacleMatrix.e10 * thisScale;
+			
+			tempModelMat[10] = tempObstacleMatrix.e11 * thisScale;
+
 			tempModelMat[12] = tempObstacleMatrix.e20;
 			tempModelMat[14] = tempObstacleMatrix.e21;
 			obstacle.second->SetMatrix(tempModelMat);
@@ -302,41 +335,79 @@ int EngineMain(string worldFile)
 
 	IFont* mousePosFont = gameEngine->LoadFont("Font1.bmp");
 
-	IMesh* agentMesh = gameEngine->LoadMesh("Box.x");
-	IMesh* agent2Mesh = gameEngine->LoadMesh("Box2.x");
 	IMesh* floorTileMesh = gameEngine->LoadMesh("FloorTile.x");
 	IMesh* vectorMesh = gameEngine->LoadMesh("Vector.x");
 	IMesh* influenceTileMesh = gameEngine->LoadMesh("InfluenceTile.x");
 	IMesh* SkyboxMesh = gameEngine->LoadMesh("Skybox.x");
 
-	std::map<string, IMesh*> obstacleMeshes;
+	////////////////////////
+	// Obstacles
+	////////////////////////
+	std::map<string, float> obstacleMeshList = crowdEngine->GetObstacleMeshes();
+	std::map<string, IMesh*> obstacleTLMeshes;
 
-	std::vector<string> meshList = crowdEngine->GetObstacleMeshes();
-
-	for (auto meshString : meshList)
+	for (auto mesh : obstacleMeshList)	//Load the TL Meshes
 	{
-		obstacleMeshes.emplace(make_pair(meshString, gameEngine->LoadMesh(meshString)));
+		obstacleTLMeshes.emplace(make_pair(mesh.first, gameEngine->LoadMesh(mesh.first)));
 	}
 
-	vector<UID> obstacleUIDs = crowdEngine->GetObstacleUIDs();
-	map<UID, IModel*> obstacles;
+	vector<UID> obstacleUIDs = crowdEngine->GetObstacleUIDs();	//Get a list of all the obstacles in the scene
+	map<UID, IModel*> obstacleModels;
 
-	for (auto id : obstacleUIDs)
+	for (auto id : obstacleUIDs)	//Construct a TL model for each obstacle
 	{
 		string thisMeshName;
-		
 		if (crowdEngine->GetObstacleMesh(id, thisMeshName))
 		{
-			obstacles.emplace(id, obstacleMeshes[thisMeshName]->CreateModel());
+			obstacleModels.emplace(id, obstacleTLMeshes[thisMeshName]->CreateModel());
 		}
 	}
 
+	////////////////////////
+	// Agents
+	////////////////////////
+	
+	std::map<string, float> agentMeshScales = crowdEngine->GetAgentMeshes();
+	std::map<string, IMesh*> agentTLMeshes;
+
+	for (auto mesh : agentMeshScales)
+	{
+		agentTLMeshes.emplace(make_pair(mesh.first, gameEngine->LoadMesh(mesh.first)));
+	}
 
 	map<UID, IModel*> Agents;
 	map<UID, IModel*> DestinationVectors;
 	map<UID, IModel*> MovementVectors;
+
+	vector<UID> AgentIDs = crowdEngine->GetAgentUIDs();
+
+	for (auto id : AgentIDs)
+	{
+		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
+		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
+		string thisMeshName;
+		if (crowdEngine->GetAgentMeshFile(id, thisMeshName))
+		{
+			Agents.emplace(make_pair(id, agentTLMeshes[thisMeshName]->CreateModel()));
+
+#ifdef DirectionVisualiserEnabled
+			DestinationVectors.insert(make_pair(id, vectorMesh->CreateModel()));
+			MovementVectors.insert(make_pair(id, vectorMesh->CreateModel()));
+#endif
+		}
+	}
+
+#ifdef DirectionVisualiserEnabled
+	for (auto item : MovementVectors)
+	{
+		item.second->SetSkin("vectortex2.jpg");
+	}
+#endif
+
+
+
 	IModel** FloorTiles;
-	IModel* SkyBox = SkyboxMesh->CreateModel(worldBlueprint.WorldSize.x / 2.0f, -1000.0f, worldBlueprint.WorldSize.y);
+	IModel* SkyBox = SkyboxMesh->CreateModel(worldBlueprint.WorldSize.x / 1.5f, -1000.0f, worldBlueprint.WorldSize.y);
 	SkyBox->ScaleX(worldBlueprint.WorldSize.x / 300.0f);
 	SkyBox->ScaleZ(worldBlueprint.WorldSize.y / 300.0f);
 
@@ -369,24 +440,6 @@ int EngineMain(string worldFile)
 #endif
 
 
-
-	vector<UID> AgentIDs = crowdEngine->GetAgentUIDs();
-
-	for (auto agent : AgentIDs)
-	{
-		//Use the Y Column as the height (0 column), CrowdDynamics uses X and Y as this will use X and Z
-		//Where the model spawns is irrelevant as it's matrix is built from the CrowdDynamics matrix
-		Agents.insert(make_pair(agent, agentMesh->CreateModel()));
-#ifdef DirectionVisualiserEnabled
-		DestinationVectors.insert(make_pair(agent, vectorMesh->CreateModel()));
-		MovementVectors.insert(make_pair(agent, vectorMesh->CreateModel()));
-#endif
-	}
-	for (auto item : MovementVectors)
-	{
-		item.second->SetSkin("vectortex2.jpg");
-	}
-
 	ICamera* cam = gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
 	//ICamera* cam = gameEngine->CreateCamera(kManual, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
 	cam->RotateX(90.0f);
@@ -400,8 +453,8 @@ int EngineMain(string worldFile)
 	string tempString;
 
 	//Assign the simulation matrices to the model matrices - first time
-	UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
-	UpdateObstaclesFromCrowdData(crowdEngine, obstacles);
+	UpdateAgentsFromCrowdData(crowdEngine, Agents, agentMeshScales,agentTLMeshes, DestinationVectors, MovementVectors);
+	UpdateObstaclesFromCrowdData(crowdEngine, obstacleModels);
 
 
 	UID holding = -1;
@@ -444,8 +497,8 @@ int EngineMain(string worldFile)
 #endif
 
 		//Assign the simulation matrices to the model matrices
-		UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
-		UpdateObstaclesFromCrowdData(crowdEngine, obstacles);
+		UpdateAgentsFromCrowdData(crowdEngine, Agents, agentMeshScales, agentTLMeshes, DestinationVectors, MovementVectors);
+		UpdateObstaclesFromCrowdData(crowdEngine, obstacleModels);
 
 
 		if (gameEngine->KeyHit(pauseKey))
@@ -457,8 +510,8 @@ int EngineMain(string worldFile)
 			crowdEngine->PerformOneTimeStep();	//Update the CrowdDynamics simulation
 
 												//Assign the simulation matrices to the model matrices
-			UpdateAgentsFromCrowdData(crowdEngine, Agents, DestinationVectors, MovementVectors);
-			UpdateObstaclesFromCrowdData(crowdEngine, obstacles);
+			UpdateAgentsFromCrowdData(crowdEngine, Agents, agentMeshScales, agentTLMeshes, DestinationVectors, MovementVectors);
+			UpdateObstaclesFromCrowdData(crowdEngine, obstacleModels);
 
 		}
 		if (gameEngine->KeyHit(Key_N))
@@ -486,7 +539,7 @@ int EngineMain(string worldFile)
 						cout << agentString << endl;
 					}
 #endif
-					try		//Find the agent 'holding' and set the holding skin
+					try		//Find the id 'holding' and set the holding skin
 					{
 						Agents.at(holding)->SetSkin("tiles3.jpg");
 
@@ -502,7 +555,7 @@ int EngineMain(string worldFile)
 				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
 				crowdEngine->SetAgentPosition(holding, CVector2(tempPos.x, tempPos.z));
 
-				UpdateAgentFromCrowdData(holding, crowdEngine, Agents, DestinationVectors, MovementVectors);
+				UpdateAgentFromCrowdData(holding, crowdEngine, Agents, agentMeshScales, agentTLMeshes, DestinationVectors, MovementVectors);
 
 			}
 		}
@@ -576,8 +629,18 @@ int EngineMain(string worldFile)
 		if (gameEngine->KeyHit(Key_Space))
 		{
 			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
-			UID newID = crowdEngine->AddAgent("AgentBlueprint1.xml", true, CVector2(tempPos.x, tempPos.z));
-			Agents.insert(make_pair(newID, agentMesh->CreateModel(tempPos.x, 0.0f, tempPos.z)));
+			string thisBlueprint = "AgentBlueprint1.xml";
+			UID newID = crowdEngine->AddAgent(thisBlueprint, true, CVector2(tempPos.x, tempPos.z));
+			if (agentMeshScales.count(thisBlueprint) == 0)	//This blueprint does not already exist on the TL side
+			{
+				float scale;
+				if (crowdEngine->GetAgentMeshScale(thisBlueprint, scale))
+				{
+					agentTLMeshes.emplace(thisBlueprint, gameEngine->LoadMesh(thisBlueprint));
+					agentMeshScales[thisBlueprint] = scale;
+				}
+			}
+			Agents.insert(make_pair(newID, agentTLMeshes[thisBlueprint]->CreateModel(tempPos.x, 0.0f, tempPos.z)));
 #ifdef DirectionVisualiserEnabled
 			DestinationVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 10.0f, tempPos.z)));
 			MovementVectors.insert(make_pair(newID, vectorMesh->CreateModel(tempPos.x, 11.0f, tempPos.z)));

@@ -1,18 +1,19 @@
 #include "GAgent.hpp"
 #include "GSceneManager.hpp"
 
-GAgent::GAgent(SAgentBlueprint &agentDetails) :
-	GEntity(agentDetails.position, agentDetails.startsActive),
-	m_Destination(agentDetails.destination),
-	m_Velocity(agentDetails.velocity),
+GAgent::GAgent(SAgentBlueprint* agentDetails) :
+	GEntity(agentDetails->position, agentDetails->startsActive),
+	m_Blueprint(agentDetails),
+	m_Destination(agentDetails->destination),
+	m_Velocity(agentDetails->velocity),
 #ifdef _DEBUG
 	dm_BeingWatched(false),
 #endif
-	km_MaxTurn(agentDetails.defaultTurningArc),
+	km_MaxTurn(agentDetails->defaultTurningArc),
 	m_TempMaxTurn(km_MaxTurn),
 	m_PreviousMovementVect(CVector2(0.0f, 0.0f)),
-	m_Radius(agentDetails.radius),
-	m_MaxGradientTraversal(agentDetails.maxGradientTraversal),
+	m_Radius(agentDetails->radius),
+	m_MaxGradientTraversal(agentDetails->maxGradientTraversal),
 	m_StillTimer(0.0f)
 {
 	m_DesiredMovementVect = CVector2(GetPosition(), m_Destination);
@@ -71,6 +72,17 @@ CVector2 GAgent::GetDesiredMovement()
 CVector2 GAgent::GetDestination()
 {
 	return m_Destination;
+}
+
+std::string GAgent::GetMeshFile()
+{
+	return m_Blueprint->mesh;
+}
+
+float GAgent::GetMeshScale()
+{
+	return m_Blueprint->meshScale;
+
 }
 
 void GAgent::SetNewDestination(CVector2 newDestination)

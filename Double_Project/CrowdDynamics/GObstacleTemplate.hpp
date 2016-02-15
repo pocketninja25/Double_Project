@@ -23,6 +23,7 @@ private:
 	CVector2 m_TopRight;	//The point at the upper right point of the "bounding box" around the obstacle
 
 	std::string m_MeshFile;	//The mesh for the crowdengine user to load
+	float m_MeshScale;
 
 //---------------------------
 // Public Functions
@@ -59,6 +60,10 @@ public:
 	{
 		return m_MeshFile;
 	}
+	float GetMeshScale()
+	{
+		return m_MeshScale;
+	}
 
 	//***************************
 	// Setters/Mutators
@@ -67,6 +72,7 @@ public:
 	void AddVertexPair(GIntPair vertexPair);
 
 	void SetMeshFile(std::string iMeshFile);
+	void SetMeshScale(float iMeshScale);
 
 	//***************************
 	// Other Functions

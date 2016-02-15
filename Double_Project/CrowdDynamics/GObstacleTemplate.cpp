@@ -61,6 +61,11 @@ void GObstacleTemplate::SetMeshFile(std::string iMeshFile)
 	m_MeshFile = iMeshFile;
 }
 
+void GObstacleTemplate::SetMeshScale(float iMeshScale)
+{
+	m_MeshScale = iMeshScale;
+}
+
 void GObstacleTemplate::Update(float updateTime)
 {
 }

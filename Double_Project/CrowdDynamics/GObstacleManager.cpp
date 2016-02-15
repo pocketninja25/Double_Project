@@ -69,42 +69,42 @@ bool GObstacleManager::GetObstacleMatrix(UID requestedID, CMatrix3x3& matrix)
 	return false;
 }
 
-std::vector<std::string> GObstacleManager::GetObstacleMeshes()
+std::map<std::string, float> GObstacleManager::GetObstacleMeshes()
 {
-	std::vector<std::string> strings;
+	std::map<std::string, float> meshes;
 	for (auto obstacle : m_StaticObstacles)
 	{
-		std::string thisMesh = obstacle->GetTemplate()->GetMeshFile();
+		std::string thisMeshFile = obstacle->GetTemplate()->GetMeshFile();
 		bool found = false;
-		for (auto mesh : strings)
+		for (auto mesh : meshes)
 		{
-			if (mesh == thisMesh)
+			if (mesh.first == thisMeshFile)
 			{
 				found = true;
 			}
 		}
 		if (!found)
 		{
-			strings.push_back(thisMesh);
+			meshes.emplace(thisMeshFile, obstacle->GetTemplate()->GetMeshScale());
 		}
 	}
 	for (auto obstacle : m_DynamicObstacles)
 	{
-		std::string thisMesh = obstacle->GetTemplate()->GetMeshFile();
+		std::string thisMeshFile = obstacle->GetTemplate()->GetMeshFile();
 		bool found = false;
-		for (auto mesh : strings)
+		for (auto mesh : meshes)
 		{
-			if (mesh == thisMesh)
+			if (mesh.first == thisMeshFile)
 			{
 				found = true;
 			}
 		}
 		if (!found)
 		{
-			strings.push_back(thisMesh);
+			meshes.emplace(thisMeshFile, obstacle->GetTemplate()->GetMeshScale());
 		}
 	}
-	return strings;
+	return meshes;
 }
 
 std::vector<UID> GObstacleManager::GetObstacleUIDs()

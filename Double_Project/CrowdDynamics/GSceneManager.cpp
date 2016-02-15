@@ -1,5 +1,6 @@
 #include "GSceneManager.hpp"
 #include "GSceneManager.hpp"
+#include "GSceneManager.hpp"
 
 #include "GEntityManager.hpp"
 #include "GObstacleManager.hpp"
@@ -141,6 +142,11 @@ SWorldBlueprint GSceneManager::GetWorldBlueprint()
 	return m_WorldBlueprint;
 }
 
+std::map<std::string, float> GSceneManager::GetAgentMeshes()
+{
+	return mManager_Entity->GetAgentMeshes();
+}
+
 std::vector<UID> GSceneManager::GetAgentUIDs()
 {
 	return mManager_Entity->GetAgentUIDs();
@@ -194,6 +200,23 @@ bool GSceneManager::GetAgentDestination(UID requestedUID, CVector2 & destination
 	return false;
 }
 
+bool GSceneManager::GetAgentMeshFile(UID requestedUID, std::string & meshFile)
+{
+	GAgent* foundAgent = 0;	//The variable to save the agent should they be found
+	if (mManager_Entity->GetAgent(requestedUID, foundAgent))	//If the agent can be found, foundAgent is populated (notNull)
+	{
+		meshFile = foundAgent->GetMeshFile();
+		return true;
+	}
+	//No helpful data format for failed GetMatrix, just return existing desiredVector
+	return false;
+}
+
+bool GSceneManager::GetAgentMeshScale(std::string requestedMesh, float & scale)
+{
+	return mManager_Entity->GetAgentMeshScale(requestedMesh, scale);
+}
+
 GInfluenceMap * GSceneManager::GetInfluenceMap()
 {
 	return m_InfluenceMap;
@@ -204,7 +227,7 @@ std::vector<UID> GSceneManager::GetObstacleUIDs()
 	return mManager_Obstacle->GetObstacleUIDs();
 }
 
-std::vector<std::string> GSceneManager::GetObstacleMeshes()
+std::map<std::string, float> GSceneManager::GetObstacleMeshes()
 {
 	return mManager_Obstacle->GetObstacleMeshes();
 }

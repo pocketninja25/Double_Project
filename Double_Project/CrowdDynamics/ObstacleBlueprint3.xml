@@ -13,6 +13,5 @@
     <Pair x="2" y="4"/>
     <Pair x="4" y="3"/>
   </VertexPairs>
-  <Mesh file="Box.x"/>
+  <Mesh file="Box.x" scale="1.0"/>
 </ObstacleBlueprint>
-<?xml version="1.0" encoding="utf-8"?>
