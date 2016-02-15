@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ObstacleBlueprint>
+  <VertexList>
+    <Vertex id="1" x="0.0" y="0.0"/>
+    <Vertex id="2" x="1000.0" y="0.0"/>
+    <Vertex id="3" x="0.0" y="1000.0"/>
+    <Vertex id="4" x="1000.0" y="1000.0"/>
+  </VertexList>
+  <VertexPairs>
+    <Pair x="1" y="2"/>
+    <Pair x="3" y="1"/>
+    <Pair x="2" y="4"/>
+    <Pair x="4" y="3"/>
+  </VertexPairs>
+  <Mesh file="Building.x" scale="1.0"/>
+</ObstacleBlueprint>

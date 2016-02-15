@@ -198,5 +198,8 @@
     <Xml Include="ObstacleBlueprint3.xml">
       <Filter>Resource Files\ObstacleBlueprints</Filter>
     </Xml>
+    <Xml Include="BarnObstacle.xml">
+      <Filter>Resource Files\ObstacleBlueprints</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

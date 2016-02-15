@@ -64,33 +64,7 @@ bool FindNearestAgent(map<UID, IModel*> agents, GSceneManager* manager, UID &nea
 	return set;
 }
 
-void CameraControls(I3DEngine* gameEngine, ICamera* cam)
-{
-	if (gameEngine->KeyHeld(Key_Numpad4))
-	{
-		cam->MoveX(-80.0f * frameTime);
-	}
-	if (gameEngine->KeyHeld(Key_Numpad6))
-	{
-		cam->MoveX(80.0f * frameTime);
-	}
-	if (gameEngine->KeyHeld(Key_Numpad2))
-	{
-		cam->MoveZ(-80.0f * frameTime);
-	}
-	if (gameEngine->KeyHeld(Key_Numpad8))
-	{
-		cam->MoveZ(80.0f * frameTime);
-	}
-	if (gameEngine->KeyHeld(Key_Numpad7))
-	{
-		cam->MoveY(-160.0f * frameTime);
-	}
-	if (gameEngine->KeyHeld(Key_Numpad9))
-	{
-		cam->MoveY(160.0f * frameTime);
-	}
-}
+
 
 void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& agentModels, map<string, float> meshScales, map<string, IMesh*> meshList, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
@@ -163,7 +137,6 @@ void UpdateAgentsFromCrowdData(GSceneManager* crowdEngine, map<UID, IModel*>& ag
 	}
 #endif
 }
-
 
 void UpdateAgentFromCrowdData(UID agentID, GSceneManager* crowdEngine, map<UID, IModel*>& agentModels, map<string, float> meshScales, map<string, IMesh*> meshList, map<UID, IModel*>& DestinationVectors, map<UID, IModel*>& MovementVectors)
 {
@@ -317,6 +290,7 @@ void UpdateInfluenceFromCrowdData(GSceneManager* crowdEngine, IModel** influence
 	}
 }
 
+
 void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, stringstream &sstream)
 {
 	CVector3 mousePos = WorldPosFromPixel(gameEngine, cam);
@@ -327,6 +301,52 @@ void DrawPointingPosition(I3DEngine* gameEngine, ICamera* cam, IFont* theFont, s
 	sstream << "Z: " << std::setprecision(4) << mousePos.z;
 	theFont->Draw(sstream.str(), 0, height, kBlack);
 	sstream.str("");
+}
+
+enum ECameraState {Camera_FirstPerson = 0, Camera_TopDown = 1, Camera_Size = 2};
+
+void CameraControls(I3DEngine* gameEngine, ICamera* cam)
+{
+	if (gameEngine->KeyHeld(Key_Numpad4))
+	{
+		cam->MoveX(-80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad6))
+	{
+		cam->MoveX(80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad2))
+	{
+		cam->MoveZ(-80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad8))
+	{
+		cam->MoveZ(80.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad7))
+	{
+		cam->MoveY(-160.0f * frameTime);
+	}
+	if (gameEngine->KeyHeld(Key_Numpad9))
+	{
+		cam->MoveY(160.0f * frameTime);
+	}
+}
+
+void CameraSwitcher(I3DEngine* gameEngine, ICamera* cameras[Camera_Size], ECameraState& currentState)
+{
+	if (gameEngine->KeyHit(Key_Tab))
+	{
+		int stateAsInt = currentState;
+		stateAsInt++;
+
+		if (stateAsInt >= Camera_Size)
+		{
+			stateAsInt = Camera_FirstPerson;
+		}
+
+		currentState = static_cast<ECameraState>(stateAsInt);
+	}
 }
 
 enum EQuitState {Quit_Completely = 0, Quit_LoadNewMap = 1};
@@ -423,9 +443,10 @@ int EngineMain(string worldFile)
 
 
 	IModel** FloorTiles;
-	IModel* SkyBox = SkyboxMesh->CreateModel(worldBlueprint.WorldSize.x / 1.5f, -1000.0f, worldBlueprint.WorldSize.y);
-	SkyBox->ScaleX(worldBlueprint.WorldSize.x / 300.0f);
-	SkyBox->ScaleZ(worldBlueprint.WorldSize.y / 300.0f);
+	IModel* SkyBox = SkyboxMesh->CreateModel();
+	SkyBox->ScaleX((worldBlueprint.WorldSize.x + 2000.0f) / 2000.0f);			//worldBlueprint.WorldSize.x / 200.0f);
+	SkyBox->ScaleZ((worldBlueprint.WorldSize.y + 2000.0f) / 2000.0f);		//worldBlueprint.WorldSize.y / 200.0f);
+	SkyBox->SetPosition(worldBlueprint.WorldSize.x / 2.0f, -1000.0f, worldBlueprint.WorldSize.y / 2.0f);
 
 	FloorTiles = new IModel*[worldBlueprint.subdivisions.x * worldBlueprint.subdivisions.y];
 	for (int i = 0; i < worldBlueprint.subdivisions.x; i++)
@@ -455,12 +476,14 @@ int EngineMain(string worldFile)
 	}
 #endif
 
-
-	ICamera* cam = gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
-	//ICamera* cam = gameEngine->CreateCamera(kManual, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
-	cam->RotateX(90.0f);
-	cam->SetMovementSpeed(100.0f);
-	cam->SetRotationSpeed(25.0f);
+	ICamera* cameras[Camera_Size];
+	ECameraState currentCameraState = Camera_TopDown;
+	cameras[Camera_FirstPerson]= gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
+	cameras[Camera_FirstPerson]->SetMovementSpeed(100.0f);
+	cameras[Camera_FirstPerson]->SetRotationSpeed(25.0f);
+	cameras[Camera_FirstPerson]->RotateX(90.0f);
+	cameras[Camera_TopDown] = gameEngine->CreateCamera(kManual, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
+	cameras[Camera_TopDown]->RotateX(90.0f);
 
 	float frameRate;
 	stringstream frameStream;
@@ -491,9 +514,11 @@ int EngineMain(string worldFile)
 
 		frameTime = gameEngine->Timer();
 		// Draw the scene
-		gameEngine->DrawScene();
+		gameEngine->DrawScene(cameras[currentCameraState]);
+		//Check if the active camera is to change
+		CameraSwitcher(gameEngine, cameras, currentCameraState);
 
-		DrawPointingPosition(gameEngine, cam, mousePosFont, frameStream);
+		DrawPointingPosition(gameEngine, cameras[currentCameraState], mousePosFont, frameStream);
 
 		frameRate = 1 / frameTime;
 		frameStream << setprecision(4) << (frameRate);
@@ -502,7 +527,7 @@ int EngineMain(string worldFile)
 
 
 
-		CameraControls(gameEngine, cam);
+		CameraControls(gameEngine, cameras[currentCameraState]);
 
 		/**** Update your scene each frame here ****/
 		crowdEngine->Update(frameTime);	//Update the CrowdDynamics simulation
@@ -532,7 +557,7 @@ int EngineMain(string worldFile)
 		}
 		if (gameEngine->KeyHit(Key_N))
 		{
-			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+			CVector3 tempPos = WorldPosFromPixel(gameEngine, cameras[currentCameraState]);
 			CVector2 mousePosition = CVector2(tempPos.x, tempPos.z);
 #ifdef _DEBUG
 			crowdEngine->GetSquareString(mousePosition, tempString);
@@ -544,7 +569,7 @@ int EngineMain(string worldFile)
 			if (holding == -1)	//If not holding anything, pick the nearest item up
 			{
 				UID tempHold;
-				if (FindNearestAgent(Agents, crowdEngine, tempHold, gameEngine, cam))
+				if (FindNearestAgent(Agents, crowdEngine, tempHold, gameEngine, cameras[currentCameraState]))
 				{
 					holding = tempHold;
 					string agentString;
@@ -568,7 +593,7 @@ int EngineMain(string worldFile)
 			}
 			if (holding != -1)
 			{
-				CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+				CVector3 tempPos = WorldPosFromPixel(gameEngine, cameras[currentCameraState]);
 				crowdEngine->SetAgentPosition(holding, CVector2(tempPos.x, tempPos.z));
 
 				UpdateAgentFromCrowdData(holding, crowdEngine, Agents, agentMeshScales, agentTLMeshes, DestinationVectors, MovementVectors);
@@ -609,7 +634,7 @@ int EngineMain(string worldFile)
 		if (gameEngine->KeyHit(Mouse_RButton))
 		{
 			UID foundNearest;
-			if (FindNearestAgent(Agents, crowdEngine, foundNearest, gameEngine, cam))
+			if (FindNearestAgent(Agents, crowdEngine, foundNearest, gameEngine, cameras[currentCameraState]))
 			{
 				bool isWatched = crowdEngine->GetAgentWatched(foundNearest);
 				if (crowdEngine->SetAgentWatched(foundNearest, !crowdEngine->GetAgentWatched(foundNearest)))
@@ -644,7 +669,7 @@ int EngineMain(string worldFile)
 		}
 		if (gameEngine->KeyHit(Key_Space))
 		{
-			CVector3 tempPos = WorldPosFromPixel(gameEngine, cam);
+			CVector3 tempPos = WorldPosFromPixel(gameEngine, cameras[currentCameraState]);
 			string thisBlueprint = "AgentBlueprint1.xml";
 			UID newID = crowdEngine->AddAgent(thisBlueprint, true, CVector2(tempPos.x, tempPos.z));
 			if (agentMeshScales.count(thisBlueprint) == 0)	//This blueprint does not already exist on the TL side

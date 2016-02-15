@@ -71,6 +71,7 @@
   <ItemGroup>
     <Xml Include="AgentBlueprint1.xml" />
     <Xml Include="AgentBlueprint2.xml" />
+    <Xml Include="BarnObstacle.xml" />
     <Xml Include="MegaWorld.xml">
       <SubType>Designer</SubType>
     </Xml>
