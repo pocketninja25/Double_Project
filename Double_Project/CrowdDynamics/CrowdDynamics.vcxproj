@@ -71,13 +71,13 @@
   <ItemGroup>
     <Xml Include="AgentBlueprint1.xml" />
     <Xml Include="AgentBlueprint2.xml" />
-    <Xml Include="BarnObstacle.xml" />
+    <Xml Include="Building8.xml" />
     <Xml Include="MegaWorld.xml">
       <SubType>Designer</SubType>
     </Xml>
     <Xml Include="ObstacleBlueprint1.xml" />
     <Xml Include="ObstacleBlueprint2.xml" />
-    <Xml Include="ObstacleBlueprint3.xml" />
+    <Xml Include="World2.xml" />
     <Xml Include="WorldBlueprint1.xml" />
     <Xml Include="test.xml" />
   </ItemGroup>

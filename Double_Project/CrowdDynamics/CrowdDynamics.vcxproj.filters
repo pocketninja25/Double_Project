@@ -195,10 +195,10 @@
     <Xml Include="MegaWorld.xml">
       <Filter>Resource Files\WorldBlueprints</Filter>
     </Xml>
-    <Xml Include="ObstacleBlueprint3.xml">
-      <Filter>Resource Files\ObstacleBlueprints</Filter>
+    <Xml Include="World2.xml">
+      <Filter>Resource Files\WorldBlueprints</Filter>
     </Xml>
-    <Xml Include="BarnObstacle.xml">
+    <Xml Include="Building8.xml">
       <Filter>Resource Files\ObstacleBlueprints</Filter>
     </Xml>
   </ItemGroup>

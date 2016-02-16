@@ -121,7 +121,7 @@ void GAgent::Update(float updateTime)
 
 	PerformGlobalCollisionAvoidance();
 	
-	PerformLocalCollisionAvoidance();
+	//PerformLocalCollisionAvoidance();
 
 	//Move by the movement vector (units per second) modified by update time calculating units this frame
 	matrix.Move2D(m_MovementVector);// *updateTime);

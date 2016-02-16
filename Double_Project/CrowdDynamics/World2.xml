@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<WorldBluePrint>
+  <TimeStep ticks="30"/>
+  <!--Use ticks here so that most accurate value can be calculated in c++-->
+  <WorldSize x="2000.0" y="2000.0"/>
+  <Subdivisions x="20" y="20"/>
+  <influencePerUnit value="0.5"/>
+  <Agents number="400" blueprint="AgentBlueprint1.xml"/>
+  <Agents number="300" blueprint="AgentBlueprint2.xml"/>
+  <Obstacles blueprint ="Building8.xml" >
+    <Obstacle x="100.0" y="200.0"/>
+    <Obstacle x="600.0" y="500.0"/>
+    <Obstacle x="200.0" y="1100.0"/>
+    <Obstacle x="500.0" y="1900.0"/>
+    <Obstacle x="950.0" y="1150.0"/>
+    <Obstacle x="1150.0" y="1450.0"/>
+    <Obstacle x="1800.0" y="1300.0"/>
+    <Obstacle x="1200.0" y="60.0"/>
+    <Obstacle x="1300.0" y="500.0"/>
+    <Obstacle x="1200.0" y="800.0"/>
+    <Obstacle x="1700.0" y="350.0"/>
+    <Obstacle x="-40.0" y="-40.0"/>
+  </Obstacles>
+</WorldBluePrint>

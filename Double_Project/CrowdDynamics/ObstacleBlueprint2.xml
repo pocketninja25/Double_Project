@@ -13,5 +13,5 @@
     <Pair x="2" y="4"/>
     <Pair x="4" y="3"/>
   </VertexPairs>
-  <Mesh file="Building.x" scale="1.0"/>
+  <Mesh file="Building2.x" scale="1.0"/>
 </ObstacleBlueprint>

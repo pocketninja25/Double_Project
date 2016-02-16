@@ -478,7 +478,7 @@ int EngineMain(string worldFile)
 
 	ICamera* cameras[Camera_Size];
 	ECameraState currentCameraState = Camera_TopDown;
-	cameras[Camera_FirstPerson]= gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x / 2.0f, 220.0f, worldBlueprint.WorldSize.y / 2.0f);
+	cameras[Camera_FirstPerson]= gameEngine->CreateCamera(kFPS, worldBlueprint.WorldSize.x / 2.0f, (worldBlueprint.WorldSize.x + worldBlueprint.WorldSize.y) / 2, worldBlueprint.WorldSize.y / 2.0f);
 	cameras[Camera_FirstPerson]->SetMovementSpeed(100.0f);
 	cameras[Camera_FirstPerson]->SetRotationSpeed(25.0f);
 	cameras[Camera_FirstPerson]->RotateX(90.0f);
