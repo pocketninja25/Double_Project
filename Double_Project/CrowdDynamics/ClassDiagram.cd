@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="GAgent">
+    <Position X="12.5" Y="8.25" Width="7.75" />
+    <NestedTypes>
+      <Enum Name="GAgent::Directions" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>GAgent.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQQJAoAQgAQICCAkIgAIAAIAAAgAAgSC0AMgAAAAAIA=</HashCode>
+      <FileName>GAgent.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GEntity">
+    <Position X="9" Y="7.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAQBAACAAAAAEAAAACBCCAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>GEntity.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GInfluenceMap">
+    <Position X="20.75" Y="7" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAIABBBgEACQAACAAIQgAAAAAAAAgIEAJAAgA=</HashCode>
+      <FileName>GInfluenceMap.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GIntPair">
+    <Position X="25.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAIABgAAAAAAA=</HashCode>
+      <FileName>GIntPair.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObject">
+    <Position X="1.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAAAAABAAABEkAAgABAAAAAAAAAAQAIAAAAAAAA=</HashCode>
+      <FileName>GObject.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GSceneSquare">
+    <Position X="15.75" Y="5.75" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAABAAAgAUAAQAAAAAAAgAAQEAAAAAAAIAAAA=</HashCode>
+      <FileName>GSceneSquare.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDynamicObstacle">
+    <Position X="0.5" Y="10.25" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAgAAAIAAECBEAABAAIACAAAAAgAAAAAABAAAIAY=</HashCode>
+      <FileName>GDynamicObstacle.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObstacle">
+    <Position X="0.5" Y="5.75" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AAQMAQBAACAAAAAEAAIACAAAAAAAAAAAAEAAAAAAEAA=</HashCode>
+      <FileName>GObstacle.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObstacleTemplate">
+    <Position X="10" Y="3.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AEQAAQEAhCAQABAEAAAAABAAAAQoACAAAAMACAAAAAA=</HashCode>
+      <FileName>GObstacleTemplate.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GStaticObstacle">
+    <Position X="6" Y="12.75" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAEAAABAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GStaticObstacle.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GEntityManager">
+    <Position X="10.25" Y="16.25" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AFYAAAAAAIAAAAIAAAAABAQQBAgAAAAAAEAgCAADAAA=</HashCode>
+      <FileName>GEntityManager.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObstacleManager">
+    <Position X="5.5" Y="16.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAIAEAAAAAAAAAAAAAAAAAABAAEEAAAAEAABgQgA=</HashCode>
+      <FileName>GObstacleManager.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GSceneManager">
+    <Position X="16" Y="16.25" Width="8.75" />
+    <TypeIdentifier>
+      <HashCode>IBQCAYEEAQAhgAIIgCCQRCwCDgxAQAAgAEggAIBjAoI=</HashCode>
+      <FileName>GSceneManager.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GAgentImporter">
+    <Position X="7.5" Y="0.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAQAAAAAABAA=</HashCode>
+      <FileName>GAgentImporter.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObstacleImporter">
+    <Position X="11.25" Y="0.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAABAA=</HashCode>
+      <FileName>GObstacleImporter.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GWorldImporter">
+    <Position X="3.75" Y="0.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>ABAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>GWorldImporter.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SRestrictionObject">
+    <Position X="17.25" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAQAAAAAAAAAAAAAAIAAAgAAAAAAAABgvmEBAAA=</HashCode>
+      <FileName>GAgent.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SWall">
+    <Position X="19.5" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>GObstacleTemplate.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SWorldBlueprint">
+    <Position X="21.5" Y="1.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAIAAAgAAAAIBAAAAAAAAAAAAAAAAAAAAABABA=</HashCode>
+      <FileName>Common.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SAgentBlueprint">
+    <Position X="15" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAACAAAAAAAAAAAIBAAgAABAAAAIAQCFAAAAAA=</HashCode>
+      <FileName>Common.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="UID" Collapsed="true">
+    <Position X="17.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common.hpp</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

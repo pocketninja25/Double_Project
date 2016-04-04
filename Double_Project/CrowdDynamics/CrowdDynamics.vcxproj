@@ -81,6 +81,9 @@
     <Xml Include="WorldBlueprint1.xml" />
     <Xml Include="test.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E98B7449-A87B-4F1A-AA5D-F7185BAE5A0B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
